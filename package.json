@@ -63,7 +63,7 @@
     "@commitlint/cli": "7.0.0",
     "@commitlint/config-conventional": "7.0.1",
     "@types/got": "8.3.1",
-    "@types/jest": "23.1.4",
+    "@types/jest": "23.1.6",
     "@types/mem": "1.1.2",
     "@types/node": "10.5.1",
     "@types/shortid": "0.0.29",
