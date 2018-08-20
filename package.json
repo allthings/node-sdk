@@ -57,7 +57,7 @@
     "bottleneck": "2.7.2",
     "got": "9.0.0",
     "mem": "3.0.1",
-    "shortid": "2.2.12"
+    "shortid": "2.2.13"
   },
   "devDependencies": {
     "@allthings/tslint-preset": "1.10.1",
