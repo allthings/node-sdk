@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "bottleneck": "2.8.0",
-    "got": "9.0.0",
+    "got": "9.1.0",
     "mem": "3.0.1",
     "shortid": "2.2.13"
   },
