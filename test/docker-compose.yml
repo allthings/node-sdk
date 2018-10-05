@@ -59,7 +59,7 @@ services:
     links:
       - nginx:accounts.dev.allthings.me
       - nginx:api.dev.allthings.me
-    entrypoint: yarn test
+    entrypoint: yarn test --runInBand
     volumes:
       - ../:/srv/www
       - ../../.yarncache:/srv/www/.yarncache
