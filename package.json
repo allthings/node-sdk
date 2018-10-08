@@ -22,6 +22,34 @@
   "engines": {
     "node": ">= 8.10"
   },
+  "config": {
+    "deployProfile": "allthings-deploy",
+    "awsAccountId": "provided by env var AWS_ACCOUNT_ID",
+    "awsKmsKeyArn": "provided by env var AWS_KMS_KEY_ARN",
+    "awsRegion": "eu-west-1",
+    "development": {
+      "apiUrl": "https://api.dev.allthings.me",
+      "emailFromAddress": "no-reply@mock.test",
+      "oauthUrl": "https://accounts.dev.allthings.me",
+      "oauth": {
+        "username": "",
+        "password": "",
+        "clientId": "",
+        "clientSecret": ""
+      }
+    },
+    "staging": {
+      "apiUrl": "https://api.staging.allthings.me",
+      "emailFromAddress": "no-reply@allthings.me",
+      "oauthUrl": "https://accounts.staging.allthings.me",
+      "oauth": {
+        "username": "AQECAHj6Y8swFFZ8sg2A5LDqzMqXTngYQ4IY+YtXTBbxtG0Z0wAAAHAwbgYJKoZIhvcNAQcGoGEwXwIBADBaBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDBtk3eq1GIZKM1zV5wIBEIAttCsGGNRSLeH+b9tJBBPD8Pzzu4hiDmSuIfVg044pYE7yo4x/PO7bbOSvW3K6",
+        "password": "AQECAHj6Y8swFFZ8sg2A5LDqzMqXTngYQ4IY+YtXTBbxtG0Z0wAAAHAwbgYJKoZIhvcNAQcGoGEwXwIBADBaBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDMIU5zTgsO6sKrbD9QIBEIAtuecKp+Y7AnGS/1aBzPWld8Lqp+iJxqn2e20RVL3p0oz5DngRivNlc2pYbpGE",
+        "clientId": "AQECAHj6Y8swFFZ8sg2A5LDqzMqXTngYQ4IY+YtXTBbxtG0Z0wAAAK0wgaoGCSqGSIb3DQEHBqCBnDCBmQIBADCBkwYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAw9X4l4yK/by99SAwMCARCAZryhL6jhwpL9oDjQ7a652gAJEUBy4xBjMAVtrPtJE/p1qPa0Soocf7JPU8kfSUHoh8l8rvYjoap5j7fzuVQyxrGebOSaJ43R33k8+IetcN/TSyZINq7KsnYRzvvudQ7JfArNye2MLg==",
+        "clientSecret": "AQECAHj6Y8swFFZ8sg2A5LDqzMqXTngYQ4IY+YtXTBbxtG0Z0wAAAJIwgY8GCSqGSIb3DQEHBqCBgTB/AgEAMHoGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM3+7JETSrjHYtG/oaAgEQgE1M0fSzRGIno8zP4D9hoW51/W7TGWASiKvMRRE0+TtMUrM/lqf/ZmGvT2UOlVhGopt6+89sHt41gvSCR5NZjG9im2d3BJ5UfOJY/9jn2A=="
+      }
+    }
+  },
   "main": "dist/lib.cjs.js",
   "module": "dist/lib.esm.js",
   "browser": "dist/lib.umd.min.js",
