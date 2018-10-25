@@ -1,4 +1,5 @@
 import { InterfaceAllthingsRestClient } from '../types'
+import { remapRegistationCodeResult } from './registrationCode'
 import { IUser, remapEmbeddedUser } from './user'
 
 export interface IUtilisationPeriod {
@@ -30,7 +31,7 @@ export interface IUtilisationPeriodInvite {
   readonly permanent: boolean
   readonly utilisationPeriods: ReadonlyArray<string>
   readonly invitationSent: boolean
-  readonly tenantId: string
+  readonly externalId: string
   readonly organizations: ReadonlyArray<string> // array of mongoId
   readonly teams: ReadonlyArray<string> // array of mongoId
   readonly resendAttempts: ReadonlyArray<string> // array of dates
@@ -93,7 +94,7 @@ export async function utilisationPeriodFindById(
 
   return {
     ...result,
-    invitations: _embedded.invitations,
+    invitations: _embedded.invitations.map(remapRegistationCodeResult),
     tenantIds,
     users: remapEmbeddedUser(_embedded),
   }
