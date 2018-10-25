@@ -10,6 +10,7 @@ export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
   readonly code: string
   readonly createdAt: string
   readonly email: string
+  readonly externalId: string
   readonly id: string
   readonly invitationSent: boolean
   readonly utilisationPeriods: ReadonlyArray<string>
@@ -18,6 +19,12 @@ export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
 export type PartialRegistrationCode = Partial<IRegistrationCode>
 
 export type RegistrationCodeResult = Promise<IRegistrationCode>
+
+export const remapRegistationCodeResult = (registrationCode: any) => {
+  const { tenantID: externalId, ...result } = registrationCode
+
+  return { ...result, externalId }
+}
 
 /*
   Create new registration code
@@ -38,9 +45,8 @@ export async function registrationCodeCreate(
 ): RegistrationCodeResult {
   const { externalId, ...moreOptions } = options
 
-  const { tenantID: resultExternalId, ...result } = await client.post(
-    '/v1/registration-codes',
-    {
+  return remapRegistationCodeResult(
+    await client.post('/v1/registration-codes', {
       code,
       utilisationPeriods:
         typeof utilisationPeriods === 'string'
@@ -48,13 +54,8 @@ export async function registrationCodeCreate(
           : utilisationPeriods,
       ...(externalId && { tenantID: externalId }),
       ...moreOptions,
-    },
+    }),
   )
-
-  return {
-    ...result,
-    externalId: resultExternalId,
-  }
 }
 
 /*
@@ -69,7 +70,9 @@ export async function registrationCodeFindById(
   client: InterfaceAllthingsRestClient,
   registrationCodeId: string,
 ): RegistrationCodeResult {
-  return client.get(`/v1/invitations/${registrationCodeId}`)
+  return remapRegistationCodeResult(
+    await client.get(`/v1/invitations/${registrationCodeId}`),
+  )
 }
 
 /*
