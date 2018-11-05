@@ -57,7 +57,7 @@
     "test:implicit-flow": "open http://localhost:3333/test/fixtures/implicit-flow?clientId=$ALLTHINGS_OAUTH_CLIENT_ID"
   },
   "dependencies": {
-    "bottleneck": "2.12.2",
+    "bottleneck": "2.13.0",
     "cross-fetch": "2.2.3",
     "mem": "4.0.0",
     "nanoid": "1.3.1",
