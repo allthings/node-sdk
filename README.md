@@ -226,6 +226,18 @@ export interface InterfaceAllthingsRestClient {
    */
   readonly groupUpdateById: MethodGroupUpdateById
 
+  // Notification settings
+
+  /**
+   * Set all notification settings to default
+   */
+  readonly notificationSettingsResetByUser: MethodNotificationSettingsResetByUser
+
+  /**
+   * Change user notification-settings
+   */
+  readonly notificationSettingsUpdateByUser: MethodNotificationSettingsUpdateByUser
+
   // Property
 
   /**

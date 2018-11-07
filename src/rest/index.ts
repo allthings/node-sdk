@@ -15,6 +15,10 @@ import { fileCreate, fileDelete } from './methods/file'
 import { groupCreate, groupFindById, groupUpdateById } from './methods/group'
 import { lookupIds } from './methods/idLookup'
 import {
+  notificationSettingsResetByUser,
+  notificationSettingsUpdateByUser,
+} from './methods/notificationSettings'
+import {
   propertyCreate,
   propertyFindById,
   propertyUpdateById,
@@ -76,6 +80,10 @@ const API_METHODS: ReadonlyArray<any> = [
 
   // ID Lookup
   lookupIds,
+
+  // Notification settings
+  notificationSettingsResetByUser,
+  notificationSettingsUpdateByUser,
 
   // Group
   groupCreate,

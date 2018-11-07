@@ -20,6 +20,10 @@ import {
 } from './methods/group'
 import { MethodLookupIds } from './methods/idLookup'
 import {
+  MethodNotificationSettingsResetByUser,
+  MethodNotificationSettingsUpdateByUser,
+} from './methods/notificationSettings'
+import {
   MethodPropertyCreate,
   MethodPropertyFindById,
   MethodPropertyUpdateById,
@@ -187,6 +191,18 @@ export interface InterfaceAllthingsRestClient {
    * Update a group by its ID
    */
   readonly groupUpdateById: MethodGroupUpdateById
+
+  // Notification settings
+
+  /**
+   * Set all notification settings to default
+   */
+  readonly notificationSettingsResetByUser: MethodNotificationSettingsResetByUser
+
+  /**
+   * Change user notification-settings
+   */
+  readonly notificationSettingsUpdateByUser: MethodNotificationSettingsUpdateByUser
 
   // Property
 
