@@ -53,29 +53,17 @@ export interface INotification extends IBasicNotification {
   readonly referencedObjectId: string | null
 }
 
-const remapNotificationResult = (
-  notification: IPreprocessedNotification,
-): INotification => {
-  const {
-    category,
-    id,
-    read,
-    title,
-    type,
-    createdAt,
-    objectID,
-    referencedObjectID,
-  } = notification
-
+function remapNotificationResult({
+  createdAt,
+  objectID,
+  referencedObjectID,
+  ...restNotification
+}: IPreprocessedNotification): INotification {
   return {
-    category,
     createdAt: stringToDate(createdAt),
-    id,
     objectId: objectID,
-    read,
     referencedObjectId: referencedObjectID,
-    title,
-    type,
+    ...restNotification,
   }
 }
 
