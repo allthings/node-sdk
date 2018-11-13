@@ -76,7 +76,7 @@
     "@types/query-string": "6.1.1",
     "coveralls": "3.0.2",
     "form-data": "2.3.3",
-    "husky": "1.1.2",
+    "husky": "1.1.4",
     "jest": "23.6.0",
     "lint-staged": "7.3.0",
     "nsp": "3.2.1",
