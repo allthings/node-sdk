@@ -13,8 +13,11 @@ import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
 import {
+  // getNewTokenUsingAuthorizationGrant,
   getNewTokenUsingImplicitFlow,
   getNewTokenUsingPasswordGrant,
+  getNewTokenUsingRefreshToken,
+  IAuthorizationResponse,
 } from './oauth'
 import { IAllthingsRestClientOptions } from './types'
 
@@ -49,7 +52,14 @@ export type MethodHttpRequest = (
   payload?: IRequestOptions,
 ) => RequestResult
 
-const RETRYABLE_STATUS_CODES: ReadonlyArray<number> = [408, 429, 502, 503, 504]
+const RETRYABLE_STATUS_CODES: ReadonlyArray<number> = [
+  401,
+  408,
+  429,
+  502,
+  503,
+  504,
+]
 
 const queue = new Bottleneck({
   maxConcurrent: QUEUE_CONCURRENCY,
@@ -150,7 +160,8 @@ export function makeApiRequest(
   httpMethod: HttpVerb,
   apiUrl: string,
   apiMethod: string,
-  accessToken: string,
+  accessToken: string | undefined,
+  refreshToken?: string,
   payload?: IRequestOptions,
 ): (previousResult: any, iteration: number) => Promise<Response> {
   return async (previousResult, retryCount) => {
@@ -164,6 +175,15 @@ export function makeApiRequest(
         requestLogger.error(error)
 
         throw new Error(error)
+      }
+      if (previousResult.status === 401 && refreshToken !== undefined) {
+        const newToken = await getNewTokenUsingRefreshToken({
+          ...options,
+          refreshToken,
+        })
+        options.accessToken = newToken && (newToken.accessToken as string)
+        accessToken = newToken && newToken.accessToken
+        options.refreshToken = newToken && (newToken.refreshToken as string)
       }
 
       // tslint:disable-next-line:no-expression-statement
@@ -286,15 +306,11 @@ export default async function request(
   apiMethod: string,
   payload?: IRequestOptions,
 ): RequestResult {
-  const { apiUrl, accessToken: maybeAccessToken } = options
+  const { apiUrl } = options
 
-  const accessToken =
-    maybeAccessToken ||
-    (typeof window !== 'undefined'
-      ? await getNewTokenUsingImplicitFlow(options)
-      : await getNewTokenUsingPasswordGrant(options))
+  const resp = await getNetToken(options)
 
-  if (!accessToken) {
+  if (!(resp && resp.accessToken)) {
     throw new Error('Unable to get OAuth2 authentication token.')
   }
 
@@ -310,7 +326,8 @@ export default async function request(
       httpMethod,
       apiUrl,
       apiMethod,
-      accessToken,
+      resp && resp.accessToken,
+      resp && resp.refreshToken,
       payload,
     ),
   )
@@ -323,4 +340,25 @@ export default async function request(
   }
 
   return result.body
+}
+
+const getNetToken = async (
+  options: InterfaceAllthingsRestClientOptions,
+): Promise<IAuthorizationResponse | undefined> => {
+  // TODO: define a case to detect implicit flow
+  switch (true) {
+    case options.refreshToken !== undefined:
+      return getNewTokenUsingRefreshToken(options)
+    case options.accessToken !== undefined:
+      return {
+        accessToken: options.accessToken as string,
+        ...(options.refreshToken && { refreshToken: options.refreshToken }),
+      }
+    case typeof window !== 'undefined':
+      return getNewTokenUsingImplicitFlow(options)
+    case options.password !== 'undefined':
+      return getNewTokenUsingPasswordGrant(options)
+  }
+
+  return undefined
 }

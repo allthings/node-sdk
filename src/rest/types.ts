@@ -108,12 +108,13 @@ export enum EnumTimezone {
 // Describes the options with which to construct a new API wrapper instance
 export interface IAllthingsRestClientOptions {
   readonly apiUrl: string
-  readonly accessToken?: string
+  accessToken?: string
   readonly clientId?: string
   readonly clientSecret?: string
   readonly oauthUrl: string
   readonly password?: string
   readonly redirectUri?: string
+  refreshToken?: string
   readonly requestBackOffInterval: number
   readonly requestMaxRetries: number
   readonly scope?: string
