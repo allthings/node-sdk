@@ -85,6 +85,7 @@ describe('Request', () => {
           '',
           '',
           '',
+          '',
           { query: {} },
         ),
         { statusCode: 503 },
@@ -95,7 +96,7 @@ describe('Request', () => {
 
   it('should get an oauth token on request from implicit grant', async () => {
     // get a legit access token with the password grant, so we can mock it in the implicit flow
-    const accessToken = await getNewTokenUsingPasswordGrant(
+    const token = await getNewTokenUsingPasswordGrant(
       DEFAULT_API_WRAPPER_OPTIONS,
     )
 
@@ -103,7 +104,7 @@ describe('Request', () => {
     global.window = {
       history: { replaceState: () => null },
       location: {
-        hash: `access_token=${accessToken}`,
+        hash: `access_token=${token && token.accessToken}`,
         href: '',
         origin: '',
       },
