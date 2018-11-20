@@ -7,7 +7,17 @@ import replace from 'rollup-plugin-replace'
 //import typescript from 'rollup-plugin-typescript'
 import packageJson from './package.json'
 
-const external = [...Object.keys(packageJson.dependencies), 'readline']
+const external = [
+  ...Object.keys(packageJson.dependencies),
+  'fs',
+  'http',
+  'https',
+  'path',
+  'readline',
+  'stream',
+  'url',
+  'util',
+]
 
 const plugins = [
   resolve({
@@ -37,13 +47,6 @@ export default [
     ],
     plugins,
   },
-  // The SDKs CLI
-  {
-    external,
-    input: 'dist/src/cli.js',
-    output: [{ file: 'dist/cli.js', format: 'cjs' }],
-    plugins: [hashbang(), ...plugins],
-  },
   // For modern browsers
   {
     input: 'dist/src/index.js',
@@ -71,5 +74,12 @@ export default [
       }),
       terser(),
     ],
+  },
+  // The SDKs CLI
+  {
+    external,
+    input: 'dist/src/cli.js',
+    output: [{ file: 'dist/cli.js', format: 'cjs' }],
+    plugins: [hashbang(), ...plugins],
   },
 ]

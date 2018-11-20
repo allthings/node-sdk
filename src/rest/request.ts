@@ -49,6 +49,8 @@ export type MethodHttpRequest = (
   payload?: IRequestOptions,
 ) => RequestResult
 
+const RETRYABLE_STATUS_CODES: ReadonlyArray<number> = [408, 429, 502, 503, 504]
+
 const queue = new Bottleneck({
   maxConcurrent: QUEUE_CONCURRENCY,
   minTime: QUEUE_DELAY,
@@ -99,8 +101,8 @@ function refillReservoir(): IntervalSet {
 async function makeResultFromResponse(
   response: Response,
 ): Promise<Error | { readonly status: number; readonly body: any }> {
-  // Retry 503s as it was likely a rate-limited request
-  if (response.status === 503) {
+  // E.g. retry 503s as it was likely a rate-limited request
+  if (RETRYABLE_STATUS_CODES.includes(response.status)) {
     return response.clone()
   }
 
@@ -129,17 +131,17 @@ async function makeResultFromResponse(
 
 /**
  * Determine if the result was successful. Here, successful means
- * _not_ a 503 error.
+ * a non-retryable code (e.g. not 429, or 502-504 error).
  */
-export function responseWasSuccessful(response: any): boolean {
-  return ![503].includes(response.status)
+export function responseWasSuccessful(response: Response): boolean {
+  return !RETRYABLE_STATUS_CODES.includes(response.status)
 }
 
 /**
  * Perform an API request. The request is passed to the queue from where it is
- * queued and scheduled for execution. When a request fails with a statuCode of 503,
- * the request is retried up to REQUEST_MAX_RETRIES times. Each retry incurrs a wait
- * penalty of retryCount * REQUEST_BACK_OFF_INTERVAL.
+ * queued and scheduled for execution. When a request fails with a retryable
+ * statusCode, the request is retried up to REQUEST_MAX_RETRIES times. Retries
+ * are implemented with exponential-backing off strategy with jitter.
  */
 export function makeApiRequest(
   options: InterfaceAllthingsRestClientOptions,
@@ -171,7 +173,13 @@ export function makeApiRequest(
 
       // disabling linter here for better readabiliy
       // tslint:disable-next-line:no-expression-statement
-      await sleep(options.requestBackOffInterval * 2 ** retryCount)
+      await sleep(
+        Math.ceil(
+          Math.random() * // adds jitter
+            options.requestBackOffInterval *
+            2 ** retryCount, // exponential backoff
+        ),
+      )
     }
 
     try {

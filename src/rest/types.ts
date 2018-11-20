@@ -48,6 +48,7 @@ import {
 } from './methods/user'
 import {
   MethodUtilisationPeriodCheckInUser,
+  MethodUtilisationPeriodCheckOutUser,
   MethodUtilisationPeriodCreate,
   MethodUtilisationPeriodGetById,
   MethodUtilisationPeriodUpdateById,
@@ -324,4 +325,10 @@ export interface InterfaceAllthingsRestClient {
    * Check-in a user to a utilisation period with the users email
    */
   readonly utilisationPeriodCheckInUser: MethodUtilisationPeriodCheckInUser
+
+  /**
+   * Remove a user from a utilisation period with the utilisaitionPeriodId
+   * and userId
+   */
+  readonly utilisationPeriodCheckOutUser: MethodUtilisationPeriodCheckOutUser
 }

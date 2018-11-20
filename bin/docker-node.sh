@@ -24,7 +24,21 @@ set -- \
   -v "$PWD/build/node_modules:/srv/www/node_modules" \
   -v "$PWD/../.yarncache:/srv/www/.yarncache" \
   -e "YARN_CACHE_FOLDER=/srv/www/.yarncache" \
+  -e CI \
+  -e BUILDKITE \
+  -e BUILDKITE_BRANCH \
+  -e BUILDKITE_BUILD_CHECKOUT_PATH \
+  -e BUILDKITE_BUILD_NUMBER \
+  -e BUILDKITE_BUILD_URL \
+  -e BUILDKITE_COMMIT \
+  -e BUILDKITE_ORGANIZATION_SLUG \
+  -e BUILDKITE_PROJECT_SLUG \
+  -e BUILDKITE_PULL_REQUEST \
+  -e BUILDKITE_PULL_REQUEST_BASE_BRANCH \
+  -e BUILDKITE_TAG \
   -e NODE_ENV \
+  -e NPM_TOKEN \
+  -e GITHUB_TOKEN \
   --entrypoint "$CMD" \
   --rm \
   allthings/node \

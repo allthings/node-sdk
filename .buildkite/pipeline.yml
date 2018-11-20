@@ -37,5 +37,10 @@ steps:
   - name: release
     command: >
       bin/artifacts-download.sh &&
-      bin/docker-node.sh yarn semantic-release || true
+      git remote set-url origin https://github.com/allthings/node-sdk.git && 
+      git checkout master &&
+      git pull &&
+      bin/docker-node.sh yarn semantic-release
     branches: 'master'
+    agents:
+      queue: t2-large

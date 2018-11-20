@@ -1,5 +1,8 @@
 import { EnumLocale, InterfaceAllthingsRestClient } from '../types'
-import { UtilisationPeriodResults } from './utilisationPeriod'
+import {
+  UtilisationPeriodResult,
+  UtilisationPeriodResults,
+} from './utilisationPeriod'
 
 export enum EnumGender {
   female = 'female',
@@ -33,7 +36,7 @@ export interface IUser {
   readonly publicProfile: boolean
   readonly receiveAdminNotifications: boolean
   readonly roles: ReadonlyArray<string>
-  readonly tenantIds: ReadonlyArray<string>
+  readonly tenantIds: { readonly [key: string]: string }
   readonly type: EnumUserType | null
   readonly username: string
 }
@@ -76,6 +79,17 @@ export interface IUserPermission {
 export type PartialUserPermission = Partial<IUserPermission>
 
 export type UserPermissionResult = Promise<IUserPermission>
+
+const remapUserResult = (user: any) => {
+  const { tenantIDs: tenantIds, ...result } = user
+
+  return { ...result, tenantIds }
+}
+
+export const remapEmbeddedUser = (embedded: {
+  readonly [key: string]: any
+}): ReadonlyArray<IUser> =>
+  embedded.users ? embedded.users.map(remapUserResult) : []
 
 /*
   Create new user
@@ -120,7 +134,12 @@ export async function getUsers(
   page = 1,
   limit = -1,
 ): UserResultList {
-  return client.get(`/v1/users?page=${page}&limit=${limit}`)
+  const {
+    _embedded: { items: users },
+    total,
+  } = await client.get(`/v1/users?page=${page}&limit=${limit}`)
+
+  return { _embedded: { items: users.map(remapUserResult) }, total }
 }
 
 /*
@@ -132,7 +151,7 @@ export type MethodGetCurrentUser = () => UserResult
 export async function getCurrentUser(
   client: InterfaceAllthingsRestClient,
 ): UserResult {
-  return client.get('/v1/me')
+  return remapUserResult(await client.get('/v1/me'))
 }
 
 /*
@@ -145,7 +164,7 @@ export async function userGetById(
   client: InterfaceAllthingsRestClient,
   userId: string,
 ): UserResult {
-  return client.get(`/v1/users/${userId}`)
+  return remapUserResult(await client.get(`/v1/users/${userId}`))
 }
 
 /*
@@ -162,7 +181,11 @@ export async function userUpdateById(
   userId: string,
   data: PartialUser,
 ): UserResult {
-  return client.patch(`/v1/users/${userId}`, data)
+  const { tenantIds: tenantIDs, ...rest } = data
+
+  return remapUserResult(
+    await client.patch(`/v1/users/${userId}`, { ...rest, tenantIDs }),
+  )
 }
 
 /*
@@ -271,14 +294,10 @@ export async function userCheckInToUtilisationPeriod(
   client: InterfaceAllthingsRestClient,
   userId: string,
   utilisationPeriodId: string,
-): UtilisationPeriodResults {
+): UtilisationPeriodResult {
   const { email: userEmail } = await client.userGetById(userId)
 
-  const {
-    _embedded: { items: utilisationPeriods },
-  } = await client.utilisationPeriodCheckInUser(utilisationPeriodId, {
+  return client.utilisationPeriodCheckInUser(utilisationPeriodId, {
     email: userEmail,
   })
-
-  return utilisationPeriods
 }

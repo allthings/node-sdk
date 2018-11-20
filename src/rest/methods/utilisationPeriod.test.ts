@@ -4,6 +4,7 @@ import restClient from '..'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
 import { EnumLocale, EnumTimezone } from '../types'
 import { EnumUnitType } from './unit'
+import { remapEmbeddedUser } from './user'
 
 let sharedUnitId: string // tslint:disable-line no-let
 
@@ -90,7 +91,7 @@ describe('utilisationPeriodUpdateById()', () => {
 })
 
 describe('utilisationPeriodCheckInUser()', () => {
-  it('should checkIn and existing user to a utilisationPeriod by email', async () => {
+  it('should checkIn an existing user to a utilisationPeriod by email', async () => {
     const initialData = {
       endDate: '2450-01-03',
       externalId: generateId(),
@@ -109,9 +110,7 @@ describe('utilisationPeriodCheckInUser()', () => {
     })
 
     const {
-      _embedded: {
-        users: [{ id: checkedInUserId }],
-      },
+      users: [{ id: checkedInUserId }],
     } = await client.utilisationPeriodCheckInUser(utilisationPeriod.id, {
       email: userEmail,
     })
@@ -120,7 +119,52 @@ describe('utilisationPeriodCheckInUser()', () => {
       { id: usersUtilisationPeriodId },
     ] = await client.userGetUtilisationPeriods(user.id)
 
+    const checkedInUtilisationPeriod = await client.utilisationPeriodFindById(
+      usersUtilisationPeriodId,
+    )
+
+    expect(Array.isArray(checkedInUtilisationPeriod.users)).toEqual(true)
+
+    expect(checkedInUtilisationPeriod.users[0]).toHaveProperty('tenantIds')
     expect(user.id).toEqual(checkedInUserId)
     expect(usersUtilisationPeriodId).toEqual(utilisationPeriod.id)
+  })
+
+  describe('utilisationPeriodCheckOutUser()', () => {
+    it('should remove an existing user from a utilisationPeriod', async () => {
+      const initialData = {
+        endDate: '2999-01-03',
+        externalId: generateId(),
+        startDate: '2999-01-03',
+      }
+      const utilisationPeriod = await client.utilisationPeriodCreate(
+        sharedUnitId,
+        initialData,
+      )
+
+      const userEmail = generateId() + '@test.com'
+
+      const user = await client.userCreate(APP_ID, generateId(), generateId(), {
+        email: userEmail,
+        locale: EnumLocale.de_DE,
+      })
+
+      await client.utilisationPeriodCheckInUser(utilisationPeriod.id, {
+        email: userEmail,
+      })
+
+      const checkOutResult = await client.utilisationPeriodCheckOutUser(
+        utilisationPeriod.id,
+        user.id,
+      )
+
+      expect(checkOutResult).toEqual(true)
+
+      const emptyUtilisationPeriod = await client.utilisationPeriodFindById(
+        utilisationPeriod.id,
+      )
+      expect(emptyUtilisationPeriod.users).toHaveLength(0)
+      expect(remapEmbeddedUser(emptyUtilisationPeriod.users)).toEqual([])
+    })
   })
 })
