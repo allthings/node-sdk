@@ -1,8 +1,7 @@
 // tslint:disable:no-expression-statement
 import restClient from '.'
-
-const mockAccessToken = 'foobar-token'
-const mockClientId = 'foobar-clientId'
+import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
+import { getNewTokenUsingPasswordGrant, IAuthorizationResponse } from './oauth'
 
 describe('Rest API Client', () => {
   it('should return a client', async () => {
@@ -13,13 +12,17 @@ describe('Rest API Client', () => {
   })
 
   it('should use accessToken when provided in options object', async () => {
+    const { accessToken } = (await getNewTokenUsingPasswordGrant(
+      DEFAULT_API_WRAPPER_OPTIONS,
+    )) as IAuthorizationResponse
     const client = restClient({
-      accessToken: mockAccessToken,
-      clientId: mockClientId,
-      clientSecret: '',
+      accessToken,
     })
 
-    await expect(client.get('/v1/me')).rejects.toThrow('401 Unauthorized')
+    const me = await client.get('/v1/me')
+
+    expect(client.options.accessToken).toBe(accessToken)
+    expect(me).toHaveProperty('id')
   })
 
   it('should throw error when apiUrl parameter is not provided', async () => {
@@ -73,6 +76,6 @@ describe('Rest API Client', () => {
 
     await expect(
       client.appCreate('foobar', { name: 'foobar', siteUrl: 'foobar.test' }),
-    ).rejects.toThrow('Could not get token')
+    ).rejects.toThrow('Unable to get OAuth2 authentication token')
   })
 })

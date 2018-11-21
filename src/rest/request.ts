@@ -77,6 +77,26 @@ function isFormData(
   return typeof body !== 'undefined' && body.formData !== undefined
 }
 
+export const getNewToken = async (
+  options: InterfaceAllthingsRestClientOptions,
+): Promise<IAuthorizationResponse | undefined> => {
+  // TODO: define a case to detect implicit flow
+  switch (true) {
+    case options.refreshToken !== undefined:
+      return getNewTokenUsingRefreshToken(options)
+    case options.accessToken !== undefined:
+      return {
+        accessToken: options.accessToken as string,
+      }
+    case typeof window !== 'undefined':
+      return getNewTokenUsingImplicitFlow(options)
+    case options.password !== undefined:
+      return getNewTokenUsingPasswordGrant(options)
+  }
+
+  return undefined
+}
+
 /**
  * refillReservoir() refills the queue's reservoir
  * at a rate of 1 every QUEUE_RESERVOIR_REFILL_INTERVAL
@@ -160,7 +180,7 @@ export function makeApiRequest(
   httpMethod: HttpVerb,
   apiUrl: string,
   apiMethod: string,
-  accessToken: string | undefined,
+  accessToken: string,
   refreshToken?: string,
   payload?: IRequestOptions,
 ): (previousResult: any, iteration: number) => Promise<Response> {
@@ -181,9 +201,13 @@ export function makeApiRequest(
           ...options,
           refreshToken,
         })
-        options.accessToken = newToken && (newToken.accessToken as string)
-        accessToken = newToken && newToken.accessToken
-        options.refreshToken = newToken && (newToken.refreshToken as string)
+
+        // Mutating the options for now, until a better way is thought up
+        // tslint:disable
+        options.accessToken = newToken.accessToken
+        options.refreshToken = newToken.refreshToken
+        accessToken = newToken.accessToken
+        // tslint:enable
       }
 
       // tslint:disable-next-line:no-expression-statement
@@ -214,7 +238,6 @@ export function makeApiRequest(
               ? '?' + querystring.stringify(payload.query)
               : ''
           }`
-
           const body = payload && payload.body
           const hasForm = isFormData(body)
           const form = isFormData(body) ? body.formData : {}
@@ -308,7 +331,7 @@ export default async function request(
 ): RequestResult {
   const { apiUrl } = options
 
-  const resp = await getNetToken(options)
+  const resp = await getNewToken(options)
 
   if (!(resp && resp.accessToken)) {
     throw new Error('Unable to get OAuth2 authentication token.')
@@ -319,6 +342,7 @@ export default async function request(
     while backing off exponentially +REQUEST_BACK_OFF_INTERVAL milliseconds
     on each retry until we reach REQUEST_MAX_RETRIES at which point throw an error.
   */
+
   const result = await until(
     responseWasSuccessful,
     makeApiRequest(
@@ -340,25 +364,4 @@ export default async function request(
   }
 
   return result.body
-}
-
-const getNetToken = async (
-  options: InterfaceAllthingsRestClientOptions,
-): Promise<IAuthorizationResponse | undefined> => {
-  // TODO: define a case to detect implicit flow
-  switch (true) {
-    case options.refreshToken !== undefined:
-      return getNewTokenUsingRefreshToken(options)
-    case options.accessToken !== undefined:
-      return {
-        accessToken: options.accessToken as string,
-        ...(options.refreshToken && { refreshToken: options.refreshToken }),
-      }
-    case typeof window !== 'undefined':
-      return getNewTokenUsingImplicitFlow(options)
-    case options.password !== 'undefined':
-      return getNewTokenUsingPasswordGrant(options)
-  }
-
-  return undefined
 }
