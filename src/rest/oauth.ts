@@ -14,6 +14,74 @@ export interface IAuthorizationResponse {
   readonly refreshToken?: string
 }
 
+const tokenPost = async (
+  clientOptions: InterfaceAllthingsRestClientOptions,
+  grantType: string,
+  authCode?: string,
+): Promise<IAuthorizationResponse> => {
+  const {
+    clientId,
+    clientSecret,
+    oauthUrl,
+    password,
+    refreshToken,
+    scope,
+    username,
+  } = clientOptions
+
+  const url = `${oauthUrl}/oauth/token`
+
+  try {
+    const response = await fetch(url, {
+      body: querystring.stringify({
+        ...(authCode && { code: authCode }),
+        client_id: clientId,
+        ...(clientSecret && { client_secret: clientSecret }),
+        grant_type: grantType,
+        ...(password && { password }),
+        ...(refreshToken && { refresh_token: refreshToken }),
+        ...(scope && { scope }),
+        ...(username && { username }),
+      }),
+      cache: 'no-cache',
+      credentials: 'omit',
+      headers: {
+        // OAuth 2 requires request content-type to be
+        // application/x-www-form-urlencoded
+        'Content-Type': 'application/x-www-form-urlencoded',
+        accept: 'application/json',
+        'user-agent': USER_AGENT,
+      },
+      method: 'POST',
+      mode: 'cors',
+    })
+
+    const {
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken,
+    } = await response.json()
+
+    if (response.status !== 200) {
+      throw response
+    }
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken }
+  } catch (error) {
+    if (!error.status) {
+      throw error
+    }
+
+    const errorName = `HTTP ${error.status} — ${error.statusText}`
+
+    // tslint:disable-next-line:no-expression-statement
+    logger.error(errorName, error.response)
+
+    throw new Error(
+      `HTTP ${error.status} — ${error.statusText}. Could not get token.`,
+    )
+  }
+}
+
 export const getNewTokenUsingPasswordGrant = memoize(
   async (
     clientOptions: InterfaceAllthingsRestClientOptions,
@@ -21,64 +89,7 @@ export const getNewTokenUsingPasswordGrant = memoize(
     // tslint:disable-next-line:no-expression-statement
     logger.log('Performing password grant flow')
 
-    const {
-      clientId,
-      clientSecret,
-      oauthUrl,
-      password,
-      scope,
-      username,
-    } = clientOptions
-
-    const url = `${oauthUrl}/oauth/token`
-
-    try {
-      const response = await fetch(url, {
-        body: querystring.stringify({
-          client_id: clientId,
-          ...(clientSecret ? { client_secret: clientSecret } : {}),
-          grant_type: 'password',
-          password,
-          scope,
-          username,
-        }),
-        cache: 'no-cache',
-        credentials: 'omit',
-        headers: {
-          // OAuth 2 requires request content-type to be
-          // application/x-www-form-urlencoded
-          'Content-Type': 'application/x-www-form-urlencoded',
-          accept: 'application/json',
-          'user-agent': USER_AGENT,
-        },
-        method: 'POST',
-        mode: 'cors',
-      })
-
-      const {
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      } = await response.json()
-
-      if (response.status !== 200) {
-        throw response
-      }
-
-      return { accessToken, refreshToken }
-    } catch (error) {
-      if (!error.status) {
-        throw error
-      }
-
-      const errorName = `HTTP ${error.status} — ${error.statusText}`
-
-      // tslint:disable-next-line:no-expression-statement
-      logger.error(errorName, error.response)
-
-      throw new Error(
-        `HTTP ${error.status} — ${error.statusText}. Could not get token.`,
-      )
-    }
+    return tokenPost(clientOptions, 'password')
   },
   MEMOIZE_OPTIONS,
 )
@@ -129,7 +140,7 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
   // tslint:disable-next-line:no-expression-statement
   logger.log('Performing auth grant flow')
 
-  const { clientId, clientSecret, oauthUrl, scope } = clientOptions
+  const { clientId, oauthUrl, scope } = clientOptions
 
   const { code: authCode } = querystring.parse(window.location.search)
   const redirectUri = clientOptions.redirectUri || window.location
@@ -151,56 +162,7 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
     return undefined
   }
 
-  const url = `${oauthUrl}/oauth/token`
-
-  try {
-    // tslint:disable-next-line:no-expression-statement
-    window.history.replaceState({}, '', window.location.href.split('?')[0])
-    const response = await fetch(url, {
-      body: querystring.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        code: authCode,
-        grant_type: 'authorization_code',
-        redirect_uri: 'http://0.0.0.0:3333/test/fixtures/implicit-flow',
-      }),
-      cache: 'no-cache',
-      credentials: 'omit',
-      headers: {
-        // OAuth 2 requires request content-type to be
-        // application/x-www-form-urlencoded
-        'Content-Type': 'application/x-www-form-urlencoded',
-        accept: 'application/json',
-        'user-agent': USER_AGENT,
-      },
-      method: 'POST',
-      mode: 'cors',
-    })
-
-    const {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    } = await response.json()
-
-    if (response.status !== 200) {
-      throw response
-    }
-
-    return { accessToken, refreshToken }
-  } catch (error) {
-    if (!error.status) {
-      throw error
-    }
-
-    const errorName = `HTTP ${error.status} — ${error.statusText}`
-
-    // tslint:disable-next-line:no-expression-statement
-    logger.error(errorName, error.response)
-
-    throw new Error(
-      `HTTP ${error.status} — ${error.statusText}. Could not get token.`,
-    )
-  }
+  return tokenPost(clientOptions, 'authorization_code', authCode as string)
 }
 
 export const getNewTokenUsingAuthorizationGrant = memoize(
@@ -210,60 +172,11 @@ export const getNewTokenUsingAuthorizationGrant = memoize(
 
 export const unmemoizedGetNewTokenUsingRefreshToken = async (
   clientOptions: InterfaceAllthingsRestClientOptions,
-): Promise<IAuthorizationResponse | undefined> => {
+): Promise<IAuthorizationResponse> => {
   // tslint:disable-next-line:no-expression-statement
   logger.log('Performing refresh flow')
 
-  const { clientId, clientSecret, scope } = clientOptions
-
-  try {
-    const url = 'https://accounts.dev.allthings.me/oauth/token'
-
-    const response = await fetch(url, {
-      body: querystring.stringify({
-        client_id: clientId,
-        ...(clientSecret && { client_secret: clientSecret }),
-        grant_type: 'refresh_token',
-        refresh_token: clientOptions.refreshToken,
-        scope,
-      }),
-      cache: 'no-cache',
-      credentials: 'omit',
-      headers: {
-        // OAuth 2 requires request content-type to be
-        // application/x-www-form-urlencoded
-        'Content-Type': 'application/x-www-form-urlencoded',
-        accept: 'application/json',
-        'user-agent': USER_AGENT,
-      },
-      method: 'POST',
-      mode: 'cors',
-    })
-
-    const {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    } = await response.json()
-
-    if (response.status !== 200) {
-      throw response
-    }
-
-    return { accessToken, refreshToken }
-  } catch (error) {
-    if (!error.status) {
-      throw error
-    }
-
-    const errorName = `HTTP ${error.status} — ${error.statusText}`
-
-    // tslint:disable-next-line:no-expression-statement
-    logger.error(errorName, error.response)
-
-    throw new Error(
-      `HTTP ${error.status} — ${error.statusText}. Could not get token.`,
-    )
-  }
+  return tokenPost(clientOptions, 'refresh_token')
 }
 
 export const getNewTokenUsingRefreshToken = memoize(
