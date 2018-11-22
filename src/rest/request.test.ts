@@ -133,9 +133,10 @@ describe('Request', () => {
 
   it('should get an oauth token on request from implicit grant', async () => {
     // get a legit access token with the password grant, so we can mock it in the implicit flow
-    const { accessToken } = (await getNewTokenUsingPasswordGrant(
-      DEFAULT_API_WRAPPER_OPTIONS,
-    )) as IAuthorizationResponse
+    const { accessToken } = (await getNewTokenUsingPasswordGrant({
+      ...DEFAULT_API_WRAPPER_OPTIONS,
+      state: 'test state222',
+    })) as IAuthorizationResponse
 
     // tslint:disable-next-line:no-object-mutation
     global.window = {
@@ -148,7 +149,7 @@ describe('Request', () => {
     }
 
     const response = await request(
-      DEFAULT_API_WRAPPER_OPTIONS,
+      { ...DEFAULT_API_WRAPPER_OPTIONS, accessToken },
       'get' as HttpVerb,
       '/v1/me',
     )
@@ -172,7 +173,7 @@ describe('Request', () => {
 
     await expect(
       request(clientOptions, 'get' as HttpVerb, '/v1/me'),
-    ).rejects.toThrow('Unable to get OAuth2 authentication token.')
+    ).rejects.toThrow('Unable to get OAuth2 access token.')
 
     expect(global.window.location.href).toBeTruthy()
     expect(global.window.location.href).toContain(clientOptions.oauthUrl)

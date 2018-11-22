@@ -1,44 +1,38 @@
 <html>
+  <head>
+    <title>OAuth Implicit Flow</title>
+    <meta charset="UTF-8" />
+    <script src="/dist/lib.umd.min.js"></script>
+  </head>
 
-<head>
-  <title>OAuth Implicit Flow</title>
-  <meta charset="UTF-8" />
-  <script src="/dist/lib.umd.min.js"></script>
-</head>
+  <body>
+    <div id="app">Loading...</div>
 
-<body>
-  <div id="app">Loading...</div>
-
-  <script type="text/javascript">	
-    const client = allthings.restClient({
+    <script type="text/javascript">
+      const client = allthings.restClient({
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
-        clientId: '575027e58178f56a008b4568_3t6ualb01m2o0gocgw40c48c0k000kgkk8oss4oooss8o8ogsw',
-        clientSecret: '3l0kckn2q5ogcs0w4o4oosc8g44gcog0c8o0gwkoo0gcwgg88o'
+        clientId: OAUTH_CLIENT,
       })
-    window.addEventListener('load', async () => {
-      // e.g. 
-      // http://localhost:3333/test/fixtures/implicit-flow?clientId=foobarIdHere
-      const OAUTH_CLIENT = window.location.search.split('=')[1]
+      window.addEventListener('load', async () => {
+        // e.g.
+        // http://localhost:3333/test/fixtures/implicit-flow?clientId=foobarIdHere
+        // const OAUTH_CLIENT = window.location.search.split('=')[1]
 
+        const user = await client.getCurrentUser()
 
-
-      const user = await client.getCurrentUser()
-
-      document.getElementById('app').innerHTML =
-        `<div>Hi there, ${user.username} (${user.email})</div>`
-    })
+        document.getElementById('app').innerHTML = `<div>Hi there, ${
+          user.username
+        } (${user.email})</div>`
+      })
 
       const checkMe = async () => {
         const user = await client.getCurrentUser()
 
         console.log(user)
       }
-  </script>
+    </script>
 
-<button onClick="checkMe()">
-  click me
-  </button>
-</body>
-
+    <button onClick="checkMe()">click me</button>
+  </body>
 </html>
