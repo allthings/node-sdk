@@ -14,7 +14,7 @@ export interface IAuthorizationResponse {
   readonly refreshToken?: string
 }
 
-const tokenPost = async (
+const makeTokenRequest = async (
   clientOptions: IAllthingsRestClientOptions,
   grantType: string,
   authCode?: string,
@@ -24,6 +24,7 @@ const tokenPost = async (
     clientSecret,
     oauthUrl,
     password,
+    redirectUri,
     refreshToken,
     scope,
     username,
@@ -40,6 +41,7 @@ const tokenPost = async (
         grant_type: grantType,
         ...(password && { password }),
         ...(refreshToken && { refresh_token: refreshToken }),
+        ...(redirectUri && { redirect_uri: redirectUri }),
         ...(scope && { scope }),
         ...(username && { username }),
       }),
@@ -89,7 +91,7 @@ export const getNewTokenUsingPasswordGrant = memoize(
     // tslint:disable-next-line:no-expression-statement
     logger.log('Performing password grant flow')
 
-    return tokenPost(clientOptions, 'password')
+    return makeTokenRequest(clientOptions, 'password')
   },
   MEMOIZE_OPTIONS,
 )
@@ -141,9 +143,11 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
   logger.log('Performing auth grant flow')
 
   const { clientId, oauthUrl, scope } = clientOptions
-
   const { code: authCode } = querystring.parse(window.location.search)
-  const redirectUri = clientOptions.redirectUri || window.location
+  // snip the code from the url
+  // tslint:disable-next-line:no-expression-statement
+  window.history.replaceState({}, '', window.location.href.split('?')[0])
+  const redirectUri = clientOptions.redirectUri || window.location.href
 
   const allthingsAuthUrl = `${oauthUrl}/oauth/authorize?${querystring.stringify(
     {
@@ -155,14 +159,18 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
     },
   )}`
 
-  if (!authCode) {
+  if (typeof authCode !== 'string') {
     // tslint:disable-next-line:no-expression-statement no-object-mutation
     window.location.href = allthingsAuthUrl
 
     return undefined
   }
 
-  return tokenPost(clientOptions, 'authorization_code', authCode as string)
+  return makeTokenRequest(
+    { ...clientOptions, redirectUri },
+    'authorization_code',
+    authCode,
+  )
 }
 
 export const getNewTokenUsingAuthorizationGrant = memoize(
@@ -176,7 +184,7 @@ export const unmemoizedGetNewTokenUsingRefreshToken = async (
   // tslint:disable-next-line:no-expression-statement
   logger.log('Performing refresh flow')
 
-  return tokenPost(clientOptions, 'refresh_token')
+  return makeTokenRequest(clientOptions, 'refresh_token')
 }
 
 export const getNewTokenUsingRefreshToken = memoize(
