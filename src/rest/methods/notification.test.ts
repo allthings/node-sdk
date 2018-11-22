@@ -11,7 +11,7 @@ async function createAdminMessage(author: IUser, title: string): Promise<void> {
   await client.post(`/v1/users/${author.id}/community-articles`, {
     category: 'admin-messages',
     channels: [`App-${APP_ID}`],
-    content: 'test message',
+    content: title,
     title,
   })
 }
