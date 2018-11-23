@@ -266,7 +266,7 @@ export async function userDeletePermission(
 */
 
 export type MethodUserGetUtilisationPeriods = (
-  permissionId: string,
+  userId: string,
 ) => UtilisationPeriodResults
 
 export async function userGetUtilisationPeriods(
