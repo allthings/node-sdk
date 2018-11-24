@@ -6,6 +6,84 @@ import request, { HttpVerb, makeApiRequest } from './request'
 import { InterfaceAllthingsRestClientOptions } from './types'
 
 describe('Request', () => {
+  it('get the headers from form-data, when in browser', async () => {
+    jest.resetModules()
+    jest.resetAllMocks()
+    const getHeadersMock = jest.fn()
+    getHeadersMock.mockReturnValue({
+      foo: 'bar',
+    })
+    getHeadersMock()
+    jest.mock(
+      'form-data',
+      () =>
+        // tslint:disable:no-class
+        class FormDataMock {
+          public readonly getHeaders = getHeadersMock
+          public readonly append = jest.fn()
+        },
+    )
+
+    const mockMakeApiRequest = require('./request').makeApiRequest
+
+    mockMakeApiRequest({}, 'get', '', '', '', {
+      body: {
+        formData: {
+          a: 'b',
+          c: 'd',
+        },
+      },
+      headers: {
+        'x-man': 'jo',
+      },
+      query: {},
+    })(0, 0)
+
+    expect(getHeadersMock).toHaveBeenCalled()
+  })
+
+  it('should use customer headers when passed', async () => {
+    jest.resetModules()
+    jest.resetAllMocks()
+    jest.mock('cross-fetch')
+
+    const mockFetch = require('cross-fetch').default
+    const mockMakeApiRequest = require('./request').makeApiRequest
+
+    mockFetch.mockResolvedValueOnce({
+      clone: () => ({ text: () => '' }),
+      headers: new Map([['content-type', 'text/json']]),
+      ok: true,
+      status: 200,
+    })
+
+    await mockMakeApiRequest(
+      DEFAULT_API_WRAPPER_OPTIONS,
+      'get',
+      DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+      '',
+      '',
+      { headers: { 'x-man': 'universe' } },
+    )({}, 0)
+
+    expect(mockFetch).toHaveBeenLastCalledWith(
+      'https://accounts.dev.allthings.me/api',
+      {
+        cache: 'no-cache',
+        credentials: 'omit',
+        headers: {
+          accept: 'application/json',
+          authorization: 'Bearer ',
+          'content-type': 'application/json',
+          'user-agent': 'Allthings Node SDK REST Client/0.0.0-development',
+          'x-man': 'universe',
+        },
+        method: 'GET',
+        mode: 'cors',
+      },
+    )
+  })
+
   it('should throw when options.requestMaxRetries reached', async () => {
     await expect(
       until(
