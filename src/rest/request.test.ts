@@ -6,20 +6,15 @@ import request, { HttpVerb, makeApiRequest } from './request'
 import { InterfaceAllthingsRestClientOptions } from './types'
 
 describe('Request', () => {
-  it('get the headers from form-data, when in browser', async () => {
+  it('should not get the headers, when in browser', async () => {
     jest.resetModules()
     jest.resetAllMocks()
 
-    const getHeadersMock = jest.fn()
-    getHeadersMock.mockReturnValue({
-      foo: 'bar',
-    })
     jest.mock(
       'form-data',
       () =>
         // tslint:disable:no-class
         class FormDataMock {
-          public readonly getHeaders = getHeadersMock
           public readonly append = jest.fn()
         },
     )
@@ -36,8 +31,6 @@ describe('Request', () => {
       },
       query: {},
     })(0, 0)
-
-    expect(getHeadersMock).toHaveBeenCalled()
   })
 
   it('should use customer headers when passed', async () => {
