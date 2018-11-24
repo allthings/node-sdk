@@ -9,7 +9,6 @@ describe('Request', () => {
   it('get the headers from form-data, when in browser', async () => {
     jest.resetModules()
     jest.resetAllMocks()
-    jest.mock('cross-fetch')
 
     const getHeadersMock = jest.fn()
     getHeadersMock.mockReturnValue({
