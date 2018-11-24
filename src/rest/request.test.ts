@@ -9,11 +9,12 @@ describe('Request', () => {
   it('get the headers from form-data, when in browser', async () => {
     jest.resetModules()
     jest.resetAllMocks()
+    jest.mock('cross-fetch')
+
     const getHeadersMock = jest.fn()
     getHeadersMock.mockReturnValue({
       foo: 'bar',
     })
-    getHeadersMock()
     jest.mock(
       'form-data',
       () =>
@@ -24,17 +25,15 @@ describe('Request', () => {
         },
     )
 
+    require('form-data')
     const mockMakeApiRequest = require('./request').makeApiRequest
 
-    mockMakeApiRequest({}, 'get', '', '', '', {
+    await mockMakeApiRequest({}, 'get', '', '', '', {
       body: {
         formData: {
           a: 'b',
           c: 'd',
         },
-      },
-      headers: {
-        'x-man': 'jo',
       },
       query: {},
     })(0, 0)
