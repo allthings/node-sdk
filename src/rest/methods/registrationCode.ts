@@ -52,7 +52,7 @@ export async function registrationCodeCreate(
         typeof utilisationPeriods === 'string'
           ? [utilisationPeriods]
           : utilisationPeriods,
-      ...(externalId && { tenantID: externalId }),
+      ...(externalId ? { tenantID: externalId } : {}),
       ...moreOptions,
     }),
   )

@@ -209,17 +209,20 @@ export function makeApiRequest(
           const headers = {
             accept: 'application/json',
             authorization: `Bearer ${accessToken}`,
-            ...(!hasForm && { 'content-type': 'application/json' }),
+            ...(!hasForm ? { 'content-type': 'application/json' } : {}),
             'user-agent': USER_AGENT,
 
             // user overrides
-            ...((payload && payload.headers) || {}),
+            ...(payload && payload.headers ? payload.headers : {}),
 
             // content-type header overrides given FormData
-            ...(hasForm && {
-              ...(typeof formData.getHeaders === 'function' &&
-                formData.getHeaders()),
-            }),
+            ...(hasForm
+              ? {
+                  ...(typeof formData.getHeaders === 'function'
+                    ? formData.getHeaders()
+                    : {}),
+                }
+              : {}),
           }
 
           // Log the request including raw body
@@ -243,7 +246,7 @@ export function makeApiRequest(
             method,
             mode: 'cors',
 
-            ...((hasForm || body) && requestBody),
+            ...(hasForm || body ? requestBody : {}),
           })
 
           const result = await makeResultFromResponse(response)
