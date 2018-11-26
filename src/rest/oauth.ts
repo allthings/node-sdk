@@ -31,7 +31,7 @@ export const getNewTokenUsingPasswordGrant = memoize(
       const response = await fetch(url, {
         body: querystring.stringify({
           client_id: clientId,
-          ...(clientSecret && { client_secret: clientSecret }),
+          ...(clientSecret ? { client_secret: clientSecret } : {}),
           grant_type: 'password',
           password,
           scope,
