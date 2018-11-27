@@ -119,7 +119,7 @@ describe('utilisationPeriodCheckInUser()', () => {
       { id: usersUtilisationPeriodId },
     ] = await client.userGetUtilisationPeriods(user.id)
 
-    const checkedInUtilisationPeriod = await client.utilisationPeriodFindById(
+    const checkedInUtilisationPeriod = await client.utilisationPeriodGetById(
       usersUtilisationPeriodId,
     )
 
@@ -160,7 +160,7 @@ describe('utilisationPeriodCheckInUser()', () => {
 
       expect(checkOutResult).toEqual(true)
 
-      const emptyUtilisationPeriod = await client.utilisationPeriodFindById(
+      const emptyUtilisationPeriod = await client.utilisationPeriodGetById(
         utilisationPeriod.id,
       )
       expect(emptyUtilisationPeriod.users).toHaveLength(0)
