@@ -20,6 +20,11 @@ import {
 } from './methods/group'
 import { MethodLookupIds } from './methods/idLookup'
 import {
+  MethodNotificationsGetByUser,
+  MethodNotificationsUpdateReadByUser,
+  MethodNotificationUpdateRead,
+} from './methods/notification'
+import {
   MethodPropertyCreate,
   MethodPropertyGetById,
   MethodPropertyUpdateById,
@@ -187,6 +192,23 @@ export interface InterfaceAllthingsRestClient {
    * Update a group by its ID
    */
   readonly groupUpdateById: MethodGroupUpdateById
+
+  // Notification
+
+  /**
+   * Returns a collection of notifications for a given user
+   */
+  readonly notificationsGetByUser: MethodNotificationsGetByUser
+
+  /**
+   * Marks all notifications of a user - until a provided timestamp (or now) - as read
+   */
+  readonly notificationsUpdateReadByUser: MethodNotificationsUpdateReadByUser
+
+  /**
+   * Mark a notification as read
+   */
+  readonly notificationUpdateRead: MethodNotificationUpdateRead
 
   // Property
 

@@ -226,6 +226,23 @@ export interface InterfaceAllthingsRestClient {
    */
   readonly groupUpdateById: MethodGroupUpdateById
 
+  // Notification
+
+  /**
+   * Returns a collection of notifications for a given user
+   */
+  readonly notificationsGetByUser: MethodNotificationsGetByUser
+
+  /**
+   * Marks all notifications of a user - until a provided timestamp (or now) - as read
+   */
+  readonly notificationsUpdateReadByUser: MethodNotificationsUpdateReadByUser
+
+  /**
+   * Mark a notification as read
+   */
+  readonly notificationUpdateRead: MethodNotificationUpdateRead
+
   // Property
 
   /**

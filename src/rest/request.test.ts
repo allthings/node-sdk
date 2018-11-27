@@ -6,6 +6,75 @@ import request, { HttpVerb, makeApiRequest } from './request'
 import { InterfaceAllthingsRestClientOptions } from './types'
 
 describe('Request', () => {
+  it('should not get the headers, when in browser', async () => {
+    jest.resetModules()
+    jest.resetAllMocks()
+
+    jest.mock(
+      'form-data',
+      () =>
+        // tslint:disable:no-class
+        class FormDataMock {
+          public readonly append = jest.fn()
+        },
+    )
+
+    require('form-data')
+    const mockMakeApiRequest = require('./request').makeApiRequest
+
+    await mockMakeApiRequest({}, 'get', '', '', '', {
+      body: {
+        formData: {
+          a: 'b',
+          c: 'd',
+        },
+      },
+      query: {},
+    })(0, 0)
+  })
+
+  it('should use customer headers when passed', async () => {
+    jest.resetModules()
+    jest.resetAllMocks()
+    jest.mock('cross-fetch')
+
+    const mockFetch = require('cross-fetch').default
+    const mockMakeApiRequest = require('./request').makeApiRequest
+
+    mockFetch.mockResolvedValueOnce({
+      clone: () => ({ text: () => '' }),
+      headers: new Map([['content-type', 'text/json']]),
+      ok: true,
+      status: 200,
+    })
+
+    await mockMakeApiRequest(
+      DEFAULT_API_WRAPPER_OPTIONS,
+      'get',
+      DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+      '',
+      '',
+      { headers: { 'x-man': 'universe' } },
+    )({}, 0)
+
+    expect(mockFetch).toHaveBeenLastCalledWith(
+      'https://accounts.dev.allthings.me/api',
+      {
+        cache: 'no-cache',
+        credentials: 'omit',
+        headers: {
+          accept: 'application/json',
+          authorization: 'Bearer ',
+          'content-type': 'application/json',
+          'user-agent': 'Allthings Node SDK REST Client/0.0.0-development',
+          'x-man': 'universe',
+        },
+        method: 'GET',
+        mode: 'cors',
+      },
+    )
+  })
+
   it('should throw when options.requestMaxRetries reached', async () => {
     await expect(
       until(
