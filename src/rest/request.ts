@@ -19,7 +19,7 @@ import {
   getNewTokenUsingRefreshToken,
   IAuthorizationResponse,
 } from './oauth'
-import { IAllthingsRestClientOptions } from './types'
+import { IAllthingsRestClientOptions, Writeable } from './types'
 
 const requestLogger = makeLogger('REST API Request')
 const responseLogger = makeLogger('REST API Response')
@@ -78,17 +78,19 @@ function isFormData(
 }
 
 export const getNewToken = async (
-  options: InterfaceAllthingsRestClientOptions,
+  options: IAllthingsRestClientOptions,
 ): Promise<IAuthorizationResponse | undefined> => {
   // TODO: define a case to detect implicit flow
-
   if (typeof options.refreshToken !== 'undefined') {
     return getNewTokenUsingRefreshToken(options)
   }
   if (options.accessToken !== undefined) {
     return { accessToken: options.accessToken }
   }
-  if (typeof window !== 'undefined') {
+  if (
+    typeof window !== 'undefined' ||
+    typeof options.authorizationRedirect !== 'undefined'
+  ) {
     return getNewTokenUsingAuthorizationGrant(options)
   }
   if (options.password !== undefined) {
@@ -177,7 +179,7 @@ export function responseWasSuccessful(response: Response): boolean {
  * are implemented with exponential-backing off strategy with jitter.
  */
 export function makeApiRequest(
-  options: IAllthingsRestClientOptions,
+  options: Writeable<IAllthingsRestClientOptions>,
   httpMethod: HttpVerb,
   apiUrl: string,
   apiMethod: string,

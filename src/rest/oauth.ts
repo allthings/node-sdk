@@ -142,12 +142,19 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
   // tslint:disable-next-line:no-expression-statement
   logger.log('Performing auth grant flow')
 
-  const { clientId, oauthUrl, scope } = clientOptions
-  const { code: authCode } = querystring.parse(window.location.search)
+  const {
+    authCode,
+    authorizationRedirect,
+    clientId,
+    oauthUrl,
+    redirectUri,
+    scope,
+  } = clientOptions
+  // const { code: authCode } = querystring.parse(window.location.search)
   // snip the code from the url
   // tslint:disable-next-line:no-expression-statement
-  window.history.replaceState({}, '', window.location.href.split('?')[0])
-  const redirectUri = clientOptions.redirectUri || window.location.href
+  // window.history.replaceState({}, '', window.location.href.split('?')[0])
+  // const redirectUri = clientOptions.redirectUri // || window.location.href
 
   const allthingsAuthUrl = `${oauthUrl}/oauth/authorize?${querystring.stringify(
     {
@@ -159,9 +166,10 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
     },
   )}`
 
-  if (typeof authCode !== 'string') {
-    // tslint:disable-next-line:no-expression-statement no-object-mutation
-    window.location.href = allthingsAuthUrl
+  if (!authCode) {
+    if (authorizationRedirect) {
+      return authorizationRedirect(allthingsAuthUrl)
+    }
 
     return undefined
   }

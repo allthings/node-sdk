@@ -37,6 +37,26 @@ describe('Rest API Client', () => {
     expect(() => restClient({ clientId: undefined } as any)).toThrow()
   })
 
+  it.only('should throw error when clientId parameter is not provided', async () => {
+    const myCallback = jest.fn()
+    const client = restClient({
+      apiUrl: DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
+      authorizationRedirect: myCallback,
+      clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
+      oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+      requestBackOffInterval:
+        DEFAULT_API_WRAPPER_OPTIONS.requestBackOffInterval,
+      requestMaxRetries: DEFAULT_API_WRAPPER_OPTIONS.requestMaxRetries,
+    } as any)
+
+    await expect(client.getCurrentUser()).rejects.toThrow(
+      'Unable to get OAuth2 access token',
+    )
+    expect(myCallback).toHaveBeenCalledWith(
+      'https://accounts.dev.allthings.me/oauth/authorize?client_id=575027e58178f56a008b4568_3t6ualb01m2o0gocgw40c48c0k000kgkk8oss4oooss8o8ogsw&response_type=code&scope=user%3Aprofile&state=Nativeapp',
+    )
+  })
+
   it('should use default options when none provided, and process.env variables unset', async () => {
     jest.resetModules()
 
