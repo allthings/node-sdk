@@ -4,7 +4,6 @@ import httpDelete from './delete'
 import httpGet from './get'
 import { agentCreate, agentCreatePermissions } from './methods/agent'
 import { appCreate } from './methods/app'
-import { groupCreate, groupGetById, groupUpdateById } from './methods/group'
 import {
   bucketAddFile,
   bucketCreate,
@@ -13,6 +12,7 @@ import {
   bucketRemoveFilesInPath,
 } from './methods/bucket'
 import { fileCreate, fileDelete } from './methods/file'
+import { groupCreate, groupGetById, groupUpdateById } from './methods/group'
 import { lookupIds } from './methods/idLookup'
 import {
   notificationsGetByUser,
