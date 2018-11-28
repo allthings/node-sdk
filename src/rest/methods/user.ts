@@ -51,6 +51,7 @@ export interface IUser {
       }
     }
   }
+}
 
 export type PartialUser = Partial<IUser>
 
