@@ -39,7 +39,18 @@ export interface IUser {
   readonly tenantIds: { readonly [key: string]: string }
   readonly type: EnumUserType | null
   readonly username: string
-}
+  readonly _embedded: {
+    readonly profileImage: {
+      readonly files: {
+        readonly original: {
+          readonly url: string
+        }
+        readonly small: {
+          readonly url: string
+        }
+      }
+    }
+  }
 
 export type PartialUser = Partial<IUser>
 
