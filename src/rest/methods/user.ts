@@ -31,7 +31,6 @@ export interface IUser {
   readonly locale: EnumLocale
   readonly passwordChanged: boolean
   readonly phoneNumber: string | null
-  readonly profileImage: string | null
   readonly properties: ReadonlyArray<string> | null
   readonly publicProfile: boolean
   readonly receiveAdminNotifications: boolean
@@ -39,15 +38,14 @@ export interface IUser {
   readonly tenantIds: { readonly [key: string]: string }
   readonly type: EnumUserType | null
   readonly username: string
-  readonly _embedded: {
-    readonly profileImage: {
-      readonly files: {
-        readonly original: {
-          readonly url: string
-        }
-        readonly small: {
-          readonly url: string
-        }
+  readonly profileImage: {
+    readonly id: string | null
+    readonly files: {
+      readonly original: {
+        readonly url: string
+      }
+      readonly small: {
+        readonly url: string
       }
     }
   }
@@ -93,9 +91,21 @@ export type PartialUserPermission = Partial<IUserPermission>
 export type UserPermissionResult = Promise<IUserPermission>
 
 const remapUserResult = (user: any) => {
-  const { tenantIDs: tenantIds, ...result } = user
+  const {
+    _embedded: embedded,
+    profileImage: profileImageId,
+    tenantIDs: tenantIds,
+    ...result
+  } = user
 
-  return { ...result, tenantIds }
+  return {
+    ...result,
+    profileImage: {
+      id: profileImageId,
+      ...embedded.profileImage,
+    },
+    tenantIds,
+  }
 }
 
 export const remapEmbeddedUser = (embedded: {
