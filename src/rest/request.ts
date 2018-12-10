@@ -81,11 +81,11 @@ export const getNewToken = async (
   options: IAllthingsRestClientOptions,
 ): Promise<IAuthorizationResponse | undefined> => {
   // TODO: define a case to detect implicit flow
-  if (typeof options.refreshToken !== 'undefined') {
-    return getNewTokenUsingRefreshToken(options)
-  }
   if (options.accessToken !== undefined) {
     return { accessToken: options.accessToken }
+  }
+  if (typeof options.refreshToken !== 'undefined') {
+    return getNewTokenUsingRefreshToken(options)
   }
   if (
     typeof window !== 'undefined' ||

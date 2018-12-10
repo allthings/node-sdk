@@ -8,7 +8,6 @@ import request, {
   makeApiRequest,
   responseWasSuccessful,
 } from './request'
-import { IAllthingsRestClientOptions } from './types'
 
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
@@ -156,27 +155,6 @@ describe('Request', () => {
 
     expect(typeof response).toBe('object')
     expect(response).toHaveProperty('_embedded')
-  })
-
-  it('should redirect to the oauth url in a window context', async () => {
-    // tslint:disable-next-line:no-object-mutation
-    global.window = {
-      history: { replaceState: () => null },
-      location: { hash: '', href: '', origin: '' },
-    }
-
-    // tslint:enable no-object-mutation
-    const clientOptions: IAllthingsRestClientOptions = {
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      apiUrl: '',
-    }
-
-    await expect(
-      request(clientOptions, 'get' as HttpVerb, '/v1/me'),
-    ).rejects.toThrow('Unable to get OAuth2 access token.')
-
-    expect(global.window.location.href).toBeTruthy()
-    expect(global.window.location.href).toContain(clientOptions.oauthUrl)
   })
 
   it('should throw when response is not JSON or HTTP 204', async () => {
