@@ -24,11 +24,10 @@ describe('getUsers()', () => {
           ...testData,
           email: generateId() + '@foobar.test',
           externalId: generateId(),
+          plainPassword: generateId(),
         }),
         limit,
-      ).map(data =>
-        client.userCreate(APP_ID, generateId(), generateId(), data),
-      ),
+      ).map(data => client.userCreate(APP_ID, generateId(), data)),
     )
 
     const result = await client.getUsers()
@@ -54,13 +53,9 @@ describe('userCreate()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const result = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      data,
-    )
+    const result = await client.userCreate(APP_ID, generateId(), data)
 
     expect(result.email).toEqual(data.email)
     expect(result.externalId).toEqual(data.externalId)
@@ -73,13 +68,9 @@ describe('userGetById()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const { id } = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      data,
-    )
+    const { id } = await client.userCreate(APP_ID, generateId(), data)
     const result = await client.userGetById(id)
 
     expect(result.email).toEqual(data.email)
@@ -93,13 +84,9 @@ describe('userUpdateById()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     expect(user.email).toEqual(initialData.email)
     expect(user.externalId).toEqual(initialData.externalId)
@@ -124,13 +111,9 @@ describe('userCreatePermission()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     expect(user.email).toEqual(initialData.email)
     expect(user.externalId).toEqual(initialData.externalId)
@@ -155,14 +138,10 @@ describe('userFindPermissions()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
 
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     const permissionData = {
       objectId: APP_ID,
@@ -186,14 +165,10 @@ describe('userDeletePermission()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
 
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     const permissionData = {
       objectId: APP_ID,
@@ -253,9 +228,10 @@ describe('userGetUtilisationPeriods()', () => {
 
     const userEmail = generateId() + '@test.com'
 
-    const user = await client.userCreate(APP_ID, generateId(), generateId(), {
+    const user = await client.userCreate(APP_ID, generateId(), {
       email: userEmail,
       locale: EnumLocale.de_DE,
+      plainPassword: generateId(),
     })
 
     await client.userCheckInToUtilisationPeriod(user.id, utilisationPeriod.id)

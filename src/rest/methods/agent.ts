@@ -1,4 +1,3 @@
-import generateId from 'nanoid'
 import { EnumLocale, InterfaceAllthingsRestClient } from '../types'
 import {
   EnumUserPermissionObjectType,
@@ -35,7 +34,7 @@ export async function agentCreate(
     readonly locale: EnumLocale
   },
 ): UserResult {
-  const user = await client.userCreate(appId, username, generateId(), {
+  const user = await client.userCreate(appId, username, {
     ...data,
     type: EnumUserType.customer,
   })
