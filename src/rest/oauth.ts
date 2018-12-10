@@ -150,11 +150,6 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
     redirectUri,
     scope,
   } = clientOptions
-  // const { code: authCode } = querystring.parse(window.location.search)
-  // snip the code from the url
-  // tslint:disable-next-line:no-expression-statement
-  // window.history.replaceState({}, '', window.location.href.split('?')[0])
-  // const redirectUri = clientOptions.redirectUri // || window.location.href
 
   const allthingsAuthUrl = `${oauthUrl}/oauth/authorize?${querystring.stringify(
     {
@@ -167,18 +162,14 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
   )}`
 
   if (!authCode) {
-    if (authorizationRedirect) {
+    if (typeof authorizationRedirect === 'function') {
       return authorizationRedirect(allthingsAuthUrl)
     }
 
     return undefined
   }
 
-  return makeTokenRequest(
-    { ...clientOptions, redirectUri },
-    'authorization_code',
-    authCode,
-  )
+  return makeTokenRequest(clientOptions, 'authorization_code', authCode)
 }
 
 export const getNewTokenUsingAuthorizationGrant = memoize(

@@ -91,25 +91,38 @@ describe('getNewTokenUsingImplicitFlow()', () => {
 })
 
 describe('getNewTokenUsingAuthorizationGrant()', () => {
-  it('should return a token given valid credentials', async () => {
+  it('should return undefined if no authToken was provided', async () => {
     const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
-
-    // tslint:disable-next-line no-object-mutation
-    global.window = {
-      history: { replaceState: () => null },
-      location: {
-        hash: '',
-        href: '',
-        origin: 'https://foobar.test/foo/bar',
-        search: '',
-      },
-    }
 
     const token = await unmemoizedGetNewTokenUsingAuthorizationGrant(
       clientOptions,
     )
 
-    expect(token).toBe(undefined)
+    expect(token).toBeUndefined()
+  })
+
+  it('should call authorizationRedirect if no authToken was provided', async () => {
+    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+
+    const authorizationRedirect = jest.fn()
+
+    await unmemoizedGetNewTokenUsingAuthorizationGrant({
+      ...clientOptions,
+      authorizationRedirect,
+    })
+    expect(authorizationRedirect).toBeCalledWith(
+      [
+        `${DEFAULT_API_WRAPPER_OPTIONS.oauthUrl}/oauth/authorize`,
+        `?client_id=${DEFAULT_API_WRAPPER_OPTIONS.clientId}`,
+        '&response_type=code',
+        '&scope=user%3Aprofile&state=Nativeapp',
+      ].join(''),
+    )
+  })
+
+  it('should make a request return a token if valid authCode is provided', async () => {
+    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+
     jest.resetModules()
     jest.resetAllMocks()
     jest.mock('cross-fetch')
@@ -119,7 +132,7 @@ describe('getNewTokenUsingAuthorizationGrant()', () => {
       .unmemoizedGetNewTokenUsingAuthorizationGrant
 
     mockFetch.mockResolvedValueOnce({
-      headers: new Map([['application / json', 'charset= utf - 8']]),
+      headers: new Map([['application/json', 'charset= utf-8']]),
       json: () => ({
         access_token: '24b779056dcda7ade21121cb3bbfc3abfa3da69e',
         expires_in: 14400,
@@ -131,20 +144,11 @@ describe('getNewTokenUsingAuthorizationGrant()', () => {
       status: 200,
     })
 
-    // tslint:disable-next-line no-object-mutation
-    global.window = {
-      history: { replaceState: () => null },
-      location: {
-        hash: '',
-        href: '',
-        origin: 'https://foobar.test/foo/bar',
-        search: 'code=eace4929bbdbfea52cda219a2278f2a12a3d694c',
-      },
-    }
-
-    const { accessToken, refreshToken } = await mockMakeApiRequest(
-      clientOptions,
-    )
+    const { accessToken, refreshToken } = await mockMakeApiRequest({
+      ...clientOptions,
+      authCode: 'c34660c481e978a0caed2cce003ba7eb528c8554',
+      redirectUri: 'http://cool-microapp.de',
+    })
 
     expect(accessToken).toBe('24b779056dcda7ade21121cb3bbfc3abfa3da69e')
     expect(refreshToken).toBe('fb947cd5c056a62ab767abaa6bebabf86012129e')
