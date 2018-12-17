@@ -50,7 +50,7 @@
     "postversion": "git push --tags origin HEAD",
     "prepublishOnly": "npm run build",
     "prettier": "prettier --write",
-    "security-check": "nsp check",
+    "security-check": "yarn audit",
     "upgrade-dependencies": "yarn upgrade-interactive --latest --exact",
     "semantic-release": "echo \"Setting npm unsafe-perm to true due to our Docker/Buildkite root permissions\" && npm set unsafe-perm true && semantic-release",
     "serve": "npx serve -l 3333",
@@ -72,13 +72,12 @@
     "@types/nanoid": "1.2.0",
     "@types/node": "10.12.12",
     "@types/query-string": "6.1.1",
-    "nanoid": "2.0.0",
     "coveralls": "3.0.2",
     "form-data": "2.3.3",
     "husky": "1.2.0",
     "jest": "23.6.0",
     "lint-staged": "8.1.0",
-    "nsp": "3.2.1",
+    "nanoid": "2.0.0",
     "nyc": "13.1.0",
     "prettier": "1.15.3",
     "rimraf": "2.6.2",
@@ -164,5 +163,8 @@
   "release": {
     "branch": "master",
     "repositoryUrl": "https://github.com/allthings/node-sdk.git"
+  },
+  "resolutions": {
+    "jest/**/merge": ">=1.2.1"
   }
 }
