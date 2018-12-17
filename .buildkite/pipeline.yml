@@ -1,6 +1,6 @@
 steps:
   - name: security-check
-    command: docker run --rm -it -v "$PWD:$PWD" -w "$PWD" allthings/nsp
+    command: bin/docker-node.sh yarn security-check
     branches: 'HEAD'
 
   - name: build
