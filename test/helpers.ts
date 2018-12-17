@@ -18,14 +18,15 @@ export async function createUserAndClient(): CreateUserAndClientResult {
   const defaultClient = restClient()
 
   const email = generateId() + '@foobar.test'
+  const password = generateId()
+
   const data = {
     description: 'Foobar User',
     email,
     externalId: generateId(),
     locale: EnumLocale.en_US,
+    plainPassword: password,
   }
-
-  const password = generateId()
 
   return {
     client: restClient({
@@ -33,7 +34,7 @@ export async function createUserAndClient(): CreateUserAndClientResult {
       username: email,
     }),
 
-    user: await defaultClient.userCreate(APP_ID, generateId(), password, data),
+    user: await defaultClient.userCreate(APP_ID, generateId(), data),
   }
 }
 
