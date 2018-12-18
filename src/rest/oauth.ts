@@ -1,97 +1,65 @@
-import fetch from 'cross-fetch'
 import memoize from 'mem'
 import querystring from 'query-string'
-import { USER_AGENT } from '../constants'
+import {
+  authorizationCodeGrant,
+  IAuthorizationResponse,
+  passwordGrant,
+  refreshTokenGrant,
+} from '../oauth'
 import makeLogger from '../utils/logger'
+import makeTokenRequest from './oauthTokenRequest'
 import { InterfaceAllthingsRestClientOptions } from './types'
 
 const logger = makeLogger('OAuth Request')
 
 const MEMOIZE_OPTIONS = { cachePromiseRejection: false, maxAge: 3600 * 1000 }
 
-export interface IAuthorizationResponse {
-  readonly accessToken: string
-  readonly refreshToken?: string
-}
-
-const makeTokenRequest = async (
-  clientOptions: InterfaceAllthingsRestClientOptions,
-  grantType: string,
-  authCode?: string,
-): Promise<IAuthorizationResponse> => {
-  const {
-    clientId,
-    clientSecret,
-    oauthUrl,
-    password,
-    redirectUri,
-    refreshToken,
-    scope,
-    username,
-  } = clientOptions
-
-  const url = `${oauthUrl}/oauth/token`
-
-  try {
-    const response = await fetch(url, {
-      body: querystring.stringify({
-        ...(authCode && { code: authCode }),
-        client_id: clientId,
-        ...(clientSecret && { client_secret: clientSecret }),
-        grant_type: grantType,
-        ...(password && { password }),
-        ...(refreshToken && { refresh_token: refreshToken }),
-        ...(redirectUri && { redirect_uri: redirectUri }),
-        ...(scope && { scope }),
-        ...(username && { username }),
-      }),
-      cache: 'no-cache',
-      credentials: 'omit',
-      headers: {
-        // OAuth 2 requires request content-type to be
-        // application/x-www-form-urlencoded
-        'Content-Type': 'application/x-www-form-urlencoded',
-        accept: 'application/json',
-        'user-agent': USER_AGENT,
-      },
-      method: 'POST',
-      mode: 'cors',
-    })
-
-    const {
-      access_token: newAccessToken,
-      refresh_token: newRefreshToken,
-    } = await response.json()
-
-    if (response.status !== 200) {
-      throw response
-    }
-
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken }
-  } catch (error) {
-    if (!error.status) {
-      throw error
-    }
-
-    const errorName = `HTTP ${error.status} — ${error.statusText}`
-
-    // tslint:disable-next-line:no-expression-statement
-    logger.error(errorName, error.response)
-
-    throw new Error(
-      `HTTP ${error.status} — ${error.statusText}. Could not get token.`,
-    )
-  }
-}
-
 export const getNewTokenUsingPasswordGrant = memoize(
   async (
     clientOptions: InterfaceAllthingsRestClientOptions,
   ): Promise<IAuthorizationResponse | undefined> => {
+    const {
+      oauthUrl,
+      username,
+      password,
+      scope,
+      clientId,
+      clientSecret,
+    } = clientOptions
+
     // tslint:disable-next-line:no-expression-statement
     logger.log('Performing password grant flow')
 
-    return makeTokenRequest(clientOptions, 'password')
+    if (!clientId) {
+      throw new Error(
+        'Missing required "clientId" parameter to perform authorization code grant',
+      )
+    }
+
+    if (!username) {
+      throw new Error(
+        'Missing required "username" parameter to perform password grant',
+      )
+    }
+
+    if (!password) {
+      throw new Error(
+        'Missing required "password" parameter to perform password grant',
+      )
+    }
+
+    return passwordGrant.requestToken(
+      makeTokenRequest,
+      `${oauthUrl}/oauth/token`,
+      {
+        client_id: clientId,
+        grant_type: passwordGrant.GRANT_TYPE,
+        password,
+        scope,
+        username,
+        ...(clientSecret ? { client_secret: clientSecret } : {}),
+      },
+    )
   },
   MEMOIZE_OPTIONS,
 )
@@ -146,30 +114,59 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
     authCode,
     authorizationRedirect,
     clientId,
+    clientSecret,
     oauthUrl,
     redirectUri,
     scope,
+    state,
   } = clientOptions
 
-  const allthingsAuthUrl = `${oauthUrl}/oauth/authorize?${querystring.stringify(
-    {
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      response_type: 'code',
-      scope,
-      state: 'Nativeapp',
-    },
-  )}`
-
-  if (!authCode) {
-    if (typeof authorizationRedirect === 'function') {
-      return authorizationRedirect(allthingsAuthUrl)
-    }
-
-    return undefined
+  if (!clientId) {
+    throw new Error(
+      'Missing required "clientId" parameter to perform authorization code grant',
+    )
   }
 
-  return makeTokenRequest(clientOptions, 'authorization_code', authCode)
+  if (!redirectUri) {
+    throw new Error(
+      'Missing required "redirectUri" parameter to perform authorization code grant',
+    )
+  }
+
+  if (!authCode) {
+    const redirectUrlParams: authorizationCodeGrant.IAuthorizationRequestParams = {
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: authorizationCodeGrant.RESPONSE_TYPE,
+      scope,
+      state,
+    }
+
+    if (typeof authorizationRedirect === 'function') {
+      return authorizationRedirect(
+        `${oauthUrl}/oauth/authorize?${querystring.stringify(
+          redirectUrlParams,
+        )}`,
+      )
+    }
+
+    throw new Error(
+      'Could not perform authorization code grant: provide either "authCode" ' +
+        'or "authorizationRedirect" parameter',
+    )
+  }
+
+  return authorizationCodeGrant.requestToken(
+    makeTokenRequest,
+    `${oauthUrl}/oauth/token`,
+    {
+      client_id: clientId,
+      client_secret: clientSecret,
+      code: authCode,
+      grant_type: authorizationCodeGrant.GRANT_TYPE,
+      redirect_uri: redirectUri,
+    },
+  )
 }
 
 export const getNewTokenUsingAuthorizationGrant = memoize(
@@ -180,10 +177,34 @@ export const getNewTokenUsingAuthorizationGrant = memoize(
 export const unmemoizedGetNewTokenUsingRefreshToken = async (
   clientOptions: InterfaceAllthingsRestClientOptions,
 ): Promise<IAuthorizationResponse> => {
+  const { oauthUrl, refreshToken, scope, clientId, clientSecret } = clientOptions
+
+  if (!clientId) {
+    throw new Error(
+      'Missing required "clientId" parameter to perform refresh token grant',
+    )
+  }
+
+  if (!refreshToken) {
+    throw new Error(
+      'Missing required "refreshToken" parameter to perform refresh token grant',
+    )
+  }
+
   // tslint:disable-next-line:no-expression-statement
   logger.log('Performing refresh flow')
 
-  return makeTokenRequest(clientOptions, 'refresh_token')
+  return refreshTokenGrant.requestToken(
+    makeTokenRequest,
+    `${oauthUrl}/oauth/token`,
+    {
+      client_id: clientId,
+      grant_type: refreshTokenGrant.GRANT_TYPE,
+      refresh_token: refreshToken,
+      ...(clientSecret ? { client_secret: clientSecret } : {}),
+      ...(scope ? { scope } : {}),
+    },
+  )
 }
 
 export const getNewTokenUsingRefreshToken = memoize(

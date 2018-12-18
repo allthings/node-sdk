@@ -9,6 +9,7 @@ import {
   QUEUE_RESERVOIR_REFILL_INTERVAL,
   USER_AGENT,
 } from '../constants'
+import { IAuthorizationResponse } from '../oauth'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
@@ -17,7 +18,6 @@ import {
   // getNewTokenUsingImplicitFlow,
   getNewTokenUsingPasswordGrant,
   getNewTokenUsingRefreshToken,
-  IAuthorizationResponse,
 } from './oauth'
 import { InterfaceAllthingsRestClientOptions, Writeable } from './types'
 
