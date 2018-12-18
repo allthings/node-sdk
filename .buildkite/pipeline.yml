@@ -1,7 +1,6 @@
 steps:
   - name: security-check
     command: bin/docker-node.sh yarn security-check
-    branches: 'HEAD'
 
   - name: build
     command: bin/artifacts-build.sh
