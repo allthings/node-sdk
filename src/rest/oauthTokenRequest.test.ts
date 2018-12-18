@@ -16,7 +16,7 @@ const getMockedResponse = (accessToken: string, refreshToken: string) => ({
     token_type: 'Bearer',
   }),
   ok: true,
-  status: 200,
+  status: 200
 })
 
 const { clientId, username, password } = DEFAULT_API_WRAPPER_OPTIONS
@@ -32,14 +32,13 @@ describe('makeTokenRequest', () => {
   it('fetches supplied URL with params and return tokens', async () => {
     const resolvedAccessToken = '1234'
     const resolvedRefreshToken = '5678'
-    ;(fetch as jest.Mock).mockResolvedValueOnce(
-      getMockedResponse(resolvedAccessToken, resolvedRefreshToken),
+
+    ; (fetch as jest.Mock).mockResolvedValueOnce(
+      getMockedResponse(resolvedAccessToken, resolvedRefreshToken)
     )
 
-    const { accessToken, refreshToken } = await makeTokenRequest(
-      'allthings://oauth/token',
-      defaultParams,
-    )
+    const { accessToken, refreshToken } =
+      await makeTokenRequest('allthings://oauth/token', defaultParams)
 
     expect(fetch).toBeCalledWith('allthings://oauth/token', {
       body: querystring.stringify(defaultParams),
@@ -59,28 +58,25 @@ describe('makeTokenRequest', () => {
   })
 
   it('throws HTTP status - statusText error when request fails with status other than 200', async () => {
-    ;(fetch as jest.Mock).mockResolvedValueOnce({
+    (fetch as jest.Mock).mockResolvedValueOnce({
       json: () => null,
       status: 400,
       statusText: 'bad request',
     })
 
-    await expect(
-      makeTokenRequest('allthings://oauth/token', defaultParams),
-    ).rejects.toThrow('HTTP 400 — bad request. Could not get token')
+    await expect(makeTokenRequest('allthings://oauth/token', defaultParams))
+      .rejects.toThrow('HTTP 400 — bad request. Could not get token')
   })
 
   it('throws original error if it has no .status', async () => {
     const error = new Error('error when getting body')
-    ;(fetch as jest.Mock).mockResolvedValueOnce({
-      json: () => {
-        throw error
-      },
-      status: 200,
+
+    ; (fetch as jest.Mock).mockResolvedValueOnce({
+      json: () => { throw error },
+      status: 200
     })
 
-    await expect(
-      makeTokenRequest('allthings://oauth/token', defaultParams),
-    ).rejects.toThrow('there')
+    await expect(makeTokenRequest('allthings://oauth/token', defaultParams))
+      .rejects.toThrow(error)
   })
 })

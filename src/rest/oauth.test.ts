@@ -1,17 +1,46 @@
 // tslint:disable:no-expression-statement
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import {
+  getNewTokenUsingAuthorizationGrant,
   getNewTokenUsingPasswordGrant,
-  unmemoizedGetNewTokenUsingAuthorizationGrant,
+  getNewTokenUsingRefreshToken,
   unmemoizedGetNewTokenUsingImplicitFlow,
 } from './oauth'
 import { IAllthingsRestClientOptions } from './types'
 
 describe('getNewTokenUsingPasswordGrant()', () => {
+  it('should throw if clientId is missing', async () => {
+    await expect(
+      getNewTokenUsingPasswordGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        clientId: '',
+      }),
+    ).rejects.toThrow('required "clientId"')
+  })
+
+  it('should throw if username is missing', async () => {
+    await expect(
+      getNewTokenUsingPasswordGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        username: '',
+      }),
+    ).rejects.toThrow('required "username"')
+  })
+
+  it('should throw if password is missing', async () => {
+    await expect(
+      getNewTokenUsingPasswordGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        password: '',
+      }),
+    ).rejects.toThrow('required "password"')
+  })
+
   it('should return a token given valid credentials', async () => {
-    const response = await getNewTokenUsingPasswordGrant(
-      DEFAULT_API_WRAPPER_OPTIONS,
-    )
+    const response = await getNewTokenUsingPasswordGrant({
+      ...DEFAULT_API_WRAPPER_OPTIONS,
+      redirectUri: 'any',
+    })
 
     expect(response).toBeTruthy()
     expect(response).toHaveProperty('accessToken')
@@ -20,42 +49,14 @@ describe('getNewTokenUsingPasswordGrant()', () => {
     expect(response && typeof response.refreshToken).toBe('string')
   })
 
-  it('should throw given invalid credentials', async () => {
-    const idSecretUserPass = {
-      clientId: '',
-      clientSecret: '',
-      password: '',
-      username: '',
-    }
-
-    const clientOptions: IAllthingsRestClientOptions = {
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      ...idSecretUserPass,
-    }
-
-    await expect(getNewTokenUsingPasswordGrant(clientOptions)).rejects.toThrow(
-      'HTTP 400 — Bad Request',
-    )
-
-    const clientOptions2: IAllthingsRestClientOptions = {
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      ...idSecretUserPass,
-      oauthUrl: `${process.env.ALLTHINGS_OAUTH_URL}/foobar` || '',
-    }
-
-    await expect(getNewTokenUsingPasswordGrant(clientOptions2)).rejects.toThrow(
-      'HTTP 404 — Not Found',
-    )
-
-    const clientOptions3: IAllthingsRestClientOptions = {
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      ...idSecretUserPass,
-      oauthUrl: 'http://foobarHost',
-    }
-
-    await expect(getNewTokenUsingPasswordGrant(clientOptions3)).rejects.toThrow(
-      'ENOTFOUND',
-    )
+  it('should not return a token if clientSecret is not specified', async () => {
+    await expect(
+      getNewTokenUsingPasswordGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        clientSecret: undefined,
+        redirectUri: 'any',
+      }),
+    ).rejects.toThrow('Could not get token')
   })
 })
 
@@ -91,45 +92,67 @@ describe('getNewTokenUsingImplicitFlow()', () => {
 })
 
 describe('getNewTokenUsingAuthorizationGrant()', () => {
-  it('should return undefined if no authToken was provided', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+  const redirectUri = 'allthings://redirect'
 
-    const token = await unmemoizedGetNewTokenUsingAuthorizationGrant(
-      clientOptions,
-    )
+  it('should throw if clientId is missing', async () => {
+    await expect(
+      getNewTokenUsingAuthorizationGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        clientId: '',
+      }),
+    ).rejects.toThrow('required "clientId"')
+  })
 
-    expect(token).toBeUndefined()
+  it('should throw if redirectUri is missing', async () => {
+    await expect(
+      getNewTokenUsingAuthorizationGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        redirectUri: '',
+      }),
+    ).rejects.toThrow('required "redirectUri"')
   })
 
   it('should call authorizationRedirect if no authToken was provided', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+    const clientOptions: IAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
 
     const authorizationRedirect = jest.fn()
 
-    await unmemoizedGetNewTokenUsingAuthorizationGrant({
+    await getNewTokenUsingAuthorizationGrant({
       ...clientOptions,
       authorizationRedirect,
+      redirectUri,
     })
     expect(authorizationRedirect).toBeCalledWith(
       [
         `${DEFAULT_API_WRAPPER_OPTIONS.oauthUrl}/oauth/authorize`,
         `?client_id=${DEFAULT_API_WRAPPER_OPTIONS.clientId}`,
+        `&redirect_uri=${encodeURIComponent(redirectUri)}`,
         '&response_type=code',
-        '&scope=user%3Aprofile&state=Nativeapp',
+        '&scope=user%3Aprofile',
+        `&state=${DEFAULT_API_WRAPPER_OPTIONS.state}`,
       ].join(''),
     )
   })
 
-  it('should make a request return a token if valid authCode is provided', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+  it('should throw if neither authCode nor authorizationRedirect is provided', async () => {
+    await expect(
+      getNewTokenUsingAuthorizationGrant({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        authCode: '',
+        redirectUri,
+      }),
+    ).rejects.toThrow('provide either "authCode" or "authorizationRedirect"')
+  })
+
+  it('should make a request and return a token if valid authCode is provided', async () => {
+    const clientOptions: IAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
 
     jest.resetModules()
-    jest.resetAllMocks()
     jest.mock('cross-fetch')
 
     const mockFetch = require('cross-fetch').default
     const mockMakeApiRequest = require('./oauth')
-      .unmemoizedGetNewTokenUsingAuthorizationGrant
+      .getNewTokenUsingAuthorizationGrant
 
     mockFetch.mockResolvedValueOnce({
       headers: new Map([['application/json', 'charset= utf-8']]),
@@ -147,7 +170,59 @@ describe('getNewTokenUsingAuthorizationGrant()', () => {
     const { accessToken, refreshToken } = await mockMakeApiRequest({
       ...clientOptions,
       authCode: 'c34660c481e978a0caed2cce003ba7eb528c8554',
-      redirectUri: 'http://cool-microapp.de',
+      redirectUri,
+    })
+
+    expect(accessToken).toBe('24b779056dcda7ade21121cb3bbfc3abfa3da69e')
+    expect(refreshToken).toBe('fb947cd5c056a62ab767abaa6bebabf86012129e')
+  })
+})
+
+describe('getNewTokenUsingRefreshToken()', () => {
+  it('should throw if clientId is missing', async () => {
+    await expect(
+      getNewTokenUsingRefreshToken({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        clientId: '',
+      }),
+    ).rejects.toThrow('required "clientId"')
+  })
+
+  it('should throw if refreshToken is missing', async () => {
+    await expect(
+      getNewTokenUsingRefreshToken({
+        ...DEFAULT_API_WRAPPER_OPTIONS,
+        refreshToken: '',
+      }),
+    ).rejects.toThrow('required "refreshToken"')
+  })
+
+  it('should make a request return a token if valid authCode is provided', async () => {
+    const clientOptions: RestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+
+    jest.resetModules()
+    jest.mock('cross-fetch')
+
+    const mockFetch = require('cross-fetch').default
+    const mockMakeApiRequest = require('./oauth')
+      .getNewTokenUsingRefreshToken
+
+    mockFetch.mockResolvedValueOnce({
+      headers: new Map([['application/json', 'charset= utf-8']]),
+      json: () => ({
+        access_token: '24b779056dcda7ade21121cb3bbfc3abfa3da69e',
+        expires_in: 14400,
+        refresh_token: 'fb947cd5c056a62ab767abaa6bebabf86012129e',
+        scope: 'user:profile',
+        token_type: 'Bearer',
+      }),
+      ok: true,
+      status: 200,
+    })
+
+    const { accessToken, refreshToken } = await mockMakeApiRequest({
+      ...clientOptions,
+      refreshToken: '24b779056dcda7ade21121cb3bbfc3abfa3da69d'
     })
 
     expect(accessToken).toBe('24b779056dcda7ade21121cb3bbfc3abfa3da69e')

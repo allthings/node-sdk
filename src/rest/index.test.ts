@@ -1,7 +1,8 @@
 // tslint:disable:no-expression-statement
 import restClient from '.'
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import { getNewTokenUsingPasswordGrant, IAuthorizationResponse } from './oauth'
+import { IAuthorizationResponse } from '../oauth'
+import { getNewTokenUsingPasswordGrant } from './oauth'
 
 describe('Rest API Client', () => {
   it('should return a client', async () => {
