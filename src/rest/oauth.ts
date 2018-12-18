@@ -7,7 +7,7 @@ import {
   refreshTokenGrant,
 } from '../oauth'
 import makeLogger from '../utils/logger'
-import makeTokenRequest from './oauthTokenRequest'
+import oauthTokenRequest from './oauthTokenRequest'
 import { InterfaceAllthingsRestClientOptions } from './types'
 
 const logger = makeLogger('OAuth Request')
@@ -49,7 +49,7 @@ export const getNewTokenUsingPasswordGrant = memoize(
     }
 
     return passwordGrant.requestToken(
-      makeTokenRequest,
+      oauthTokenRequest,
       `${oauthUrl}/oauth/token`,
       {
         client_id: clientId,
@@ -134,7 +134,7 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
   }
 
   if (!authCode) {
-    const redirectUrlParams: authorizationCodeGrant.IAuthorizationRequestParams = {
+    const redirectUrlParams = {
       client_id: clientId,
       redirect_uri: redirectUri,
       response_type: authorizationCodeGrant.RESPONSE_TYPE,
@@ -157,7 +157,7 @@ export const unmemoizedGetNewTokenUsingAuthorizationGrant = async (
   }
 
   return authorizationCodeGrant.requestToken(
-    makeTokenRequest,
+    oauthTokenRequest,
     `${oauthUrl}/oauth/token`,
     {
       client_id: clientId,
@@ -177,7 +177,13 @@ export const getNewTokenUsingAuthorizationGrant = memoize(
 export const unmemoizedGetNewTokenUsingRefreshToken = async (
   clientOptions: InterfaceAllthingsRestClientOptions,
 ): Promise<IAuthorizationResponse> => {
-  const { oauthUrl, refreshToken, scope, clientId, clientSecret } = clientOptions
+  const {
+    oauthUrl,
+    refreshToken,
+    scope,
+    clientId,
+    clientSecret,
+  } = clientOptions
 
   if (!clientId) {
     throw new Error(
@@ -195,14 +201,14 @@ export const unmemoizedGetNewTokenUsingRefreshToken = async (
   logger.log('Performing refresh flow')
 
   return refreshTokenGrant.requestToken(
-    makeTokenRequest,
+    oauthTokenRequest,
     `${oauthUrl}/oauth/token`,
     {
       client_id: clientId,
+      client_secret: clientSecret,
       grant_type: refreshTokenGrant.GRANT_TYPE,
       refresh_token: refreshToken,
-      ...(clientSecret ? { client_secret: clientSecret } : {}),
-      ...(scope ? { scope } : {}),
+      scope,
     },
   )
 }

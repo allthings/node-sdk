@@ -1,12 +1,39 @@
 // tslint:disable:no-expression-statement
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
+import { IAuthorizationResponse } from '../oauth'
 import {
   getNewTokenUsingAuthorizationGrant,
   getNewTokenUsingPasswordGrant,
   getNewTokenUsingRefreshToken,
   unmemoizedGetNewTokenUsingImplicitFlow,
 } from './oauth'
+import oauthTokenRequest from './oauthTokenRequest'
 import { InterfaceAllthingsRestClientOptions } from './types'
+
+const redirectUri = 'allthings://redirect'
+
+const mockReturnedAccessToken = '24b779056dcda7ade21121cb3bbfc3abfa3da69e'
+const mockReturnedRefreshToken = 'fb947cd5c056a62ab767abaa6bebabf86012129e'
+
+jest.mock('./oauthTokenRequest')
+
+const mockOauthTokenRequest = oauthTokenRequest as jest.Mock
+
+beforeEach(() => {
+  mockOauthTokenRequest.mockReset()
+  mockOauthTokenRequest.mockResolvedValueOnce({
+    accessToken: mockReturnedAccessToken,
+    refreshToken: mockReturnedRefreshToken,
+  })
+})
+
+const assertTokensInResponse = ({
+  accessToken,
+  refreshToken,
+}: IAuthorizationResponse) => {
+  expect(accessToken).toBe(mockReturnedAccessToken)
+  expect(refreshToken).toBe(mockReturnedRefreshToken)
+}
 
 describe('getNewTokenUsingPasswordGrant()', () => {
   it('should throw if clientId is missing', async () => {
@@ -36,27 +63,30 @@ describe('getNewTokenUsingPasswordGrant()', () => {
     ).rejects.toThrow('required "password"')
   })
 
-  it('should return a token given valid credentials', async () => {
-    const response = await getNewTokenUsingPasswordGrant({
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      redirectUri: 'any',
+  it('should send token request with parameters for password grant', async () => {
+    const result = await getNewTokenUsingPasswordGrant(
+      DEFAULT_API_WRAPPER_OPTIONS,
+    )
+
+    const {
+      oauthUrl,
+      username,
+      password,
+      scope,
+      clientId,
+      clientSecret,
+    } = DEFAULT_API_WRAPPER_OPTIONS
+
+    expect(mockOauthTokenRequest).toBeCalledWith(`${oauthUrl}/oauth/token`, {
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'password',
+      password,
+      scope,
+      username,
     })
 
-    expect(response).toBeTruthy()
-    expect(response).toHaveProperty('accessToken')
-    expect(response).toHaveProperty('refreshToken')
-    expect(response && typeof response.accessToken).toBe('string')
-    expect(response && typeof response.refreshToken).toBe('string')
-  })
-
-  it('should not return a token if clientSecret is not specified', async () => {
-    await expect(
-      getNewTokenUsingPasswordGrant({
-        ...DEFAULT_API_WRAPPER_OPTIONS,
-        clientSecret: undefined,
-        redirectUri: 'any',
-      }),
-    ).rejects.toThrow('Could not get token')
+    assertTokensInResponse(result!)
   })
 })
 
@@ -92,8 +122,6 @@ describe('getNewTokenUsingImplicitFlow()', () => {
 })
 
 describe('getNewTokenUsingAuthorizationGrant()', () => {
-  const redirectUri = 'allthings://redirect'
-
   it('should throw if clientId is missing', async () => {
     await expect(
       getNewTokenUsingAuthorizationGrant({
@@ -113,7 +141,7 @@ describe('getNewTokenUsingAuthorizationGrant()', () => {
   })
 
   it('should call authorizationRedirect if no authToken was provided', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+    const clientOptions = DEFAULT_API_WRAPPER_OPTIONS
 
     const authorizationRedirect = jest.fn()
 
@@ -144,37 +172,26 @@ describe('getNewTokenUsingAuthorizationGrant()', () => {
     ).rejects.toThrow('provide either "authCode" or "authorizationRedirect"')
   })
 
-  it('should make a request and return a token if valid authCode is provided', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+  it('should send token request with parameters for authorization code grant', async () => {
+    const authCode = '1234'
 
-    jest.resetModules()
-    jest.mock('cross-fetch')
-
-    const mockFetch = require('cross-fetch').default
-    const mockMakeApiRequest = require('./oauth')
-      .getNewTokenUsingAuthorizationGrant
-
-    mockFetch.mockResolvedValueOnce({
-      headers: new Map([['application/json', 'charset= utf-8']]),
-      json: () => ({
-        access_token: '24b779056dcda7ade21121cb3bbfc3abfa3da69e',
-        expires_in: 14400,
-        refresh_token: 'fb947cd5c056a62ab767abaa6bebabf86012129e',
-        scope: 'user:profile',
-        token_type: 'Bearer',
-      }),
-      ok: true,
-      status: 200,
-    })
-
-    const { accessToken, refreshToken } = await mockMakeApiRequest({
-      ...clientOptions,
-      authCode: 'c34660c481e978a0caed2cce003ba7eb528c8554',
+    const result = await getNewTokenUsingAuthorizationGrant({
+      ...DEFAULT_API_WRAPPER_OPTIONS,
+      authCode,
       redirectUri,
     })
 
-    expect(accessToken).toBe('24b779056dcda7ade21121cb3bbfc3abfa3da69e')
-    expect(refreshToken).toBe('fb947cd5c056a62ab767abaa6bebabf86012129e')
+    const { oauthUrl, clientId, clientSecret } = DEFAULT_API_WRAPPER_OPTIONS
+
+    expect(mockOauthTokenRequest).toBeCalledWith(`${oauthUrl}/oauth/token`, {
+      client_id: clientId,
+      client_secret: clientSecret,
+      code: authCode,
+      grant_type: 'authorization_code',
+      redirect_uri: redirectUri,
+    })
+
+    assertTokensInResponse(result!)
   })
 })
 
@@ -197,35 +214,29 @@ describe('getNewTokenUsingRefreshToken()', () => {
     ).rejects.toThrow('required "refreshToken"')
   })
 
-  it('should make a request return a token if valid authCode is provided', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+  it('should send token request with parameters for authorization code grant', async () => {
+    const refreshToken = 'a62ab767abaa6be'
 
-    jest.resetModules()
-    jest.mock('cross-fetch')
-
-    const mockFetch = require('cross-fetch').default
-    const mockMakeApiRequest = require('./oauth')
-      .getNewTokenUsingRefreshToken
-
-    mockFetch.mockResolvedValueOnce({
-      headers: new Map([['application/json', 'charset= utf-8']]),
-      json: () => ({
-        access_token: '24b779056dcda7ade21121cb3bbfc3abfa3da69e',
-        expires_in: 14400,
-        refresh_token: 'fb947cd5c056a62ab767abaa6bebabf86012129e',
-        scope: 'user:profile',
-        token_type: 'Bearer',
-      }),
-      ok: true,
-      status: 200,
+    const result = await getNewTokenUsingRefreshToken({
+      ...DEFAULT_API_WRAPPER_OPTIONS,
+      refreshToken,
     })
 
-    const { accessToken, refreshToken } = await mockMakeApiRequest({
-      ...clientOptions,
-      refreshToken: '24b779056dcda7ade21121cb3bbfc3abfa3da69d'
+    const {
+      oauthUrl,
+      clientId,
+      clientSecret,
+      scope,
+    } = DEFAULT_API_WRAPPER_OPTIONS
+
+    expect(mockOauthTokenRequest).toBeCalledWith(`${oauthUrl}/oauth/token`, {
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      scope,
     })
 
-    expect(accessToken).toBe('24b779056dcda7ade21121cb3bbfc3abfa3da69e')
-    expect(refreshToken).toBe('fb947cd5c056a62ab767abaa6bebabf86012129e')
+    assertTokensInResponse(result!)
   })
 })

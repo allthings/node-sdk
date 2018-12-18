@@ -10,7 +10,7 @@ import makeLogger from '../utils/logger'
 
 const logger = makeLogger('OAuth Token Request')
 
-const makeTokenRequest: TokenRequester = async (
+const oauthTokenRequest: TokenRequester = async (
   url: string,
   params: RequestTokenParams,
 ): Promise<IAuthorizationResponse> => {
@@ -56,4 +56,4 @@ const makeTokenRequest: TokenRequester = async (
   }
 }
 
-export default makeTokenRequest
+export default oauthTokenRequest

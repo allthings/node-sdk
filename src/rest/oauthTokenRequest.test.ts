@@ -2,9 +2,11 @@
 import fetch from 'cross-fetch'
 import querystring from 'query-string'
 import { DEFAULT_API_WRAPPER_OPTIONS, USER_AGENT } from '../constants'
-import makeTokenRequest from './oauthTokenRequest'
+import oauthTokenRequest from './oauthTokenRequest'
 
 jest.mock('cross-fetch')
+
+const mockFetch = fetch as jest.Mock
 
 const getMockedResponse = (accessToken: string, refreshToken: string) => ({
   headers: new Map([['application/json', 'charset= utf-8']]),
@@ -16,7 +18,7 @@ const getMockedResponse = (accessToken: string, refreshToken: string) => ({
     token_type: 'Bearer',
   }),
   ok: true,
-  status: 200
+  status: 200,
 })
 
 const { clientId, username, password } = DEFAULT_API_WRAPPER_OPTIONS
@@ -28,17 +30,19 @@ const defaultParams = {
   username: password!,
 }
 
-describe('makeTokenRequest', () => {
-  it('fetches supplied URL with params and return tokens', async () => {
-    const resolvedAccessToken = '1234'
-    const resolvedRefreshToken = '5678'
+const resolvedAccessToken = '1234'
+const resolvedRefreshToken = '5678'
 
-    ; (fetch as jest.Mock).mockResolvedValueOnce(
-      getMockedResponse(resolvedAccessToken, resolvedRefreshToken)
+describe('oauthTokenRequest', () => {
+  it('fetches supplied URL with params and return tokens', async () => {
+    mockFetch.mockResolvedValueOnce(
+      getMockedResponse(resolvedAccessToken, resolvedRefreshToken),
     )
 
-    const { accessToken, refreshToken } =
-      await makeTokenRequest('allthings://oauth/token', defaultParams)
+    const { accessToken, refreshToken } = await oauthTokenRequest(
+      'allthings://oauth/token',
+      defaultParams,
+    )
 
     expect(fetch).toBeCalledWith('allthings://oauth/token', {
       body: querystring.stringify(defaultParams),
@@ -58,25 +62,27 @@ describe('makeTokenRequest', () => {
   })
 
   it('throws HTTP status - statusText error when request fails with status other than 200', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    mockFetch.mockResolvedValueOnce({
       json: () => null,
       status: 400,
       statusText: 'bad request',
     })
 
-    await expect(makeTokenRequest('allthings://oauth/token', defaultParams))
-      .rejects.toThrow('HTTP 400 — bad request. Could not get token')
+    await expect(
+      oauthTokenRequest('allthings://oauth/token', defaultParams),
+    ).rejects.toThrow('HTTP 400 — bad request. Could not get token')
   })
 
   it('throws original error if it has no .status', async () => {
-    const error = new Error('error when getting body')
-
-    ; (fetch as jest.Mock).mockResolvedValueOnce({
-      json: () => { throw error },
-      status: 200
+    mockFetch.mockResolvedValueOnce({
+      json: () => {
+        throw new Error('error when reading response body')
+      },
+      status: 200,
     })
 
-    await expect(makeTokenRequest('allthings://oauth/token', defaultParams))
-      .rejects.toThrow(error)
+    await expect(
+      oauthTokenRequest('allthings://oauth/token', defaultParams),
+    ).rejects.toThrow('error when reading response body')
   })
 })
