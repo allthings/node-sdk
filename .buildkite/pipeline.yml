@@ -1,7 +1,6 @@
 steps:
   - name: security-check
     command: bin/docker-node.sh yarn security-check
-    branches: 'HEAD'
 
   - name: build
     command: bin/artifacts-build.sh
@@ -15,8 +14,7 @@ steps:
   - name: lint
     command: >
       bin/artifacts-download.sh &&
-      bin/docker-node.sh yarn lint &&
-      bin/docker-node.sh yarn security-check
+      bin/docker-node.sh yarn lint
     branches: '!HEAD'
     agents:
       queue: t2-large
