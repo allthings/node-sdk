@@ -9,29 +9,59 @@
     <div id="app">Loading...</div>
 
     <script type="text/javascript">
-      const client = allthings.restClient({
+      const clientId = window.location.search.match(/clientId=(\w+)/) &&
+        window.location.search.match(/clientId=(\w+)/)[1] ||
+        sessionStorage.getItem('clientId');
+
+      sessionStorage.setItem('clientId', clientId);
+
+      const clientSecret = window.location.search.match(/clientSecret=(\w+)/) &&
+        window.location.search.match(/clientSecret=(\w+)/)[1] ||
+        sessionStorage.getItem('clientSecret');
+
+      sessionStorage.setItem('clientSecret', clientSecret);
+
+      const clientOpts = {
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
-        clientId: OAUTH_CLIENT,
-      })
+        clientId,
+        clientSecret,
+        redirectUri: window.location.href.replace(window.location.search, ''),
+      };
 
-      window.addEventListener('load', async () => {
-        // e.g.
-        // http://localhost:3333/test/fixtures/implicit-flow?clientId=foobarIdHere
-        // const OAUTH_CLIENT = window.location.search.split('=')[1]
+      async function runQueryWithAuthCode(authCode) {
+        const client = allthings.restClient({
+          ...clientOpts,
+          authCode
+        });
 
         const user = await client.getCurrentUser()
 
         document.getElementById('app').innerHTML = `<div>Hi there, ${
           user.username
-        } (${user.email})</div>`
-      })
-
-      const checkMe = async () => {
-        const user = await client.getCurrentUser()
-
-        console.log(user)
+          } (${user.email})</div>`
       }
+
+      function followRedirectUrl() {
+        const client = allthings.restClient({
+          ...clientOpts,
+          authorizationRedirect: (url) => {
+            window.location.href = url;
+          }
+        })
+
+        client.getCurrentUser();
+      }
+
+      window.addEventListener('load', async () => {
+        const codeMatch = window.location.search.match(/code=(\w+)/);
+
+        if (codeMatch) {
+          runQueryWithAuthCode(codeMatch[1]);
+        } else {
+          followRedirectUrl();
+        }
+      });
     </script>
     <button onClick="checkMe()">click me</button>
   </body>

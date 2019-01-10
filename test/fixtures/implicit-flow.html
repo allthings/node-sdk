@@ -9,16 +9,14 @@
     <div id="app">Loading...</div>
 
     <script type="text/javascript">
+      const OAUTH_CLIENT = window.location.search.split('=')[1]
       const client = allthings.restClient({
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
+        implicit: true,
         clientId: OAUTH_CLIENT,
       })
       window.addEventListener('load', async () => {
-        // e.g.
-        // http://localhost:3333/test/fixtures/implicit-flow?clientId=foobarIdHere
-        // const OAUTH_CLIENT = window.location.search.split('=')[1]
-
         const user = await client.getCurrentUser()
 
         document.getElementById('app').innerHTML = `<div>Hi there, ${
