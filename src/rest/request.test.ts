@@ -3,9 +3,8 @@ import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import { IAuthorizationResponse } from '../oauth'
 import { until } from '../utils/functional'
 import { getNewTokenUsingPasswordGrant } from './oauth'
-import request, {
-  getNewToken,
-  HttpVerb,
+import {
+  getTokenForRequest,
   makeApiRequest,
   responseWasSuccessful,
 } from './request'
@@ -85,30 +84,19 @@ describe('Request', () => {
       until(
         () => false,
         makeApiRequest(
-          { requestMaxRetries: 2, requestBackOffInterval: 0 } as any,
+          {
+            ...DEFAULT_API_WRAPPER_OPTIONS,
+            requestBackOffInterval: 0,
+            requestMaxRetries: 2,
+          } as any,
           'get',
-          '',
-          '',
-          '',
           '',
           { query: {} },
         ),
-        { statusCode: 503 },
+        { status: 503 },
         1,
       ),
     ).rejects.toThrow('Maximum number of retries reached')
-  })
-
-  it('should return undefined if no acceptable parameters were given to obtain the access token', async () => {
-    const token = await getNewToken({
-      apiUrl: DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
-      oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-      requestBackOffInterval:
-        DEFAULT_API_WRAPPER_OPTIONS.requestBackOffInterval,
-      requestMaxRetries: DEFAULT_API_WRAPPER_OPTIONS.requestMaxRetries,
-    })
-
-    expect(token).toBe(undefined)
   })
 
   it('should get an access token when only a refreshToken only is provided', async () => {
@@ -116,46 +104,23 @@ describe('Request', () => {
       DEFAULT_API_WRAPPER_OPTIONS,
     )) as IAuthorizationResponse
 
-    const token = await getNewToken({
-      apiUrl: DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
-      clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
-      clientSecret: DEFAULT_API_WRAPPER_OPTIONS.clientSecret,
-      oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-      refreshToken,
-      requestBackOffInterval:
-        DEFAULT_API_WRAPPER_OPTIONS.requestBackOffInterval,
-      requestMaxRetries: DEFAULT_API_WRAPPER_OPTIONS.requestMaxRetries,
-    })
+    const token = await getTokenForRequest(
+      {
+        accessToken: 'any',
+        apiUrl: DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
+        clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
+        clientSecret: DEFAULT_API_WRAPPER_OPTIONS.clientSecret,
+        oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+        refreshToken,
+        requestBackOffInterval:
+          DEFAULT_API_WRAPPER_OPTIONS.requestBackOffInterval,
+        requestMaxRetries: DEFAULT_API_WRAPPER_OPTIONS.requestMaxRetries,
+      },
+      true,
+    )
 
     expect(token).toHaveProperty('accessToken')
     expect(token).toHaveProperty('refreshToken')
-  })
-
-  it('should get an oauth token on request from implicit grant', async () => {
-    // get a legit access token with the password grant, so we can mock it in the implicit flow
-    const { accessToken } = (await getNewTokenUsingPasswordGrant({
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      state: 'test state222',
-    })) as IAuthorizationResponse
-
-    // tslint:disable-next-line:no-object-mutation
-    global.window = {
-      history: { replaceState: () => null },
-      location: {
-        hash: `access_token=${accessToken}`,
-        href: '',
-        origin: '',
-      },
-    }
-
-    const response = await request(
-      { ...DEFAULT_API_WRAPPER_OPTIONS, accessToken },
-      'get' as HttpVerb,
-      '/v1/me',
-    )
-
-    expect(typeof response).toBe('object')
-    expect(response).toHaveProperty('_embedded')
   })
 
   it('should throw when response is not JSON or HTTP 204', async () => {
@@ -196,18 +161,17 @@ describe('Request', () => {
       responseWasSuccessful,
       makeApiRequest(
         {
+          ...DEFAULT_API_WRAPPER_OPTIONS,
           clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
           clientSecret: DEFAULT_API_WRAPPER_OPTIONS.clientSecret,
           oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+          refreshToken,
           requestBackOffInterval: 0,
           requestMaxRetries: 10,
           scope: DEFAULT_API_WRAPPER_OPTIONS.scope,
         } as any,
         'get',
-        DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
         '/v1/me',
-        'foobar-access-token',
-        refreshToken as string,
       ),
     )
 
@@ -225,19 +189,18 @@ describe('Request', () => {
         () => false,
         makeApiRequest(
           {
+            ...DEFAULT_API_WRAPPER_OPTIONS,
             clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
             oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+            refreshToken,
             requestBackOffInterval: 0,
             requestMaxRetries: 2,
             scope: 'foobar-scope',
           } as any,
           'get',
-          DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
           '/v1/me',
-          'foobar-access-token',
-          refreshToken as string,
         ),
-        { statusCode: 400 },
+        { status: 401 },
         1,
       ),
     ).rejects.toThrow('Could not get token')

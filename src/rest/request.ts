@@ -15,11 +15,11 @@ import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
 import {
   getNewTokenUsingAuthorizationGrant,
-  // getNewTokenUsingImplicitFlow,
+  getNewTokenUsingImplicitFlow,
   getNewTokenUsingPasswordGrant,
   getNewTokenUsingRefreshToken,
 } from './oauth'
-import { IAllthingsRestClientOptions, Writeable } from './types'
+import { IAllthingsRestClientOptions } from './types'
 
 const requestLogger = makeLogger('REST API Request')
 const responseLogger = makeLogger('REST API Response')
@@ -77,27 +77,36 @@ function isFormData(
   return typeof body !== 'undefined' && body.formData !== undefined
 }
 
-export const getNewToken = async (
+export const getTokenForRequest = async (
   options: IAllthingsRestClientOptions,
+  mustRefresh = false,
 ): Promise<IAuthorizationResponse | undefined> => {
-  // TODO: define a case to detect implicit flow
-  if (options.accessToken !== undefined) {
-    return { accessToken: options.accessToken }
+  if (options.accessToken) {
+    if (options.refreshToken && mustRefresh) {
+      return getNewTokenUsingRefreshToken(options)
+    }
+
+    return {
+      accessToken: options.accessToken,
+      refreshToken: options.refreshToken,
+    }
   }
-  if (typeof options.refreshToken !== 'undefined') {
-    return getNewTokenUsingRefreshToken(options)
-  }
-  if (
-    typeof window !== 'undefined' ||
-    typeof options.authorizationRedirect !== 'undefined'
-  ) {
-    return getNewTokenUsingAuthorizationGrant(options)
-  }
-  if (options.password !== undefined) {
+
+  if (options.username && options.password) {
     return getNewTokenUsingPasswordGrant(options)
   }
 
-  return undefined
+  if (typeof window !== 'undefined') {
+    return options.implicit
+      ? getNewTokenUsingImplicitFlow(options)
+      : getNewTokenUsingAuthorizationGrant(options)
+  }
+
+  if (options.authCode || options.authorizationRedirect) {
+    return getNewTokenUsingAuthorizationGrant(options)
+  }
+
+  return
 }
 
 /**
@@ -179,12 +188,9 @@ export function responseWasSuccessful(response: Response): boolean {
  * are implemented with exponential-backing off strategy with jitter.
  */
 export function makeApiRequest(
-  options: Writeable<IAllthingsRestClientOptions>,
+  options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
-  apiUrl: string,
   apiMethod: string,
-  accessToken: string,
-  refreshToken?: string,
   payload?: IRequestOptions,
 ): (previousResult: any, iteration: number) => Promise<Response> {
   return async (previousResult, retryCount) => {
@@ -199,19 +205,18 @@ export function makeApiRequest(
 
         throw new Error(error)
       }
-      if (previousResult.status === 401 && refreshToken !== undefined) {
-        const newToken = await getNewTokenUsingRefreshToken({
-          ...options,
-          refreshToken,
-        })
 
-        // Mutating the options for now, until a better way is thought up
-        // tslint:disable no-expression-statement no-object-mutation no-parameter-reassignment
-        options.accessToken = newToken.accessToken
-        options.refreshToken = newToken.refreshToken
-        accessToken = newToken.accessToken
-        // tslint:enable no-expression-statement no-object-mutation no-parameter-reassignment
+      const tokenResponse = await getTokenForRequest(
+        options,
+        !!options.refreshToken && previousResult.status === 401,
+      )
+
+      if (!(tokenResponse && tokenResponse.accessToken)) {
+        throw new Error('Unable to get OAuth2 access token.')
       }
+
+      // tslint:disable-next-line:no-expression-statement
+      Object.assign(options, tokenResponse)
 
       // tslint:disable-next-line:no-expression-statement
       requestLogger.warn(
@@ -236,7 +241,7 @@ export function makeApiRequest(
         refillReservoir() &&
         (await queue.schedule(async () => {
           const method = httpMethod.toUpperCase()
-          const url = `${apiUrl}/api${apiMethod}${
+          const url = `${options.apiUrl}/api${apiMethod}${
             payload && payload.query
               ? '?' + querystring.stringify(payload.query)
               : ''
@@ -256,7 +261,7 @@ export function makeApiRequest(
 
           const headers = {
             accept: 'application/json',
-            authorization: `Bearer ${accessToken}`,
+            authorization: `Bearer ${options.accessToken}`,
             ...(!hasForm ? { 'content-type': 'application/json' } : {}),
             'user-agent': USER_AGENT,
 
@@ -332,14 +337,6 @@ export default async function request(
   apiMethod: string,
   payload?: IRequestOptions,
 ): RequestResult {
-  const { apiUrl } = options
-
-  const response = await getNewToken(options)
-
-  if (!(response && response.accessToken)) {
-    throw new Error('Unable to get OAuth2 access token.')
-  }
-
   /*
     Make the API request. If the response was a 503, we retry the request
     while backing off exponentially +REQUEST_BACK_OFF_INTERVAL milliseconds
@@ -348,15 +345,7 @@ export default async function request(
 
   const result = await until(
     responseWasSuccessful,
-    makeApiRequest(
-      options,
-      httpMethod,
-      apiUrl,
-      apiMethod,
-      response.accessToken,
-      response.refreshToken,
-      payload,
-    ),
+    makeApiRequest(options, httpMethod, apiMethod, payload),
   )
 
   if (result instanceof Error) {
