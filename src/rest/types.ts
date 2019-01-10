@@ -61,8 +61,6 @@ import {
 import { MethodHttpPatch } from './patch'
 import { MethodHttpPost } from './post'
 
-export type Writeable<T> = { -readonly [P in keyof T]: T[P] }
-
 // Describes the possible resources which exist in the API
 export enum EnumResource {
   property = 'property',
@@ -102,7 +100,8 @@ export enum EnumTimezone {
   UTC = 'UTC',
 }
 
-export interface InterfaceBasicAllthingsRestClientOptions {
+// Describes the options with which to construct a new API wrapper instance
+export interface InterfaceAllthingsRestClientOptions {
   readonly apiUrl: string
   readonly authCode?: string
   readonly accessToken?: string
@@ -117,11 +116,8 @@ export interface InterfaceBasicAllthingsRestClientOptions {
   readonly scope?: string
   readonly state?: string
   readonly username?: string
-}
-
-// Describes the options with which to construct a new API wrapper instance
-export interface InterfaceAllthingsRestClientOptions
-  extends InterfaceBasicAllthingsRestClientOptions {
+  readonly implicit?: boolean
+  // tslint:disable-next-line no-mixed-interface
   readonly authorizationRedirect?: (url: string) => any
 }
 
