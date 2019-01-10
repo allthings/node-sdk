@@ -54,7 +54,8 @@
     "upgrade-dependencies": "yarn upgrade-interactive --latest --exact",
     "semantic-release": "echo \"Setting npm unsafe-perm to true due to our Docker/Buildkite root permissions\" && npm set unsafe-perm true && semantic-release",
     "serve": "npx serve -l 3333",
-    "test:implicit-flow": "open http://localhost:3333/test/fixtures/implicit-flow?clientId=$ALLTHINGS_OAUTH_CLIENT_ID"
+    "test:implicit-flow": "open http://localhost:3333/test/fixtures/implicit-flow?clientId=$ALLTHINGS_OAUTH_CLIENT_ID",
+    "test:authorization-code": "open http://localhost:3333/test/fixtures/authorization-code?clientId=$ALLTHINGS_OAUTH_CLIENT_ID&clientSecret=$ALLTHINGS_OAUTH_CLIENT_SECRET"
   },
   "dependencies": {
     "bottleneck": "2.15.3",
