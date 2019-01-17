@@ -170,7 +170,12 @@ export default function restClient(
     throw new Error('OAuth2 URL is undefined.')
   }
 
-  if (!options.clientId && !options.accessToken) {
+  // in browser access token can be obtained from URL during implicit flow
+  if (
+    !options.clientId &&
+    !options.accessToken &&
+    typeof window === 'undefined'
+  ) {
     throw new Error('Missing required "clientId" or "accessToken" parameter .')
   }
 
