@@ -236,13 +236,7 @@ export function makeApiRequest(
             ...(payload && payload.headers ? payload.headers : {}),
 
             // content-type header overrides given FormData
-            ...(hasForm
-              ? {
-                  ...(typeof formData.getHeaders === 'function'
-                    ? formData.getHeaders()
-                    : {}),
-                }
-              : {}),
+            ...(hasForm ? formData.getHeaders() : {}),
           }
 
           // Log the request including raw body

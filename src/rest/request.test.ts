@@ -18,31 +18,18 @@ jest.mock('./oauthObtainTokenFromClientOptions')
 const mockFetch = fetch as jest.Mock
 const mockOauthObtainTokenFromClientOptions = oauthObtainTokenFromClientOptions as jest.Mock
 
+const mockTokenResult = {
+  accessToken: '5c4092ed6a9a44fece13bd73',
+  refreshToken: '5c4092ef6a9a44fece13bd74',
+}
+
 beforeEach(() => {
-  mockOauthObtainTokenFromClientOptions.mockReturnValue({
-    accessToken: '1234',
-    refreshToken: '5678',
-  })
+  mockOauthObtainTokenFromClientOptions.mockReturnValue(mockTokenResult)
 })
 
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
-    jest.resetModules()
-    jest.resetAllMocks()
-
-    jest.mock(
-      'form-data',
-      () =>
-        // tslint:disable:no-class
-        class FormDataMock {
-          public readonly append = jest.fn()
-        },
-    )
-
-    require('form-data')
-    const mockMakeApiRequest = require('./request').makeApiRequest
-
-    await mockMakeApiRequest({}, 'get', '', '', '', {
+    await makeApiRequest({} as any, 'get', '', {
       body: {
         formData: {
           a: 'b',
@@ -54,13 +41,6 @@ describe('Request', () => {
   })
 
   it('should use customer headers when passed', async () => {
-    jest.resetModules()
-    jest.resetAllMocks()
-    jest.mock('cross-fetch')
-
-    const mockFetch = require('cross-fetch').default
-    const mockMakeApiRequest = require('./request').makeApiRequest
-
     mockFetch.mockResolvedValueOnce({
       clone: () => ({ text: () => '' }),
       headers: new Map([['content-type', 'text/json']]),
@@ -68,23 +48,18 @@ describe('Request', () => {
       status: 200,
     })
 
-    await mockMakeApiRequest(
-      DEFAULT_API_WRAPPER_OPTIONS,
-      'get',
-      DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-      '',
-      '',
-      { headers: { 'x-man': 'universe' } },
-    )({}, 0)
+    await makeApiRequest(DEFAULT_API_WRAPPER_OPTIONS, 'get', '', {
+      headers: { 'x-man': 'universe' },
+    })({}, 0)
 
     expect(mockFetch).toHaveBeenLastCalledWith(
-      'https://accounts.dev.allthings.me/api',
+      'https://api.dev.allthings.me/api',
       {
         cache: 'no-cache',
         credentials: 'omit',
         headers: {
           accept: 'application/json',
-          authorization: 'Bearer ',
+          authorization: `Bearer ${mockTokenResult.accessToken}`,
           'content-type': 'application/json',
           'user-agent': 'Allthings Node SDK REST Client/0.0.0-development',
           'x-man': 'universe',
