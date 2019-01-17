@@ -10,12 +10,15 @@
 
     <script type="text/javascript">
       const OAUTH_CLIENT = window.location.search.split('=')[1]
+
       const client = allthings.restClient({
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
         implicit: true,
         clientId: OAUTH_CLIENT,
+        redirectUri: window.location.href.replace(window.location.search, '')
       })
+
       window.addEventListener('load', async () => {
         const user = await client.getCurrentUser()
 
