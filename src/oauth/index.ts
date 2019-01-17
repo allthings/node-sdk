@@ -24,8 +24,3 @@ export type TokenRequester = (
   url: string,
   params: RequestTokenParams,
 ) => Promise<IAuthorizationResponse>
-
-export const COMMON_MEMOIZE_OPTIONS = {
-  cachePromiseRejection: false,
-  maxAge: 3600 * 1000,
-}

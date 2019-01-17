@@ -28,4 +28,9 @@ export const DEFAULT_API_WRAPPER_OPTIONS: IAllthingsRestClientOptions = {
   username: process.env.ALLTHINGS_OAUTH_USERNAME,
 }
 
+export const DEFAULT_MEMOIZE_OPTIONS = {
+  cachePromiseRejection: false,
+  maxAge: 3600 * 1000,
+}
+
 export const USER_AGENT = `Allthings Node SDK REST Client/${version}`

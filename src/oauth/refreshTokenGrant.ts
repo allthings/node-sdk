@@ -1,6 +1,7 @@
 import memoize from 'mem'
 
-import { COMMON_MEMOIZE_OPTIONS, TokenRequester } from '.'
+import { TokenRequester } from '.'
+import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
 
 export const GRANT_TYPE = 'refresh_token'
 
@@ -56,7 +57,7 @@ export const getTokenFromClientOptions = memoize(
     )
   },
   {
-    ...COMMON_MEMOIZE_OPTIONS,
+    ...DEFAULT_MEMOIZE_OPTIONS,
     cacheKey: (_: TokenRequester, clientOptions: IndexSignature) =>
       JSON.stringify(castClientOptionsToRequestParams(clientOptions)),
   },
