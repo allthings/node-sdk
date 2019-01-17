@@ -26,14 +26,6 @@
           user.username
         } (${user.email})</div>`
       })
-
-      const checkMe = async () => {
-        const user = await client.getCurrentUser()
-
-        console.log(user)
-      }
     </script>
-
-    <button onClick="checkMe()">click me</button>
   </body>
 </html>
