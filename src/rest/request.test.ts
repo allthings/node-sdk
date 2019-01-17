@@ -1,13 +1,29 @@
 // tslint:disable:no-expression-statement
+import fetch from 'cross-fetch'
+
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import { IAuthorizationResponse } from '../oauth'
 import { until } from '../utils/functional'
-import { getNewTokenUsingPasswordGrant } from './oauth'
-import {
-  getTokenForRequest,
-  makeApiRequest,
-  responseWasSuccessful,
-} from './request'
+import oauthObtainTokenFromClientOptions from './oauthObtainTokenFromClientOptions'
+import oauthTokenRequest from './oauthTokenRequest'
+import { makeApiRequest } from './request'
+
+beforeEach(() => {
+  jest.resetModules()
+  jest.resetAllMocks()
+})
+
+jest.mock('cross-fetch')
+jest.mock('./oauthObtainTokenFromClientOptions')
+
+const mockFetch = fetch as jest.Mock
+const mockOauthObtainTokenFromClientOptions = oauthObtainTokenFromClientOptions as jest.Mock
+
+beforeEach(() => {
+  mockOauthObtainTokenFromClientOptions.mockReturnValue({
+    accessToken: '1234',
+    refreshToken: '5678',
+  })
+})
 
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
@@ -99,38 +115,7 @@ describe('Request', () => {
     ).rejects.toThrow('Maximum number of retries reached')
   })
 
-  it('should get an access token when only a refreshToken only is provided', async () => {
-    const { refreshToken } = (await getNewTokenUsingPasswordGrant(
-      DEFAULT_API_WRAPPER_OPTIONS,
-    )) as IAuthorizationResponse
-
-    const token = await getTokenForRequest(
-      {
-        accessToken: 'any',
-        apiUrl: DEFAULT_API_WRAPPER_OPTIONS.apiUrl,
-        clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
-        clientSecret: DEFAULT_API_WRAPPER_OPTIONS.clientSecret,
-        oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-        refreshToken,
-        requestBackOffInterval:
-          DEFAULT_API_WRAPPER_OPTIONS.requestBackOffInterval,
-        requestMaxRetries: DEFAULT_API_WRAPPER_OPTIONS.requestMaxRetries,
-      },
-      true,
-    )
-
-    expect(token).toHaveProperty('accessToken')
-    expect(token).toHaveProperty('refreshToken')
-  })
-
   it('should throw when response is not JSON or HTTP 204', async () => {
-    jest.resetModules()
-    jest.resetAllMocks()
-    jest.mock('cross-fetch')
-
-    const mockFetch = require('cross-fetch').default
-    const mockMakeApiRequest = require('./request').makeApiRequest
-
     mockFetch.mockResolvedValueOnce({
       clone: () => ({ text: () => '' }),
       headers: new Map([['content-type', 'text/html']]),
@@ -138,71 +123,29 @@ describe('Request', () => {
       status: 200,
     })
 
-    const error = await mockMakeApiRequest(
-      DEFAULT_API_WRAPPER_OPTIONS,
-      'get',
-      DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-      '',
-      '',
-    )({}, 0)
+    const error = await makeApiRequest(DEFAULT_API_WRAPPER_OPTIONS, 'get', '')(
+      {},
+      0,
+    )
 
     expect(() => {
       throw error
     }).toThrow('Response content type was "text/html" but expected JSON')
   })
 
-  it('should refresh the access token when the current one has expired', async () => {
-    const { refreshToken } = (await getNewTokenUsingPasswordGrant({
-      ...DEFAULT_API_WRAPPER_OPTIONS,
-      state: 'test state',
-    })) as IAuthorizationResponse
-
-    const response = await until(
-      responseWasSuccessful,
-      makeApiRequest(
-        {
-          ...DEFAULT_API_WRAPPER_OPTIONS,
-          clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
-          clientSecret: DEFAULT_API_WRAPPER_OPTIONS.clientSecret,
-          oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-          refreshToken,
-          requestBackOffInterval: 0,
-          requestMaxRetries: 10,
-          scope: DEFAULT_API_WRAPPER_OPTIONS.scope,
-        } as any,
-        'get',
-        '/v1/me',
-      ),
+  it('should should call oauthObtainTokenFromClientOptions with mustRefresh argument is previous status was 401', async () => {
+    const options = DEFAULT_API_WRAPPER_OPTIONS
+    await makeApiRequest(options, 'get', '')(
+      {
+        status: 401,
+      },
+      1,
     )
 
-    expect(response).toHaveProperty('body')
-    expect(response.status).toBe(200)
-  })
-
-  it('should refresh the access token when the current one has expired', async () => {
-    const { refreshToken } = (await getNewTokenUsingPasswordGrant(
-      DEFAULT_API_WRAPPER_OPTIONS,
-    )) as IAuthorizationResponse
-
-    await expect(
-      until(
-        () => false,
-        makeApiRequest(
-          {
-            ...DEFAULT_API_WRAPPER_OPTIONS,
-            clientId: DEFAULT_API_WRAPPER_OPTIONS.clientId,
-            oauthUrl: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
-            refreshToken,
-            requestBackOffInterval: 0,
-            requestMaxRetries: 2,
-            scope: 'foobar-scope',
-          } as any,
-          'get',
-          '/v1/me',
-        ),
-        { status: 401 },
-        1,
-      ),
-    ).rejects.toThrow('Could not get token')
+    expect(mockOauthObtainTokenFromClientOptions).toBeCalledWith(
+      oauthTokenRequest,
+      options,
+      true,
+    )
   })
 })

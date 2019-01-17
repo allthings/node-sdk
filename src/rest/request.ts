@@ -9,16 +9,11 @@ import {
   QUEUE_RESERVOIR_REFILL_INTERVAL,
   USER_AGENT,
 } from '../constants'
-import { IAuthorizationResponse } from '../oauth'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
-import {
-  getNewTokenUsingAuthorizationGrant,
-  getNewTokenUsingImplicitFlow,
-  getNewTokenUsingPasswordGrant,
-  getNewTokenUsingRefreshToken,
-} from './oauth'
+import oauthObtainTokenFromClientOptions from './oauthObtainTokenFromClientOptions'
+import oauthTokenRequest from './oauthTokenRequest'
 import { IAllthingsRestClientOptions } from './types'
 
 const requestLogger = makeLogger('REST API Request')
@@ -61,6 +56,8 @@ const RETRYABLE_STATUS_CODES: ReadonlyArray<number> = [
   504,
 ]
 
+const TOKEN_REFRESH_STATUS_CODES: ReadonlyArray<number> = [401]
+
 const queue = new Bottleneck({
   maxConcurrent: QUEUE_CONCURRENCY,
   minTime: QUEUE_DELAY,
@@ -75,38 +72,6 @@ function isFormData(
   body: IBodyFormData | IBody | undefined,
 ): body is IBodyFormData {
   return typeof body !== 'undefined' && body.formData !== undefined
-}
-
-export const getTokenForRequest = async (
-  options: IAllthingsRestClientOptions,
-  mustRefresh = false,
-): Promise<IAuthorizationResponse | undefined> => {
-  if (options.accessToken) {
-    if (options.refreshToken && mustRefresh) {
-      return getNewTokenUsingRefreshToken(options)
-    }
-
-    return {
-      accessToken: options.accessToken,
-      refreshToken: options.refreshToken,
-    }
-  }
-
-  if (options.username && options.password) {
-    return getNewTokenUsingPasswordGrant(options)
-  }
-
-  if (typeof window !== 'undefined') {
-    return options.implicit
-      ? getNewTokenUsingImplicitFlow(options)
-      : getNewTokenUsingAuthorizationGrant(options)
-  }
-
-  if (options.authCode || options.authorizationRedirect) {
-    return getNewTokenUsingAuthorizationGrant(options)
-  }
-
-  return
 }
 
 /**
@@ -206,18 +171,6 @@ export function makeApiRequest(
         throw new Error(error)
       }
 
-      const tokenResponse = await getTokenForRequest(
-        options,
-        !!options.refreshToken && previousResult.status === 401,
-      )
-
-      if (!(tokenResponse && tokenResponse.accessToken)) {
-        throw new Error('Unable to get OAuth2 access token.')
-      }
-
-      // tslint:disable-next-line:no-expression-statement
-      Object.assign(options, tokenResponse)
-
       // tslint:disable-next-line:no-expression-statement
       requestLogger.warn(
         `Warning: encountered ${previousResult.status}. Retrying ${
@@ -235,6 +188,20 @@ export function makeApiRequest(
         ),
       )
     }
+
+    const tokenResponse = await oauthObtainTokenFromClientOptions(
+      oauthTokenRequest,
+      options,
+      retryCount > 0 &&
+        TOKEN_REFRESH_STATUS_CODES.includes(previousResult.status),
+    )
+
+    if (!(tokenResponse && tokenResponse.accessToken)) {
+      throw new Error('Unable to get OAuth2 access token.')
+    }
+
+    // tslint:disable-next-line:no-expression-statement
+    Object.assign(options, tokenResponse)
 
     try {
       return (

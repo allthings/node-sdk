@@ -1,4 +1,6 @@
-import { RequestToken, TokenRequester } from '.'
+import memoize from 'mem'
+
+import { COMMON_MEMOIZE_OPTIONS, TokenRequester } from '.'
 
 export const GRANT_TYPE = 'password'
 
@@ -11,8 +13,59 @@ export interface IAccessTokenRequestParams {
   readonly scope?: string
 }
 
-export const requestToken: RequestToken = async (
-  tokenRequester: TokenRequester,
-  url: string,
-  params: IAccessTokenRequestParams,
-) => tokenRequester(url, params)
+const castClientOptionsToRequestParams = (
+  clientOptions: IndexSignature,
+): IAccessTokenRequestParams => {
+  const { username, password, scope, clientId, clientSecret } = clientOptions
+
+  if (!clientId) {
+    throw new Error(
+      'Missing required "clientId" parameter to perform password grant',
+    )
+  }
+
+  if (!username) {
+    throw new Error(
+      'Missing required "username" parameter to perform password grant',
+    )
+  }
+
+  if (!password) {
+    throw new Error(
+      'Missing required "password" parameter to perform password grant',
+    )
+  }
+
+  return {
+    client_id: clientId,
+    grant_type: GRANT_TYPE,
+    password,
+    username,
+    ...(scope ? { scope } : {}),
+    ...(clientSecret ? { client_secret: clientSecret } : {}),
+  }
+}
+
+export const isEligible = (clientOptions: IndexSignature): boolean => {
+  try {
+    return castClientOptionsToRequestParams(clientOptions) && true
+  } catch {
+    return false
+  }
+}
+
+export const getTokenFromClientOptions = memoize(
+  async (oauthTokenRequest: TokenRequester, clientOptions: IndexSignature) => {
+    const { oauthUrl } = clientOptions
+
+    return oauthTokenRequest(
+      `${oauthUrl}/oauth/token`,
+      castClientOptionsToRequestParams(clientOptions),
+    )
+  },
+  {
+    ...COMMON_MEMOIZE_OPTIONS,
+    cacheKey: (_: TokenRequester, clientOptions: IndexSignature) =>
+      JSON.stringify(castClientOptionsToRequestParams(clientOptions)),
+  },
+)
