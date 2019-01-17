@@ -1,8 +1,8 @@
 // tslint:disable:no-expression-statement
 import restClient from '.'
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import { IAuthorizationResponse } from '../oauth'
-import { getNewTokenUsingPasswordGrant } from './oauth'
+import { IAuthorizationResponse, passwordGrant } from '../oauth'
+import oauthTokenRequest from './oauthTokenRequest'
 
 describe('Rest API Client', () => {
   it('should return a client', async () => {
@@ -13,7 +13,8 @@ describe('Rest API Client', () => {
   })
 
   it('should use accessToken when provided in options object', async () => {
-    const { accessToken } = (await getNewTokenUsingPasswordGrant(
+    const { accessToken } = (await passwordGrant.getTokenFromClientOptions(
+      oauthTokenRequest,
       DEFAULT_API_WRAPPER_OPTIONS,
     )) as IAuthorizationResponse
     const client = restClient({

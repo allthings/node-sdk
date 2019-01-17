@@ -1,8 +1,14 @@
 import * as authorizationCodeGrant from './authorizationCodeGrant'
+import * as implicitGrant from './implicitGrant'
 import * as passwordGrant from './passwordGrant'
 import * as refreshTokenGrant from './refreshTokenGrant'
 
-export { authorizationCodeGrant, passwordGrant, refreshTokenGrant }
+export {
+  authorizationCodeGrant,
+  implicitGrant,
+  passwordGrant,
+  refreshTokenGrant,
+}
 
 export interface IAuthorizationResponse {
   readonly accessToken: string
@@ -19,8 +25,7 @@ export type TokenRequester = (
   params: RequestTokenParams,
 ) => Promise<IAuthorizationResponse>
 
-export type RequestToken = (
-  tokenRequester: TokenRequester,
-  url: string,
-  params: RequestTokenParams,
-) => Promise<IAuthorizationResponse>
+export const COMMON_MEMOIZE_OPTIONS = {
+  cachePromiseRejection: false,
+  maxAge: 3600 * 1000,
+}
