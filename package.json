@@ -68,7 +68,7 @@
     "@commitlint/cli": "7.3.2",
     "@commitlint/config-conventional": "7.3.1",
     "@types/form-data": "2.2.1",
-    "@types/jest": "23.3.12",
+    "@types/jest": "23.3.13",
     "@types/mem": "1.1.2",
     "@types/nanoid": "1.2.0",
     "@types/node": "10.12.18",
@@ -80,7 +80,7 @@
     "lint-staged": "8.1.0",
     "nanoid": "2.0.1",
     "nyc": "13.1.0",
-    "prettier": "1.15.3",
+    "prettier": "1.16.0",
     "rimraf": "2.6.3",
     "rollup": "0.68.2",
     "rollup-plugin-commonjs": "9.2.0",
@@ -92,7 +92,7 @@
     "semantic-release": "15.13.3",
     "ts-jest": "23.10.5",
     "tslint": "5.12.1",
-    "typescript": "3.2.2"
+    "typescript": "3.2.4"
   },
   "prettier": {
     "printWidth": 80,
