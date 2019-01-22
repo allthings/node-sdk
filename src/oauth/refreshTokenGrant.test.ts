@@ -28,7 +28,7 @@ describe('OAuth refresh token grant', () => {
     ).toBe(true)
   })
 
-  it('not eligible when refreshToken is missing', () => {
+  it('is not eligible when refreshToken is missing', () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
     expect(
       refreshTokenGrant.isEligible({
