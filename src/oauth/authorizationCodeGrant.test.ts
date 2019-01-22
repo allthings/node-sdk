@@ -34,6 +34,15 @@ describe('OAuth authorization code grant', () => {
     ).toBe(true)
   })
 
+  it('is not eligible when clientId is missing', () => {
+    expect(
+      authorizationCodeGrant.isEligible({
+        authCode: mockAuthCode,
+        redirectUri: mockRedirectUri,
+      }),
+    ).toBe(false)
+  })
+
   it('is not eligible when authCode is missing', () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
     expect(
@@ -52,6 +61,14 @@ describe('OAuth authorization code grant', () => {
         redirectUri: mockRedirectUri,
       }),
     ).toBe(true)
+  })
+
+  it('is not eligible for redirect when clientId is missing', () => {
+    expect(
+      authorizationCodeGrant.isEligibleForClientRedirect({
+        redirectUri: mockRedirectUri,
+      }),
+    ).toBe(false)
   })
 
   it('is not eligible for redirect when redirectUri is missing', () => {
