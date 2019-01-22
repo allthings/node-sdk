@@ -24,7 +24,7 @@ describe('OAuth implicit grant', () => {
     ).toBe(true)
   })
 
-  it('not eligible for redirect when clientId is missing', () => {
+  it('is not eligible for redirect when clientId is missing', () => {
     expect(implicitGrant.isEligibleForClientRedirect({})).toBe(false)
   })
 

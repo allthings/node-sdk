@@ -28,7 +28,7 @@ describe('OAuth password grant', () => {
     ).toBe(true)
   })
 
-  it('not eligible when username is missing', () => {
+  it('is not eligible when username is missing', () => {
     const { clientId, password } = DEFAULT_API_WRAPPER_OPTIONS
     expect(
       passwordGrant.isEligible({

@@ -34,7 +34,7 @@ describe('OAuth authorization code grant', () => {
     ).toBe(true)
   })
 
-  it('not eligible when authCode is missing', () => {
+  it('is not eligible when authCode is missing', () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
     expect(
       authorizationCodeGrant.isEligible({
