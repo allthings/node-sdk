@@ -41,7 +41,7 @@ const castClientOptionsToRequestParams = (
 
 export const isEligible = (clientOptions: IndexSignature): boolean => {
   try {
-    return !!castClientOptionsToRequestParams(clientOptions) && true
+    return !!castClientOptionsToRequestParams(clientOptions)
   } catch {
     return false
   }
