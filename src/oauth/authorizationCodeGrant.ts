@@ -53,7 +53,7 @@ export const isEligibleForClientRedirect = (
   clientOptions: IndexSignature,
 ): boolean => {
   try {
-    return !!castClientOptionsToRedirectParams(clientOptions) && true
+    return !!castClientOptionsToRedirectParams(clientOptions)
   } catch {
     return false
   }
@@ -98,7 +98,7 @@ const castClientOptionsToRequestParams = (
 
 export const isEligible = (clientOptions: IndexSignature): boolean => {
   try {
-    return !!castClientOptionsToRequestParams(clientOptions) && true
+    return !!castClientOptionsToRequestParams(clientOptions)
   } catch {
     return false
   }
