@@ -71,61 +71,45 @@ describe('agentCreatePermissions()', () => {
       data,
     )
 
-    const [
-      appAdminPermission,
-      appPinboardPermission,
-    ] = await client.agentCreatePermissions(
+    const agentAppPermissionResult = await client.agentCreatePermissions(
       agent.id,
       APP_ID,
       EnumUserPermissionObjectType.app,
-      [EnumUserPermissionRole.admin, EnumUserPermissionRole.pinboardAdmin],
+      [EnumUserPermissionRole.appAdmin, EnumUserPermissionRole.pinboardAgent],
     )
 
-    // appAdminPermission
-    expect(appAdminPermission.objectId).toEqual(APP_ID)
-    expect(appAdminPermission.objectType).toEqual(
-      EnumUserPermissionObjectType.app,
-    )
-    expect(appAdminPermission.role).toEqual(EnumUserPermissionRole.admin)
-
-    // appPinboardPermission
-    expect(appPinboardPermission.objectId).toEqual(APP_ID)
-    expect(appPinboardPermission.objectType).toEqual(
-      EnumUserPermissionObjectType.app,
-    )
-    expect(appPinboardPermission.role).toEqual(
-      EnumUserPermissionRole.pinboardAdmin,
-    )
+    expect(agentAppPermissionResult).toBeTruthy()
 
     const property = await client.propertyCreate(APP_ID, {
       name: generateId(),
       timezone: EnumTimezone.EuropeBerlin,
     })
 
-    const [
-      propertyAdminPermission,
-      propertyPinboardPermission,
-    ] = await client.agentCreatePermissions(
+    const agentPropertyPermissionResult = await client.agentCreatePermissions(
       agent.id,
       property.id,
       EnumUserPermissionObjectType.property,
-      [EnumUserPermissionRole.admin, EnumUserPermissionRole.pinboardAdmin],
+      [
+        EnumUserPermissionRole.bookingAgent,
+        EnumUserPermissionRole.articlesAgent,
+      ],
     )
 
-    // propertyAdminPermission
-    expect(propertyAdminPermission.objectId).toEqual(property.id)
-    expect(propertyAdminPermission.objectType).toEqual(
-      EnumUserPermissionObjectType.property,
-    )
-    expect(propertyAdminPermission.role).toEqual(EnumUserPermissionRole.admin)
+    expect(agentPropertyPermissionResult).toBeTruthy()
 
-    // propertyPinboardPermission
-    expect(propertyPinboardPermission.objectId).toEqual(property.id)
-    expect(propertyPinboardPermission.objectType).toEqual(
-      EnumUserPermissionObjectType.property,
-    )
-    expect(propertyPinboardPermission.role).toEqual(
-      EnumUserPermissionRole.pinboardAdmin,
-    )
+    const agentPermissions = await client.userGetPermissions(agent.id)
+    expect(agentPermissions).toBeTruthy()
+    expect(agentPermissions).toHaveLength(4)
+    // expect each role to equal the ones we added
+    agentPermissions.map(permission => {
+      expect(
+        [
+          EnumUserPermissionRole.bookingAgent,
+          EnumUserPermissionRole.articlesAgent,
+          EnumUserPermissionRole.appAdmin,
+          EnumUserPermissionRole.pinboardAgent,
+        ].includes(permission.role as EnumUserPermissionRole),
+      )
+    })
   })
 })

@@ -66,7 +66,7 @@ export type MethodAgentCreatePermissions = (
   objectId: string,
   objectType: EnumUserPermissionObjectType,
   permissions: ReadonlyArray<EnumUserPermissionRole>,
-) => AgentPermissionsResult
+) => Promise<boolean>
 
 /**
  * Returns a datastore-specific object of redis clients.
@@ -77,15 +77,11 @@ export async function agentCreatePermissions(
   objectId: string,
   objectType: EnumUserPermissionObjectType,
   permissions: ReadonlyArray<EnumUserPermissionRole>,
-): AgentPermissionsResult {
-  return Promise.all(
-    permissions.map(async permission =>
-      client.userCreatePermission(agentId, {
-        objectId,
-        objectType,
-        restrictions: [],
-        role: permission,
-      }),
-    ),
-  )
+): Promise<boolean> {
+  return client.userCreatePermissionBatch(agentId, {
+    objectId,
+    objectType,
+    restrictions: [],
+    roles: permissions,
+  })
 }

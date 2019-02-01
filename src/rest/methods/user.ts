@@ -50,13 +50,26 @@ export type UserResultList = Promise<{
 }>
 
 export enum EnumUserPermissionRole {
-  admin = 'admin',
-  articleAdmin = 'article-admin',
-  assetAdmin = 'asset-admin',
-  assetContactPerson = 'asset-contact-person',
-  documentAdmin = 'document-admin',
-  externalTicketCollaborator = 'external-ticket-collaborator',
-  pinboardAdmin = 'community-article-admin',
+  appAdmin = 'app-admin',
+  appOwner = 'app-owner',
+  articlesAgent = 'articles-agent',
+  bookableAssetAgent = 'bookable-asset-agent',
+  bookingAgent = 'booking-agent',
+  cockpitManager = 'cockpit-manager',
+  dataConnectorAdmin = 'data-connector-admin',
+  documentAdmin = 'doc-admin',
+  externalAgent = 'external-agent',
+  globalOrgAdmin = 'global-org-admin',
+  globalUserAdmin = 'global-user-admin',
+  orgAdmin = 'org-admin',
+  orgTeamManager = 'org-team-manager',
+  pinboardAgent = 'pinboard-agent',
+  platformOwner = 'platform-owner',
+  qa = 'qa',
+  serviceCenterAgent = 'service-center-agent',
+  serviceCenterManager = 'service-center-manager',
+  setup = 'setup',
+  tenantManager = 'tenant-manager',
 }
 
 export enum EnumUserPermissionObjectType {
@@ -224,20 +237,58 @@ export async function userCreatePermission(
 }
 
 /*
+  Create a new permission for a user
+*/
+
+export type MethodUserCreatePermissionBatch = (
+  userId: string,
+  permissions: PartialUserPermission & {
+    readonly objectId: string
+    readonly objectType: EnumUserPermissionObjectType
+    readonly restrictions: ReadonlyArray<object>
+    readonly roles: ReadonlyArray<EnumUserPermissionRole>
+  },
+) => Promise<boolean>
+
+export async function userCreatePermissionBatch(
+  client: InterfaceAllthingsRestClient,
+  userId: string,
+  permissions: PartialUserPermission & {
+    readonly objectId: string
+    readonly objectType: EnumUserPermissionObjectType
+    readonly restrictions: ReadonlyArray<object>
+    readonly roles: ReadonlyArray<EnumUserPermissionRole>
+  },
+): Promise<boolean> {
+  const { objectId, objectType, roles } = permissions
+
+  const batch = {
+    batch: roles.map(role => ({
+      objectID: objectId,
+      objectType,
+      restrictions: [],
+      role,
+    })),
+  }
+
+  return !(await client.post(`/v1/users/${userId}/permissions`, batch))
+}
+
+/*
   Get a list of a user's permissions
 */
 
-export type MethodUserFindPermissions = (
+export type MethodUserGetPermissions = (
   userId: string,
 ) => Promise<ReadonlyArray<IUserPermission>>
 
-export async function userFindPermissions(
+export async function userGetPermissions(
   client: InterfaceAllthingsRestClient,
   userId: string,
 ): Promise<ReadonlyArray<IUserPermission>> {
   const {
     _embedded: { items: permissions },
-  } = await client.get(`/v1/users/${userId}/permissions?limit=-1`)
+  } = await client.get(`/v1/users/${userId}/roles?limit=-1`)
 
   return permissions.map(({ objectID: objectId, ...result }: any) => ({
     ...result,

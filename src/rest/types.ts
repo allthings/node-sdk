@@ -45,9 +45,10 @@ import {
   MethodUserCheckInToUtilisationPeriod,
   MethodUserCreate,
   MethodUserCreatePermission,
+  MethodUserCreatePermissionBatch,
   MethodUserDeletePermission,
-  MethodUserFindPermissions,
   MethodUserGetById,
+  MethodUserGetPermissions,
   MethodUserGetUtilisationPeriods,
   MethodUserUpdateById,
 } from './methods/user'
@@ -311,9 +312,14 @@ export interface InterfaceAllthingsRestClient {
   readonly userCreatePermission: MethodUserCreatePermission
 
   /**
+   * Give a user multiple permission/role on an given object of specified type
+   */
+  readonly userCreatePermissionBatch: MethodUserCreatePermissionBatch
+
+  /**
    * Get a list of user's permissions
    */
-  readonly userFindPermissions: MethodUserFindPermissions
+  readonly userGetPermissions: MethodUserGetPermissions
 
   /**
    * Delete a user a permission/role on an given object of specified type

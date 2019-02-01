@@ -114,7 +114,9 @@ async function makeResultFromResponse(
   }
 
   if (!response.ok) {
-    return new Error(`${response.status} ${response.statusText}`)
+    return new Error(
+      `${response.status} ${response.statusText}\n\n${await response.text()}`,
+    )
   }
 
   // The API only returns JSON, so if it's something else there was
