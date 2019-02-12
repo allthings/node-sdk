@@ -952,10 +952,10 @@ bluebird@^3.5.0, bluebird@^3.5.1, bluebird@~3.5.1:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.2.tgz#1be0908e054a751754549c270489c1505d4ab15a"
   integrity sha512-dhHTWMI7kMx5whMQntl7Vr9C6BvV10lFXDAasnqnrMYhXVCzzk6IO9Fo2L75jXHT07WrOngL1WDXOp+yYS91Yg==
 
-bottleneck@2.16.1:
-  version "2.16.1"
-  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.16.1.tgz#6c7b3aeb7ac989b16569597cdf6d0c3da9dd56b4"
-  integrity sha512-OOHt4HXiMoXKUcQR/LBzwMYWCQxOU74c8zs6/VPCe6xO3kOAZBZqYKmrgsamVXa1wm9iztD1DAoV46KmGKLl5g==
+bottleneck@2.16.2:
+  version "2.16.2"
+  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.16.2.tgz#0ece0fda316ca8d41aaf55772584f722a2de0716"
+  integrity sha512-671wkIKV9K3yO/nfGw8tB4ihJazmZyd6DYEWxF1fuE7gzobk4w4atepHuYXoUHk78xLknjAGko8dXRcFO7iCoA==
 
 bottleneck@^2.0.1:
   version "2.11.2"
