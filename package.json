@@ -70,7 +70,7 @@
     "@types/jest": "23.3.14",
     "@types/mem": "1.1.2",
     "@types/nanoid": "1.2.0",
-    "@types/node": "10.12.25",
+    "@types/node": "10.12.26",
     "@types/query-string": "6.2.0",
     "coveralls": "3.0.2",
     "form-data": "2.3.3",
