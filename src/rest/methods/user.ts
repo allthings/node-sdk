@@ -29,6 +29,7 @@ export interface IUser {
   readonly id: string
   readonly lastLogin: string | null
   readonly locale: EnumLocale
+  readonly nativeAppInstallIds: ReadonlyArray<string> | null
   readonly passwordChanged: boolean
   readonly phoneNumber: string | null
   readonly profileImage: string | null
