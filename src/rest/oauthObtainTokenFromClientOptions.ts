@@ -2,6 +2,7 @@ import querystring from 'query-string'
 
 import {
   authorizationCodeGrant,
+  clientCredentialsGrant,
   IAuthorizationResponse,
   implicitGrant,
   passwordGrant,
@@ -62,6 +63,13 @@ export default async function oauthGetTokenFromOptions(
   ) {
     return options.authorizationRedirect(
       authorizationCodeGrant.getRedirectUrl(options),
+    )
+  }
+
+  if (clientCredentialsGrant.isEligible(options)) {
+    return clientCredentialsGrant.getTokenFromClientOptions(
+      tokenFetcher,
+      options,
     )
   }
 

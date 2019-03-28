@@ -6,6 +6,7 @@
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import {
   authorizationCodeGrant,
+  clientCredentialsGrant,
   passwordGrant,
   refreshTokenGrant,
 } from '../oauth'
@@ -142,6 +143,22 @@ describe('oauthObtainTokenFromClientOptions', () => {
     })
 
     expect(mockRedirectFn).toBeCalled()
+  })
+
+  it('should invoke client credentials flow if has client id, client secret and scope provided', async () => {
+    const { clientId, clientSecret, scope } = DEFAULT_API_WRAPPER_OPTIONS
+    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+      clientId,
+      clientSecret,
+      scope,
+    })
+    expect(result).toBe(mockTokenResult)
+    expect(mockTokenFetcher).toBeCalledWith(expect.any(String), {
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: clientCredentialsGrant.GRANT_TYPE,
+      scope,
+    })
   })
 
   it('returns undefined if no flow is eligible', async () => {
