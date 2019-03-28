@@ -4,7 +4,7 @@ volumes:
   ? accounts_public
 services:
   mongodb:
-    image: mongo:3.2
+    image: mongo:3.6
   mongorestore:
     image: allthings/db-data
     volumes:
