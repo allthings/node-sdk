@@ -59,7 +59,7 @@
   "dependencies": {
     "bottleneck": "2.17.1",
     "cross-fetch": "2.2.3",
-    "mem": "4.1.0",
+    "mem": "4.3.0",
     "query-string": "6.3.0"
   },
   "devDependencies": {
