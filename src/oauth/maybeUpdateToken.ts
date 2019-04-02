@@ -2,6 +2,7 @@ import querystring from 'query-string'
 
 import * as authorizationCodeGrant from './authorizationCodeGrant'
 import { ITokenStore, TokenRequester } from './base'
+import * as clientCredentialsGrant from './clientCredentialsGrant'
 import * as implicitGrant from './implicitGrant'
 import * as passwordGrant from './passwordGrant'
 import * as refreshTokenGrant from './refreshTokenGrant'
@@ -67,6 +68,15 @@ export default async function maybeUpdateToken(
   ) {
     return options.authorizationRedirect(
       authorizationCodeGrant.getRedirectUrl(options),
+    )
+  }
+
+  if (clientCredentialsGrant.isEligible(options)) {
+    return oauthTokenStore.set(
+      await clientCredentialsGrant.getTokenFromClientOptions(
+        tokenFetcher,
+        options,
+      ),
     )
   }
 

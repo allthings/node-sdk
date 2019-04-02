@@ -75,6 +75,7 @@ describe('Rest API Client', () => {
   it('should throw error when unable to get access token', async () => {
     const client = restClient({
       accessToken: undefined,
+      clientSecret: undefined,
       password: undefined,
       username: undefined,
     })

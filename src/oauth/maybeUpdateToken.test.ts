@@ -5,6 +5,7 @@
 // tslint:disable:no-expression-statement
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import * as authorizationCodeGrant from './authorizationCodeGrant'
+import * as clientCredentialsGrant from './clientCredentialsGrant'
 import makeOAuthTokenStore from './makeOAuthTokenStore'
 import maybeUpdateToken from './maybeUpdateToken'
 import * as passwordGrant from './passwordGrant'
@@ -159,7 +160,25 @@ describe('maybeUpdateToken', () => {
     expect(mockRedirectFn).toBeCalled()
   })
 
-  it('should return undefined if no flow is eligible', async () => {
+  it('should invoke client credentials flow if has client id, client secret and scope provided', async () => {
+    const { clientId, clientSecret, scope } = DEFAULT_API_WRAPPER_OPTIONS
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
+      clientId,
+      clientSecret,
+      scope,
+    })
+    expect(mockTokenStore.get()).toEqual(
+      expect.objectContaining(mockTokenResult),
+    )
+    expect(mockTokenFetcher).toBeCalledWith({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: clientCredentialsGrant.GRANT_TYPE,
+      scope,
+    })
+  })
+
+  it('returns undefined if no flow is eligible', async () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
     const result = await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       clientId,
