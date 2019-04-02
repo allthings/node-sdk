@@ -9,7 +9,7 @@ export interface IAccessTokenRequestParams {
   readonly client_id: string
   readonly grant_type: string
   readonly client_secret: string
-  readonly scope: string
+  readonly scope?: string
 }
 
 const castClientOptionsToRequestParams = (
@@ -29,17 +29,11 @@ const castClientOptionsToRequestParams = (
     )
   }
 
-  if (!scope) {
-    throw new Error(
-      'Missing required "scope" parameter to perform client credentials grant',
-    )
-  }
-
   return {
     client_id: clientId,
     client_secret: clientSecret,
     grant_type: GRANT_TYPE,
-    scope,
+    ...(scope ? { scope } : {}),
   }
 }
 

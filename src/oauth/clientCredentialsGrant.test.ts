@@ -16,23 +16,21 @@ describe('OAuth client credentials grant', () => {
     expect(clientCredentialsGrant.GRANT_TYPE).toBe('client-credentials')
   })
 
-  it('is eligible when client options have clientId, clientSecret and scope', () => {
-    const { clientId, clientSecret, scope } = DEFAULT_API_WRAPPER_OPTIONS
+  it('is eligible when client options have clientId, clientSecret', () => {
+    const { clientId, clientSecret } = DEFAULT_API_WRAPPER_OPTIONS
     expect(
       clientCredentialsGrant.isEligible({
         clientId,
         clientSecret,
-        scope,
       }),
     ).toBe(true)
   })
 
   it('is not eligible when client secret is missing', () => {
-    const { clientId, scope } = DEFAULT_API_WRAPPER_OPTIONS
+    const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
     expect(
       clientCredentialsGrant.isEligible({
         clientId,
-        scope,
       }),
     ).toBe(false)
   })
@@ -42,18 +40,6 @@ describe('OAuth client credentials grant', () => {
       expect(() =>
         clientCredentialsGrant.getTokenFromClientOptions(mockTokenFetcher, {}),
       ).toThrow('Missing required "clientId"')
-      expect(mockTokenFetcher).not.toBeCalled()
-    })
-
-    it('throws when scope is missing in client options', () => {
-      const { clientId, clientSecret } = DEFAULT_API_WRAPPER_OPTIONS
-
-      expect(() =>
-        clientCredentialsGrant.getTokenFromClientOptions(mockTokenFetcher, {
-          clientId,
-          clientSecret,
-        }),
-      ).toThrow('Missing required "scope"')
       expect(mockTokenFetcher).not.toBeCalled()
     })
 
