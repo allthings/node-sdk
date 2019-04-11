@@ -53,6 +53,10 @@ import {
   MethodUserUpdateById,
 } from './methods/user'
 import {
+  MethodUserRelationCreate,
+  MethodUserRelationDelete,
+} from './methods/userRelation'
+import {
   MethodUtilisationPeriodCheckInUser,
   MethodUtilisationPeriodCheckOutUser,
   MethodUtilisationPeriodCreate,
@@ -99,6 +103,10 @@ export enum EnumTimezone {
   EuropeSofia = 'Europe/Sofia',
   EuropeZurich = 'Europe/Zurich',
   UTC = 'UTC',
+}
+
+export enum EnumUserRelationType {
+  isResponsible = 'is-responsible',
 }
 
 // Describes the options with which to construct a new API wrapper instance
@@ -331,6 +339,18 @@ export interface InterfaceAllthingsRestClient {
    * utilisation-periodId
    */
   readonly userCheckInToUtilisationPeriod: MethodUserCheckInToUtilisationPeriod
+
+  // User Relation
+
+  /**
+   * Creates a new user relation
+   */
+  readonly userRelationCreate: MethodUserRelationCreate
+
+  /**
+   * Deletes a new user relation
+   */
+  readonly userRelationDelete: MethodUserRelationDelete
 
   // Utilisation Period
 

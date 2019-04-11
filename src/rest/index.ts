@@ -50,6 +50,7 @@ import {
   userGetUtilisationPeriods,
   userUpdateById,
 } from './methods/user'
+import { userRelationCreate, userRelationDelete } from './methods/userRelation'
 import {
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
@@ -124,6 +125,10 @@ const API_METHODS: ReadonlyArray<any> = [
   userGetUtilisationPeriods,
   getCurrentUser,
   getUsers,
+
+  // User Relations
+  userRelationCreate,
+  userRelationDelete,
 
   // Utilisation Periods
   utilisationPeriodCreate,
