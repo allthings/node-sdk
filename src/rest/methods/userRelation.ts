@@ -11,17 +11,17 @@ export type UserRelationResult = Promise<IUserRelation>
 
 export type MethodUserRelationCreate = (
   userId: string,
-  type: EnumUserRelationType,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly type: EnumUserRelationType
   },
 ) => UserRelationResult
 
 export type MethodUserRelationDelete = (
   userId: string,
-  type: EnumUserRelationType,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly type: EnumUserRelationType
   },
 ) => UserRelationResult
 
@@ -29,12 +29,12 @@ export type MethodUserRelationDelete = (
 export async function userRelationCreate(
   client: InterfaceAllthingsRestClient,
   userId: string,
-  type: EnumUserRelationType,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly type: EnumUserRelationType
   },
 ): UserRelationResult {
-  return client.post(`/v1/users/${userId}/user-relations/${type}`, {
+  return client.post(`/v1/users/${userId}/user-relations/${data.type}`, {
     properties: data.properties,
   })
 }
@@ -43,12 +43,12 @@ export async function userRelationCreate(
 export async function userRelationDelete(
   client: InterfaceAllthingsRestClient,
   userId: string,
-  type: EnumUserRelationType,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly type: EnumUserRelationType
   },
 ): UserRelationResult {
-  return client.delete(`/v1/users/${userId}/user-relations/${type}`, {
+  return client.delete(`/v1/users/${userId}/user-relations/${data.type}`, {
     properties: data.properties,
   })
 }

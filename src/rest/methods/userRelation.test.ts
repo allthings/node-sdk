@@ -18,11 +18,10 @@ describe('userRelationCreate()', () => {
       timezone: EnumTimezone.EuropeBerlin,
     })
 
-    const userRelation = await apiRestClient.userRelationCreate(
-      user.id,
-      EnumUserRelationType.isResponsible,
-      { properties: [property1.id, property2.id] },
-    )
+    const userRelation = await apiRestClient.userRelationCreate(user.id, {
+      properties: [property1.id, property2.id],
+      type: EnumUserRelationType.isResponsible,
+    })
 
     expect(userRelation.user).toBe(user.id)
     expect(userRelation.type).toBe(EnumUserRelationType.isResponsible)
@@ -41,17 +40,15 @@ describe('userRelationCreate()', () => {
       name: 'Foobar Property2',
       timezone: EnumTimezone.EuropeBerlin,
     })
-    await apiRestClient.userRelationCreate(
-      user.id,
-      EnumUserRelationType.isResponsible,
-      { properties: [property1.id, property2.id] },
-    )
+    await apiRestClient.userRelationCreate(user.id, {
+      properties: [property1.id, property2.id],
+      type: EnumUserRelationType.isResponsible,
+    })
 
-    const userRelation = await apiRestClient.userRelationDelete(
-      user.id,
-      EnumUserRelationType.isResponsible,
-      { properties: [property1.id] },
-    )
+    const userRelation = await apiRestClient.userRelationDelete(user.id, {
+      properties: [property1.id],
+      type: EnumUserRelationType.isResponsible,
+    })
 
     expect(userRelation.user).toBe(user.id)
     expect(userRelation.type).toBe(EnumUserRelationType.isResponsible)
