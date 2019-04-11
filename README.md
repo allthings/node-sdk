@@ -113,6 +113,8 @@ client
   - [`client.userCheckInToUtilisationPeriod()`](#restclient-client-createagent)
   - [`client.getUsers()`](#restclient-client-createagent)
   - [`client.getCurrentUser()`](#restclient-client-createagent)
+  - [`client.userRelationCreate()`](#restclient-client-createagent)
+  - [`client.userRelationDelete()`](#restclient-client-createagent)
   - [`client.utilisationPeriodCreate()`](#restclient-client-createagent)
   - [`client.utilisationPeriodGetById()`](#restclient-client-createagent)
   - [`client.utilisationPeriodUpdateById()`](#restclient-client-createagent)
@@ -330,6 +332,18 @@ export interface InterfaceAllthingsRestClient {
    * utilisation-periodId
    */
   readonly userCheckInToUtilisationPeriod: MethodUserCheckInToUtilisationPeriod
+
+  // User Relation
+
+  /**
+   * Creates a new user relation
+   */
+  readonly userRelationCreate: MethodUserRelationCreate
+
+  /**
+   * Deletes a new user relation
+   */
+  readonly userRelationDelete: MethodUserRelationDelete
 
   // Utilisation Period
 
