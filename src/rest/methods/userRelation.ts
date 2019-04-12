@@ -1,4 +1,4 @@
-import { EnumUserRelationType, InterfaceAllthingsRestClient } from '../types'
+import { InterfaceAllthingsRestClient } from '../types'
 
 export interface IUserRelation {
   readonly id: string
@@ -8,6 +8,10 @@ export interface IUserRelation {
 }
 
 export type UserRelationResult = Promise<IUserRelation>
+
+export enum EnumUserRelationType {
+  isResponsible = 'is-responsible',
+}
 
 export type MethodUserRelationCreate = (
   userId: string,

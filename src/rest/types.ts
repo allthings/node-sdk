@@ -105,10 +105,6 @@ export enum EnumTimezone {
   UTC = 'UTC',
 }
 
-export enum EnumUserRelationType {
-  isResponsible = 'is-responsible',
-}
-
 // Describes the options with which to construct a new API wrapper instance
 export interface InterfaceAllthingsRestClientOptions {
   readonly apiUrl: string

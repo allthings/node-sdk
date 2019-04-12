@@ -50,7 +50,11 @@ import {
   userGetUtilisationPeriods,
   userUpdateById,
 } from './methods/user'
-import { userRelationCreate, userRelationDelete } from './methods/userRelation'
+import {
+  EnumUserRelationType,
+  userRelationCreate,
+  userRelationDelete,
+} from './methods/userRelation'
 import {
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
@@ -138,7 +142,12 @@ const API_METHODS: ReadonlyArray<any> = [
   utilisationPeriodCheckOutUser,
 ]
 
-export { EnumUserPermissionRole, EnumUnitType, EnumUserPermissionObjectType }
+export {
+  EnumUserPermissionRole,
+  EnumUnitType,
+  EnumUserPermissionObjectType,
+  EnumUserRelationType,
+}
 
 /*
   The API wrapper

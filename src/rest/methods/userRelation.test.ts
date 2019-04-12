@@ -2,8 +2,8 @@
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
 import { createUserAndClient } from '../../../test/helpers'
-import { EnumTimezone, EnumUserRelationType } from '../types'
-
+import { EnumTimezone } from '../types'
+import { EnumUserRelationType } from './userRelation'
 const apiRestClient = restClient()
 
 describe('userRelationCreate()', () => {
