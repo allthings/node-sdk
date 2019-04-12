@@ -3,6 +3,7 @@ export {
   EnumUserPermissionRole,
   EnumUnitType,
   EnumUserPermissionObjectType,
+  EnumUserRelationType,
 } from './rest'
 export {
   EnumCountryCode,
