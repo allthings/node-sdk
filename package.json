@@ -167,6 +167,7 @@
   "resolutions": {
     "jest/**/braces": ">=2.3.1",
     "js-yaml": ">=3.13.0",
-    "marked": ">=0.6.2"
+    "marked": ">=0.6.2",
+    "tar": ">=4.4.2"
   }
 }
