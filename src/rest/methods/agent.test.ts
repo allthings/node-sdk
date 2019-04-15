@@ -57,7 +57,7 @@ describe('agentCreate()', () => {
 })
 
 describe('agentCreatePermissions()', () => {
-  it.only('should be able to add agent permissions', async () => {
+  it('should be able to add agent permissions', async () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
@@ -76,8 +76,8 @@ describe('agentCreatePermissions()', () => {
       APP_ID,
       EnumUserPermissionObjectType.app,
       [EnumUserPermissionRole.appAdmin, EnumUserPermissionRole.pinboardAgent],
-      '2019-01-01T12:12:12+0000',
-      '2019-01-02T12:12:12+0000',
+      '2019-01-01 12:12:12',
+      '2019-01-02 12:12:12',
     )
 
     expect(agentAppPermissionResult).toBeTruthy()
