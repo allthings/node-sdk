@@ -66,8 +66,8 @@ export type MethodAgentCreatePermissions = (
   objectId: string,
   objectType: EnumUserPermissionObjectType,
   permissions: ReadonlyArray<EnumUserPermissionRole>,
-  startDate?: string | null,
-  endDate?: string | null,
+  startDate: Date | null,
+  endDate: Date | null,
 ) => Promise<boolean>
 
 /**
@@ -79,8 +79,8 @@ export async function agentCreatePermissions(
   objectId: string,
   objectType: EnumUserPermissionObjectType,
   permissions: ReadonlyArray<EnumUserPermissionRole>,
-  startDate?: string | null,
-  endDate?: string | null,
+  startDate: Date | null,
+  endDate: Date | null,
 ): Promise<boolean> {
   return client.userCreatePermissionBatch(agentId, {
     endDate,

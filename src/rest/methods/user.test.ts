@@ -188,10 +188,12 @@ describe('userCreatePermission()', () => {
     expect(user.externalId).toEqual(initialData.externalId)
 
     const permissionData = {
+      endDate: null,
       objectId: APP_ID,
       objectType: EnumUserPermissionObjectType.app,
       restrictions: [],
       role: EnumUserPermissionRole.appAdmin,
+      startDate: null,
     }
 
     const result = await client.userCreatePermission(user.id, permissionData)
@@ -213,10 +215,12 @@ describe('userGetPermissions()', () => {
     const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     const permissionData = {
+      endDate: null,
       objectId: APP_ID,
       objectType: EnumUserPermissionObjectType.app,
       restrictions: [],
       role: EnumUserPermissionRole.appAdmin,
+      startDate: null,
     }
 
     await client.userCreatePermission(user.id, permissionData)
@@ -241,10 +245,12 @@ describe('userDeletePermission()', () => {
     const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     const permissionData = {
+      endDate: null,
       objectId: APP_ID,
       objectType: EnumUserPermissionObjectType.app,
       restrictions: [],
       role: EnumUserPermissionRole.appAdmin,
+      startDate: null,
     }
 
     const permission = await client.userCreatePermission(
@@ -326,10 +332,12 @@ describe('userGetUtilisationPeriods()', () => {
       expect(user.externalId).toEqual(initialData.externalId)
 
       const permissionData = {
+        endDate: null,
         objectId: APP_ID,
         objectType: EnumUserPermissionObjectType.app,
         restrictions: [],
         role: EnumUserPermissionRole.serviceCenterAgent,
+        startDate: null,
       }
 
       const result = await client.userCreatePermission(user.id, permissionData)

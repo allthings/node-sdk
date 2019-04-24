@@ -57,7 +57,7 @@ describe('agentCreate()', () => {
 })
 
 describe('agentCreatePermissions()', () => {
-  it('should be able to add agent permissions', async () => {
+  it.only('should be able to add agent permissions', async () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
@@ -76,8 +76,8 @@ describe('agentCreatePermissions()', () => {
       APP_ID,
       EnumUserPermissionObjectType.app,
       [EnumUserPermissionRole.appAdmin, EnumUserPermissionRole.pinboardAgent],
-      '2019-01-01 12:12:12',
-      '2019-01-02 12:12:12',
+      new Date('2019-01-01'),
+      new Date('2019-01-02'),
     )
 
     expect(agentAppPermissionResult).toBeTruthy()
@@ -94,6 +94,8 @@ describe('agentCreatePermissions()', () => {
         EnumUserPermissionRole.bookingAgent,
         EnumUserPermissionRole.articlesAgent,
       ],
+      null,
+      null,
     )
 
     expect(agentPropertyPermissionResult).toBeTruthy()
@@ -122,8 +124,8 @@ describe('agentCreatePermissions()', () => {
       ) {
         expect(permission.startDate).toBeDefined()
         expect(permission.endDate).toBeDefined()
-        expect(permission.startDate).toEqual('2019-01-01T12:12:12+0000')
-        expect(permission.endDate).toEqual('2019-01-02T12:12:12+0000')
+        expect(permission.startDate).toEqual('2019-01-01T00:00:00+0000')
+        expect(permission.endDate).toEqual('2019-01-02T00:00:00+0000')
       }
     })
   })
