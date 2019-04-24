@@ -57,7 +57,7 @@ describe('agentCreate()', () => {
 })
 
 describe('agentCreatePermissions()', () => {
-  it.only('should be able to add agent permissions', async () => {
+  it('should be able to add agent permissions', async () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
