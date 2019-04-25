@@ -94,8 +94,6 @@ describe('agentCreatePermissions()', () => {
         EnumUserPermissionRole.bookingAgent,
         EnumUserPermissionRole.articlesAgent,
       ],
-      null,
-      null,
     )
 
     expect(agentPropertyPermissionResult).toBeTruthy()
