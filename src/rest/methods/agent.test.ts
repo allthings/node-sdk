@@ -77,7 +77,7 @@ describe('agentCreatePermissions()', () => {
       EnumUserPermissionObjectType.app,
       [EnumUserPermissionRole.appAdmin, EnumUserPermissionRole.pinboardAgent],
       new Date('2019-01-01'),
-      new Date('2019-01-02'),
+      new Date('2050-01-02'),
     )
 
     expect(agentAppPermissionResult).toBeTruthy()
@@ -123,7 +123,7 @@ describe('agentCreatePermissions()', () => {
         expect(permission.startDate).toBeDefined()
         expect(permission.endDate).toBeDefined()
         expect(permission.startDate).toEqual('2019-01-01T00:00:00+0000')
-        expect(permission.endDate).toEqual('2019-01-02T00:00:00+0000')
+        expect(permission.endDate).toEqual('2050-01-02T00:00:00+0000')
       }
     })
   })
