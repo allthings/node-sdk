@@ -66,6 +66,12 @@ services:
         condition: service_healthy
     environment:
       - SSL_PASS
+  graphql:
+    image: allthings/graphql
+    environment:
+      - NODE_ENV
+      - PORT=6000
+      - LOGGING=
   nginx:
     image: allthings/nginx
     volumes:
@@ -77,6 +83,8 @@ services:
       accounts:
         condition: service_healthy
       php:
+        condition: service_healthy
+      graphql:
         condition: service_healthy
     extra_hosts:
       - app:127.0.0.1
