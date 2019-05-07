@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface IProperty {
   readonly externalId: string
@@ -23,7 +23,7 @@ export type MethodPropertyCreate = (
 ) => PropertyResult
 
 export async function propertyCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   appId: string,
   data: PartialProperty & { readonly name: string; readonly timezone: string },
 ): PropertyResult {
@@ -38,7 +38,7 @@ export async function propertyCreate(
 export type MethodPropertyGetById = (propertyId: string) => PropertyResult
 
 export async function propertyGetById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   propertyId: string,
 ): PropertyResult {
   return client.get(`/v1/properties/${propertyId}`)
@@ -55,7 +55,7 @@ export type MethodPropertyUpdateById = (
 ) => PropertyResult
 
 export async function propertyUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   propertyId: string,
   data: PartialProperty,
 ): PropertyResult {

@@ -4,7 +4,7 @@ import {
   getNewTokenUsingPasswordGrant,
   unmemoizedGetNewTokenUsingImplicitFlow,
 } from './oauth'
-import { InterfaceAllthingsRestClientOptions } from './types'
+import { IAllthingsRestClientOptions } from './types'
 
 describe('getNewTokenUsingPasswordGrant()', () => {
   it('should return a token given valid credentials', async () => {
@@ -23,7 +23,7 @@ describe('getNewTokenUsingPasswordGrant()', () => {
       username: '',
     }
 
-    const clientOptions: InterfaceAllthingsRestClientOptions = {
+    const clientOptions: IAllthingsRestClientOptions = {
       ...DEFAULT_API_WRAPPER_OPTIONS,
       ...idSecretUserPass,
     }
@@ -32,7 +32,7 @@ describe('getNewTokenUsingPasswordGrant()', () => {
       'HTTP 400 — Bad Request',
     )
 
-    const clientOptions2: InterfaceAllthingsRestClientOptions = {
+    const clientOptions2: IAllthingsRestClientOptions = {
       ...DEFAULT_API_WRAPPER_OPTIONS,
       ...idSecretUserPass,
       oauthUrl: `${process.env.ALLTHINGS_OAUTH_URL}/foobar` || '',
@@ -42,7 +42,7 @@ describe('getNewTokenUsingPasswordGrant()', () => {
       'HTTP 404 — Not Found',
     )
 
-    const clientOptions3: InterfaceAllthingsRestClientOptions = {
+    const clientOptions3: IAllthingsRestClientOptions = {
       ...DEFAULT_API_WRAPPER_OPTIONS,
       ...idSecretUserPass,
       oauthUrl: 'http://foobarHost',
@@ -56,7 +56,7 @@ describe('getNewTokenUsingPasswordGrant()', () => {
 
 describe('getNewTokenUsingImplicitFlow()', () => {
   it('should return a token given valid credentials', async () => {
-    const clientOptions: InterfaceAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
+    const clientOptions: IAllthingsRestClientOptions = DEFAULT_API_WRAPPER_OPTIONS
 
     // tslint:disable-next-line no-object-mutation
     global.window = {

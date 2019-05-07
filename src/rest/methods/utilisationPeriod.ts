@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 import { remapRegistationCodeResult } from './registrationCode'
 import { IUser, remapEmbeddedUser } from './user'
 
@@ -57,7 +57,7 @@ export type MethodUtilisationPeriodCreate = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   unitId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
@@ -85,7 +85,7 @@ export type MethodUtilisationPeriodGetById = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodGetById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
 ): UtilisationPeriodResult {
   const { tenantIDs: tenantIds, _embedded, ...result } = await client.get(
@@ -110,7 +110,7 @@ export type MethodUtilisationPeriodUpdateById = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
@@ -135,7 +135,7 @@ export type MethodUtilisationPeriodCheckInUser = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodCheckInUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
   data: {
     readonly email: string
@@ -154,7 +154,7 @@ export type MethodUtilisationPeriodCheckOutUser = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodCheckOutUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
   userId: string,
 ): Promise<boolean> {

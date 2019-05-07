@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface IRegistrationCodeOptions {
   readonly expiresAt?: string | null
@@ -38,7 +38,7 @@ export type MethodRegistrationCodeCreate = (
 ) => RegistrationCodeResult
 
 export async function registrationCodeCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   code: string,
   utilisationPeriods: string | ReadonlyArray<string>,
   options: IRegistrationCodeOptions = { permanent: false },
@@ -67,7 +67,7 @@ export type MethodRegistrationCodeGetById = (
 ) => RegistrationCodeResult
 
 export async function registrationCodeGetById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   registrationCodeId: string,
 ): RegistrationCodeResult {
   return remapRegistationCodeResult(
@@ -83,7 +83,7 @@ export type MethodRegistrationCodeDelete = (
 ) => RegistrationCodeResult
 
 export async function registrationCodeDelete(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   registrationCodeId: string,
 ): Promise<boolean> {
   return (await client.delete(`/v1/invitations/${registrationCodeId}`)) === ''

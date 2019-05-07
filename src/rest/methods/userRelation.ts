@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface IUserRelation {
   readonly id: string
@@ -31,7 +31,7 @@ export type MethodUserRelationDelete = (
 
 // https://api-doc.allthings.me/#/User/Relations/post_users__userId__user_relations__type_
 export async function userRelationCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: {
     readonly properties: ReadonlyArray<string>
@@ -45,7 +45,7 @@ export async function userRelationCreate(
 
 // https://api-doc.allthings.me/#/User/Relations/delete_users__userId__user_relations__type_
 export async function userRelationDelete(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: {
     readonly properties: ReadonlyArray<string>

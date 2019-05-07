@@ -1,5 +1,5 @@
 import { dateToString, stringToDate } from '../../utils/stringToDate'
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export enum EnumNotificationCategory {
   events = 'events',
@@ -80,7 +80,7 @@ export type MethodNotificationsGetByUser = (
 ) => NotificationResultList
 
 export async function notificationsGetByUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   page = 1,
   limit = -1,
@@ -108,7 +108,7 @@ export type MethodNotificationsUpdateReadByUser = (
 ) => NotificationsUpdateReadByUserResult
 
 export async function notificationsUpdateReadByUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   lastReadAt: Date = new Date(),
 ): NotificationsUpdateReadByUserResult {
@@ -124,7 +124,7 @@ export type MethodNotificationUpdateRead = (
 ) => NotificationUpdateReadResult
 
 export async function notificationUpdateRead(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   notificationId: string,
 ): NotificationUpdateReadResult {
   return remapNotificationResult(

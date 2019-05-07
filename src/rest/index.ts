@@ -65,10 +65,7 @@ import {
 import httpPatch from './patch'
 import httpPost from './post'
 import httpRequest from './request'
-import {
-  InterfaceAllthingsRestClient,
-  InterfaceAllthingsRestClientOptions,
-} from './types'
+import { IAllthingsRestClient, IAllthingsRestClientOptions } from './types'
 
 const API_METHODS: ReadonlyArray<any> = [
   // Agent
@@ -157,10 +154,10 @@ export {
 */
 export default function restClient(
   userOptions: Partial<
-    InterfaceAllthingsRestClientOptions
+    IAllthingsRestClientOptions
   > = DEFAULT_API_WRAPPER_OPTIONS,
-): InterfaceAllthingsRestClient {
-  const options: InterfaceAllthingsRestClientOptions = {
+): IAllthingsRestClient {
+  const options: IAllthingsRestClientOptions = {
     ...DEFAULT_API_WRAPPER_OPTIONS,
     ...userOptions,
   }
@@ -186,7 +183,7 @@ export default function restClient(
   const post = partial(httpPost, request)
   const patch = partial(httpPatch, request)
 
-  const client: InterfaceAllthingsRestClient = API_METHODS.reduce(
+  const client: IAllthingsRestClient = API_METHODS.reduce(
     (methods, method) => ({
       ...methods,
       // tslint:disable-next-line readonly-array

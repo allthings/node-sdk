@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export type FileResult = Promise<IFile>
 
@@ -29,15 +29,13 @@ export interface IFile {
   }
 }
 
-export type MethodFileCreate = (
-  data: {
-    readonly file: Blob | Buffer | ReadableStream
-    readonly name: string
-    readonly path?: string
-  },
-) => FileResult
+export type MethodFileCreate = (data: {
+  readonly file: Blob | Buffer | ReadableStream
+  readonly name: string
+  readonly path?: string
+}) => FileResult
 export async function fileCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   data: {
     readonly file: Blob | Buffer | ReadableStream
     readonly name: string
@@ -54,7 +52,7 @@ export async function fileCreate(
 
 export type MethodFileDelete = (fileId: string) => Promise<boolean>
 export async function fileDelete(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   fileId: string,
 ): Promise<boolean> {
   return (await client.delete(`/v1/files/${fileId}`)) === ''

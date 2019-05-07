@@ -1,4 +1,4 @@
-import { EnumLocale, InterfaceAllthingsRestClient } from '../types'
+import { EnumLocale, IAllthingsRestClient } from '../types'
 import {
   UtilisationPeriodResult,
   UtilisationPeriodResults,
@@ -122,7 +122,7 @@ export type MethodUserCreate = (
 ) => UserResult
 
 export async function userCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   appId: string,
   username: string,
   data: PartialUser & {
@@ -149,7 +149,7 @@ export type MethodGetUsers = (
 ) => UserResultList
 
 export async function getUsers(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   page = 1,
   limit = -1,
   filter = {},
@@ -170,9 +170,7 @@ export async function getUsers(
 
 export type MethodGetCurrentUser = () => UserResult
 
-export async function getCurrentUser(
-  client: InterfaceAllthingsRestClient,
-): UserResult {
+export async function getCurrentUser(client: IAllthingsRestClient): UserResult {
   return remapUserResult(await client.get('/v1/me'))
 }
 
@@ -183,7 +181,7 @@ export async function getCurrentUser(
 export type MethodUserGetById = (id: string) => UserResult
 
 export async function userGetById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
 ): UserResult {
   return remapUserResult(await client.get(`/v1/users/${userId}`))
@@ -199,7 +197,7 @@ export type MethodUserUpdateById = (
 ) => UserResult
 
 export async function userUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialUser,
 ): UserResult {
@@ -227,7 +225,7 @@ export type MethodUserCreatePermission = (
 ) => UserPermissionResult
 
 export async function userCreatePermission(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialUserPermission & {
     readonly objectId: string
@@ -267,7 +265,7 @@ export type MethodUserCreatePermissionBatch = (
 ) => Promise<boolean>
 
 export async function userCreatePermissionBatch(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   permissions: PartialUserPermission & {
     readonly objectId: string
@@ -303,7 +301,7 @@ export type MethodUserGetPermissions = (
 ) => Promise<ReadonlyArray<IUserPermission>>
 
 export async function userGetPermissions(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
 ): Promise<ReadonlyArray<IUserPermission>> {
   const {
@@ -325,7 +323,7 @@ export type MethodUserDeletePermission = (
 ) => Promise<boolean>
 
 export async function userDeletePermission(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   permissionId: string,
 ): Promise<boolean> {
   return !(await client.delete(`/v1/permissions/${permissionId}`))
@@ -340,7 +338,7 @@ export type MethodUserGetUtilisationPeriods = (
 ) => UtilisationPeriodResults
 
 export async function userGetUtilisationPeriods(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
 ): UtilisationPeriodResults {
   const {
@@ -361,7 +359,7 @@ export type MethodUserCheckInToUtilisationPeriod = (
 ) => UtilisationPeriodResults
 
 export async function userCheckInToUtilisationPeriod(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   utilisationPeriodId: string,
 ): UtilisationPeriodResult {

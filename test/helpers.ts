@@ -5,12 +5,12 @@ import { IUtilisationPeriod } from '../src/rest/methods/utilisationPeriod'
 import {
   EnumLocale,
   EnumTimezone,
-  InterfaceAllthingsRestClient,
+  IAllthingsRestClient,
 } from '../src/rest/types'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from './constants'
 
 export type CreateUserAndClientResult = Promise<{
-  readonly client: InterfaceAllthingsRestClient
+  readonly client: IAllthingsRestClient
   readonly user: IUser
 }>
 
