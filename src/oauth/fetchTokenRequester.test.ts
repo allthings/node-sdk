@@ -2,7 +2,7 @@
 import fetch from 'cross-fetch'
 import querystring from 'query-string'
 import { DEFAULT_API_WRAPPER_OPTIONS, USER_AGENT } from '../constants'
-import oauthTokenRequest from './oauthTokenRequest'
+import fetchTokenRequester from './fetchTokenRequester'
 
 jest.mock('cross-fetch')
 
@@ -33,13 +33,13 @@ const defaultParams = {
 const resolvedAccessToken = '1234'
 const resolvedRefreshToken = '5678'
 
-describe('oauthTokenRequest', () => {
+describe('fetchTokenRequester', () => {
   it('fetches supplied URL with params and return tokens', async () => {
     mockFetch.mockResolvedValueOnce(
       getMockedResponse(resolvedAccessToken, resolvedRefreshToken),
     )
 
-    const { accessToken, refreshToken } = await oauthTokenRequest(
+    const { accessToken, refreshToken } = await fetchTokenRequester(
       'allthings://oauth/token',
       defaultParams,
     )
@@ -69,7 +69,7 @@ describe('oauthTokenRequest', () => {
     })
 
     await expect(
-      oauthTokenRequest('allthings://oauth/token', defaultParams),
+      fetchTokenRequester('allthings://oauth/token', defaultParams),
     ).rejects.toThrow('HTTP 400 — bad request. Could not get token')
   })
 
@@ -82,7 +82,7 @@ describe('oauthTokenRequest', () => {
     })
 
     await expect(
-      oauthTokenRequest('allthings://oauth/token', defaultParams),
+      fetchTokenRequester('allthings://oauth/token', defaultParams),
     ).rejects.toThrow('error when reading response body')
   })
 })

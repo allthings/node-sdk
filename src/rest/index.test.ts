@@ -2,7 +2,7 @@
 import restClient from '.'
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import { IAuthorizationResponse, passwordGrant } from '../oauth'
-import oauthTokenRequest from './oauthTokenRequest'
+import fetchTokenRequester from '../oauth/fetchTokenRequester'
 
 describe('Rest API Client', () => {
   it('should return a client', async () => {
@@ -14,7 +14,7 @@ describe('Rest API Client', () => {
 
   it('should use accessToken when provided in options object', async () => {
     const { accessToken } = (await passwordGrant.requestToken(
-      oauthTokenRequest,
+      fetchTokenRequester,
       DEFAULT_API_WRAPPER_OPTIONS,
     )) as IAuthorizationResponse
     const client = restClient({

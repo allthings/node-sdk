@@ -2,9 +2,9 @@
 import fetch from 'cross-fetch'
 
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
+import fetchTokenRequester from '../oauth/fetchTokenRequester'
 import { until } from '../utils/functional'
 import oauthObtainTokenFromClientOptions from './oauthObtainTokenFromClientOptions'
-import oauthTokenRequest from './oauthTokenRequest'
 import { makeApiRequest } from './request'
 
 beforeEach(() => {
@@ -118,7 +118,7 @@ describe('Request', () => {
     )
 
     expect(mockOauthObtainTokenFromClientOptions).toBeCalledWith(
-      oauthTokenRequest,
+      fetchTokenRequester,
       options,
       true,
     )

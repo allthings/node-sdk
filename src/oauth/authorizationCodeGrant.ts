@@ -105,10 +105,10 @@ export const isEligible = (params: IndexSignature): boolean => {
 }
 
 export const requestToken = memoize(
-  async (oauthTokenRequest: TokenRequester, params: IndexSignature) => {
+  async (tokenRequester: TokenRequester, params: IndexSignature) => {
     const { oauthUrl } = params
 
-    return oauthTokenRequest(
+    return tokenRequester(
       `${oauthUrl}/oauth/token`,
       castToTokenRequestParams(params),
     )
