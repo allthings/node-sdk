@@ -166,7 +166,7 @@ describe('OAuth authorization code grant', () => {
         }),
       ).toEqual(mockTokenResult)
 
-      expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
+      expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         code: mockAuthCode,
         grant_type: 'authorization_code',
@@ -185,7 +185,7 @@ describe('OAuth authorization code grant', () => {
         redirectUri: mockRedirectUri,
       })
 
-      expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
+      expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         client_secret: clientSecret,
         code: mockAuthCode,

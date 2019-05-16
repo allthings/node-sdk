@@ -37,7 +37,7 @@ describe('oauthObtainTokenFromClientOptions', () => {
       true,
     )
     expect(result).toBe(mockTokenResult)
-    expect(mockTokenFetcher).toBeCalledWith(expect.any(String), {
+    expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       grant_type: refreshTokenGrant.GRANT_TYPE,
       refresh_token: mockRefreshToken,
@@ -67,7 +67,7 @@ describe('oauthObtainTokenFromClientOptions', () => {
       username,
     })
     expect(result).toBe(mockTokenResult)
-    expect(mockTokenFetcher).toBeCalledWith(expect.any(String), {
+    expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       grant_type: passwordGrant.GRANT_TYPE,
       password,
@@ -121,7 +121,7 @@ describe('oauthObtainTokenFromClientOptions', () => {
       redirectUri: mockRedirectUri,
     })
     expect(result).toBe(mockTokenResult)
-    expect(mockTokenFetcher).toBeCalledWith(expect.any(String), {
+    expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       client_secret: clientSecret,
       code: mockAuthCode,

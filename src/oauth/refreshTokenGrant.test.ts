@@ -67,7 +67,7 @@ describe('OAuth refresh token grant', () => {
         }),
       ).toEqual(mockTokenResult)
 
-      expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
+      expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         grant_type: 'refresh_token',
         refresh_token: mockRefreshToken,
@@ -85,7 +85,7 @@ describe('OAuth refresh token grant', () => {
         scope,
       })
 
-      expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
+      expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: 'refresh_token',

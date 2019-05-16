@@ -105,14 +105,8 @@ export const isEligible = (params: IndexSignature): boolean => {
 }
 
 export const requestToken = memoize(
-  async (tokenRequester: TokenRequester, params: IndexSignature) => {
-    const { oauthUrl } = params
-
-    return tokenRequester(
-      `${oauthUrl}/oauth/token`,
-      castToTokenRequestParams(params),
-    )
-  },
+  async (tokenRequester: TokenRequester, params: IndexSignature) =>
+    tokenRequester(castToTokenRequestParams(params)),
   {
     ...DEFAULT_MEMOIZE_OPTIONS,
     cacheKey: (_: TokenRequester, params: IndexSignature) =>

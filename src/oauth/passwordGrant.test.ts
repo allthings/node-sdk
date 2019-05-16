@@ -81,7 +81,7 @@ describe('OAuth password grant', () => {
         }),
       ).toEqual(mockTokenResult)
 
-      expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
+      expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         grant_type: 'password',
         password,
@@ -107,7 +107,7 @@ describe('OAuth password grant', () => {
         username,
       })
 
-      expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
+      expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: 'password',

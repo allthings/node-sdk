@@ -4,6 +4,5 @@ export interface IAuthorizationResponse {
 }
 
 export type TokenRequester = (
-  url: string,
   params: IndexSignature,
 ) => Promise<IAuthorizationResponse>

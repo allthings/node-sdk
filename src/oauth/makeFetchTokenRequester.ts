@@ -5,7 +5,9 @@ import makeLogger from '../utils/logger'
 
 const logger = makeLogger('OAuth Token Request')
 
-const fetchTokenRequester = async (url: string, params: IndexSignature) => {
+const makeFetchTokenRequester = (url: string) => async (
+  params: IndexSignature,
+) => {
   try {
     const response = await fetch(url, {
       body: querystring.stringify(params),
@@ -48,4 +50,4 @@ const fetchTokenRequester = async (url: string, params: IndexSignature) => {
   }
 }
 
-export default fetchTokenRequester
+export default makeFetchTokenRequester

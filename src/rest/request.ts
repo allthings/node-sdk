@@ -9,7 +9,7 @@ import {
   QUEUE_RESERVOIR_REFILL_INTERVAL,
   USER_AGENT,
 } from '../constants'
-import fetchTokenRequester from '../oauth/fetchTokenRequester'
+import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
@@ -190,7 +190,7 @@ export function makeApiRequest(
     }
 
     const tokenResponse = await oauthObtainTokenFromClientOptions(
-      fetchTokenRequester,
+      makeFetchTokenRequester(`${options.oauthUrl}/oauth/token`),
       options,
       retryCount > 0 &&
         TOKEN_REFRESH_STATUS_CODES.includes(previousResult.status),
