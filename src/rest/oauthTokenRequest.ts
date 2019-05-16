@@ -1,11 +1,7 @@
 import fetch from 'cross-fetch'
 import querystring from 'query-string'
 import { USER_AGENT } from '../constants'
-import {
-  IAuthorizationResponse,
-  RequestTokenParams,
-  TokenRequester,
-} from '../oauth'
+import { RequestTokenParams, TokenRequester } from '../oauth'
 import makeLogger from '../utils/logger'
 
 const logger = makeLogger('OAuth Token Request')
@@ -13,7 +9,7 @@ const logger = makeLogger('OAuth Token Request')
 const oauthTokenRequest: TokenRequester = async (
   url: string,
   params: RequestTokenParams,
-): Promise<IAuthorizationResponse> => {
+) => {
   try {
     const response = await fetch(url, {
       body: querystring.stringify(params),
