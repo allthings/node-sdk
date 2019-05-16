@@ -14,10 +14,10 @@ export interface IAccessTokenRequestParams {
   readonly scope?: string
 }
 
-const castClientOptionsToRequestParams = (
-  clientOptions: IndexSignature,
+const castToRequestParams = (
+  params: IndexSignature,
 ): IAccessTokenRequestParams => {
-  const { username, password, scope, clientId, clientSecret } = clientOptions
+  const { username, password, scope, clientId, clientSecret } = params
 
   if (!clientId) {
     throw new Error(
@@ -47,26 +47,26 @@ const castClientOptionsToRequestParams = (
   }
 }
 
-export const isEligible = (clientOptions: IndexSignature): boolean => {
+export const isEligible = (params: IndexSignature): boolean => {
   try {
-    return !!castClientOptionsToRequestParams(clientOptions)
+    return !!castToRequestParams(params)
   } catch {
     return false
   }
 }
 
 export const requestToken = memoize(
-  async (oauthTokenRequest: TokenRequester, clientOptions: IndexSignature) => {
-    const { oauthUrl } = clientOptions
+  async (oauthTokenRequest: TokenRequester, params: IndexSignature) => {
+    const { oauthUrl } = params
 
     return oauthTokenRequest(
       `${oauthUrl}/oauth/token`,
-      castClientOptionsToRequestParams(clientOptions),
+      castToRequestParams(params),
     )
   },
   {
     ...DEFAULT_MEMOIZE_OPTIONS,
-    cacheKey: (_: TokenRequester, clientOptions: IndexSignature) =>
-      JSON.stringify(castClientOptionsToRequestParams(clientOptions)),
+    cacheKey: (_: TokenRequester, params: IndexSignature) =>
+      JSON.stringify(castToRequestParams(params)),
   },
 )

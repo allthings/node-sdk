@@ -23,10 +23,10 @@ export interface IAccessTokenRequestParams {
   readonly client_secret?: string
 }
 
-const castClientOptionsToAuthorizationRequestParams = (
-  clientOptions: IndexSignature,
+const castToAuthorizationRequestParams = (
+  params: IndexSignature,
 ): IAuthorizationRequestParams => {
-  const { redirectUri, clientId, scope, state } = clientOptions
+  const { redirectUri, clientId, scope, state } = params
 
   if (!clientId) {
     throw new Error(
@@ -50,24 +50,24 @@ const castClientOptionsToAuthorizationRequestParams = (
 }
 
 export const isEligibleForClientRedirect = (
-  clientOptions: IndexSignature,
+  params: IndexSignature,
 ): boolean => {
   try {
-    return !!castClientOptionsToAuthorizationRequestParams(clientOptions)
+    return !!castToAuthorizationRequestParams(params)
   } catch {
     return false
   }
 }
 
-export const getRedirectUrl = (clientOptions: IndexSignature) =>
-  `${clientOptions.oauthUrl}/oauth/authorize?${querystring.stringify(
-    castClientOptionsToAuthorizationRequestParams(clientOptions),
+export const getRedirectUrl = (params: IndexSignature) =>
+  `${params.oauthUrl}/oauth/authorize?${querystring.stringify(
+    castToAuthorizationRequestParams(params),
   )}`
 
-const castClientOptionsToRequestParams = (
-  clientOptions: IndexSignature,
+const castToRequestParams = (
+  params: IndexSignature,
 ): IAccessTokenRequestParams => {
-  const { authCode, redirectUri, clientId, clientSecret } = clientOptions
+  const { authCode, redirectUri, clientId, clientSecret } = params
 
   if (!clientId) {
     throw new Error(
@@ -96,26 +96,26 @@ const castClientOptionsToRequestParams = (
   }
 }
 
-export const isEligible = (clientOptions: IndexSignature): boolean => {
+export const isEligible = (params: IndexSignature): boolean => {
   try {
-    return !!castClientOptionsToRequestParams(clientOptions)
+    return !!castToRequestParams(params)
   } catch {
     return false
   }
 }
 
 export const requestToken = memoize(
-  async (oauthTokenRequest: TokenRequester, clientOptions: IndexSignature) => {
-    const { oauthUrl } = clientOptions
+  async (oauthTokenRequest: TokenRequester, params: IndexSignature) => {
+    const { oauthUrl } = params
 
     return oauthTokenRequest(
       `${oauthUrl}/oauth/token`,
-      castClientOptionsToRequestParams(clientOptions),
+      castToRequestParams(params),
     )
   },
   {
     ...DEFAULT_MEMOIZE_OPTIONS,
-    cacheKey: (_: TokenRequester, clientOptions: IndexSignature) =>
-      JSON.stringify(castClientOptionsToRequestParams(clientOptions)),
+    cacheKey: (_: TokenRequester, params: IndexSignature) =>
+      JSON.stringify(castToRequestParams(params)),
   },
 )
