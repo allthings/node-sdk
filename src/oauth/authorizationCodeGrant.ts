@@ -1,8 +1,8 @@
 import memoize from 'mem'
 import querystring from 'query-string'
 
-import { TokenRequester } from '.'
 import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
+import { TokenRequester } from './base'
 
 export const RESPONSE_TYPE = 'code'
 export const GRANT_TYPE = 'authorization_code'
@@ -64,7 +64,7 @@ export const getRedirectUrl = (params: IndexSignature) =>
     castToAuthorizationRequestParams(params),
   )}`
 
-const castToRequestParams = (
+const castToTokenRequestParams = (
   params: IndexSignature,
 ): IAccessTokenRequestParams => {
   const { authCode, redirectUri, clientId, clientSecret } = params
@@ -98,7 +98,7 @@ const castToRequestParams = (
 
 export const isEligible = (params: IndexSignature): boolean => {
   try {
-    return !!castToRequestParams(params)
+    return !!castToTokenRequestParams(params)
   } catch {
     return false
   }
@@ -110,12 +110,12 @@ export const requestToken = memoize(
 
     return oauthTokenRequest(
       `${oauthUrl}/oauth/token`,
-      castToRequestParams(params),
+      castToTokenRequestParams(params),
     )
   },
   {
     ...DEFAULT_MEMOIZE_OPTIONS,
     cacheKey: (_: TokenRequester, params: IndexSignature) =>
-      JSON.stringify(castToRequestParams(params)),
+      JSON.stringify(castToTokenRequestParams(params)),
   },
 )
