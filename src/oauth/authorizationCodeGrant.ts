@@ -23,7 +23,7 @@ export interface IAccessTokenRequestParams {
   readonly client_secret?: string
 }
 
-const castClientOptionsToRedirectParams = (
+const castClientOptionsToAuthorizationRequestParams = (
   clientOptions: IndexSignature,
 ): IAuthorizationRequestParams => {
   const { redirectUri, clientId, scope, state } = clientOptions
@@ -53,7 +53,7 @@ export const isEligibleForClientRedirect = (
   clientOptions: IndexSignature,
 ): boolean => {
   try {
-    return !!castClientOptionsToRedirectParams(clientOptions)
+    return !!castClientOptionsToAuthorizationRequestParams(clientOptions)
   } catch {
     return false
   }
@@ -61,7 +61,7 @@ export const isEligibleForClientRedirect = (
 
 export const getRedirectUrl = (clientOptions: IndexSignature) =>
   `${clientOptions.oauthUrl}/oauth/authorize?${querystring.stringify(
-    castClientOptionsToRedirectParams(clientOptions),
+    castClientOptionsToAuthorizationRequestParams(clientOptions),
   )}`
 
 const castClientOptionsToRequestParams = (
@@ -104,7 +104,7 @@ export const isEligible = (clientOptions: IndexSignature): boolean => {
   }
 }
 
-export const getTokenFromClientOptions = memoize(
+export const requestToken = memoize(
   async (oauthTokenRequest: TokenRequester, clientOptions: IndexSignature) => {
     const { oauthUrl } = clientOptions
 

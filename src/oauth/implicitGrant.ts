@@ -10,7 +10,7 @@ export interface IAuthorizationRequestParams {
   readonly state?: string
 }
 
-const castClientOptionsToRedirectParams = (
+const castClientOptionsToAuthorizationRequestParams = (
   clientOptions: IndexSignature,
 ): IAuthorizationRequestParams => {
   const { clientId, scope, state, redirectUri } = clientOptions
@@ -34,7 +34,7 @@ export const isEligibleForClientRedirect = (
   clientOptions: IndexSignature,
 ): boolean => {
   try {
-    return !!castClientOptionsToRedirectParams(clientOptions)
+    return !!castClientOptionsToAuthorizationRequestParams(clientOptions)
   } catch {
     return false
   }
@@ -42,5 +42,5 @@ export const isEligibleForClientRedirect = (
 
 export const getRedirectUrl = (clientOptions: IndexSignature) =>
   `${clientOptions.oauthUrl}/oauth/authorize?${querystring.stringify(
-    castClientOptionsToRedirectParams(clientOptions),
+    castClientOptionsToAuthorizationRequestParams(clientOptions),
   )}`

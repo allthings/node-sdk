@@ -55,7 +55,7 @@ export const isEligible = (clientOptions: IndexSignature): boolean => {
   }
 }
 
-export const getTokenFromClientOptions = memoize(
+export const requestToken = memoize(
   async (oauthTokenRequest: TokenRequester, clientOptions: IndexSignature) => {
     const { oauthUrl } = clientOptions
 

@@ -123,10 +123,10 @@ describe('OAuth authorization code grant', () => {
     })
   })
 
-  describe('getTokenFromClientOptions', () => {
+  describe('requestToken', () => {
     it('throws when clientId is missing in client options', () => {
       expect(() =>
-        authorizationCodeGrant.getTokenFromClientOptions(mockTokenFetcher, {}),
+        authorizationCodeGrant.requestToken(mockTokenFetcher, {}),
       ).toThrow('Missing required "clientId"')
       expect(mockTokenFetcher).not.toBeCalled()
     })
@@ -135,7 +135,7 @@ describe('OAuth authorization code grant', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(() =>
-        authorizationCodeGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        authorizationCodeGrant.requestToken(mockTokenFetcher, {
           clientId,
         }),
       ).toThrow('Missing required "redirectUri"')
@@ -146,7 +146,7 @@ describe('OAuth authorization code grant', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(() =>
-        authorizationCodeGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        authorizationCodeGrant.requestToken(mockTokenFetcher, {
           clientId,
           redirectUri: mockRedirectUri,
         }),
@@ -158,15 +158,12 @@ describe('OAuth authorization code grant', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(
-        await authorizationCodeGrant.getTokenFromClientOptions(
-          mockTokenFetcher,
-          {
-            authCode: mockAuthCode,
-            clientId,
-            oauthUrl: mockOauthUrl,
-            redirectUri: mockRedirectUri,
-          },
-        ),
+        await authorizationCodeGrant.requestToken(mockTokenFetcher, {
+          authCode: mockAuthCode,
+          clientId,
+          oauthUrl: mockOauthUrl,
+          redirectUri: mockRedirectUri,
+        }),
       ).toEqual(mockTokenResult)
 
       expect(mockTokenFetcher).toBeCalledWith(`${mockOauthUrl}/oauth/token`, {
@@ -180,7 +177,7 @@ describe('OAuth authorization code grant', () => {
     it('provides client_secret if was specified in client options', async () => {
       const { clientId, clientSecret } = DEFAULT_API_WRAPPER_OPTIONS
 
-      await authorizationCodeGrant.getTokenFromClientOptions(mockTokenFetcher, {
+      await authorizationCodeGrant.requestToken(mockTokenFetcher, {
         authCode: mockAuthCode,
         clientId,
         clientSecret,

@@ -38,11 +38,11 @@ describe('OAuth password grant', () => {
     ).toBe(false)
   })
 
-  describe('getTokenFromClientOptions', () => {
+  describe('requestToken', () => {
     it('throws when clientId is missing in client options', () => {
-      expect(() =>
-        passwordGrant.getTokenFromClientOptions(mockTokenFetcher, {}),
-      ).toThrow('Missing required "clientId"')
+      expect(() => passwordGrant.requestToken(mockTokenFetcher, {})).toThrow(
+        'Missing required "clientId"',
+      )
       expect(mockTokenFetcher).not.toBeCalled()
     })
 
@@ -50,7 +50,7 @@ describe('OAuth password grant', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(() =>
-        passwordGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        passwordGrant.requestToken(mockTokenFetcher, {
           clientId,
         }),
       ).toThrow('Missing required "username"')
@@ -61,7 +61,7 @@ describe('OAuth password grant', () => {
       const { clientId, username } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(() =>
-        passwordGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        passwordGrant.requestToken(mockTokenFetcher, {
           clientId,
           username,
         }),
@@ -73,7 +73,7 @@ describe('OAuth password grant', () => {
       const { clientId, username, password } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(
-        await passwordGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        await passwordGrant.requestToken(mockTokenFetcher, {
           clientId,
           oauthUrl: mockOauthUrl,
           password,
@@ -98,7 +98,7 @@ describe('OAuth password grant', () => {
         clientSecret,
       } = DEFAULT_API_WRAPPER_OPTIONS
 
-      await passwordGrant.getTokenFromClientOptions(mockTokenFetcher, {
+      await passwordGrant.requestToken(mockTokenFetcher, {
         clientId,
         clientSecret,
         oauthUrl: mockOauthUrl,

@@ -22,5 +22,5 @@ export type RequestTokenParams =
 
 export type TokenRequester = (
   url: string,
-  params: RequestTokenParams,
+  params: IndexSignature,
 ) => Promise<IAuthorizationResponse>

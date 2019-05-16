@@ -13,7 +13,7 @@ describe('Rest API Client', () => {
   })
 
   it('should use accessToken when provided in options object', async () => {
-    const { accessToken } = (await passwordGrant.getTokenFromClientOptions(
+    const { accessToken } = (await passwordGrant.requestToken(
       oauthTokenRequest,
       DEFAULT_API_WRAPPER_OPTIONS,
     )) as IAuthorizationResponse

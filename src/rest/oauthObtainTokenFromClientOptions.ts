@@ -15,7 +15,7 @@ export default async function oauthGetTokenFromOptions(
   mustRefresh = false,
 ): Promise<IAuthorizationResponse | undefined> {
   if (mustRefresh && refreshTokenGrant.isEligible(options)) {
-    return refreshTokenGrant.getTokenFromClientOptions(tokenFetcher, options)
+    return refreshTokenGrant.requestToken(tokenFetcher, options)
   }
 
   if (options.accessToken) {
@@ -26,7 +26,7 @@ export default async function oauthGetTokenFromOptions(
   }
 
   if (passwordGrant.isEligible(options)) {
-    return passwordGrant.getTokenFromClientOptions(tokenFetcher, options)
+    return passwordGrant.requestToken(tokenFetcher, options)
   }
 
   if (typeof window !== 'undefined' && options.implicit) {
@@ -50,10 +50,7 @@ export default async function oauthGetTokenFromOptions(
   }
 
   if (authorizationCodeGrant.isEligible(options)) {
-    return authorizationCodeGrant.getTokenFromClientOptions(
-      tokenFetcher,
-      options,
-    )
+    return authorizationCodeGrant.requestToken(tokenFetcher, options)
   }
 
   if (

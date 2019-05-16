@@ -37,10 +37,10 @@ describe('OAuth refresh token grant', () => {
     ).toBe(false)
   })
 
-  describe('getTokenFromClientOptions', () => {
+  describe('requestToken', () => {
     it('throws when clientId is missing in client options', () => {
       expect(() =>
-        refreshTokenGrant.getTokenFromClientOptions(mockTokenFetcher, {}),
+        refreshTokenGrant.requestToken(mockTokenFetcher, {}),
       ).toThrow('Missing required "clientId"')
       expect(mockTokenFetcher).not.toBeCalled()
     })
@@ -49,7 +49,7 @@ describe('OAuth refresh token grant', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(() =>
-        refreshTokenGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        refreshTokenGrant.requestToken(mockTokenFetcher, {
           clientId,
         }),
       ).toThrow('Missing required "refreshToken"')
@@ -60,7 +60,7 @@ describe('OAuth refresh token grant', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(
-        await refreshTokenGrant.getTokenFromClientOptions(mockTokenFetcher, {
+        await refreshTokenGrant.requestToken(mockTokenFetcher, {
           clientId,
           oauthUrl: mockOauthUrl,
           refreshToken: mockRefreshToken,
@@ -77,7 +77,7 @@ describe('OAuth refresh token grant', () => {
     it('provides scope and client_secret if they were specified in client options', async () => {
       const { clientId, scope, clientSecret } = DEFAULT_API_WRAPPER_OPTIONS
 
-      await refreshTokenGrant.getTokenFromClientOptions(mockTokenFetcher, {
+      await refreshTokenGrant.requestToken(mockTokenFetcher, {
         clientId,
         clientSecret,
         oauthUrl: mockOauthUrl,
