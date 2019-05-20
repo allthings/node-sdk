@@ -1,13 +1,10 @@
 import querystring from 'query-string'
 
-import {
-  authorizationCodeGrant,
-  IAuthorizationResponse,
-  implicitGrant,
-  passwordGrant,
-  refreshTokenGrant,
-  TokenRequester,
-} from '../oauth'
+import * as authorizationCodeGrant from '../oauth/authorizationCodeGrant'
+import { IAuthorizationResponse, TokenRequester } from '../oauth/base'
+import * as implicitGrant from '../oauth/implicitGrant'
+import * as passwordGrant from '../oauth/passwordGrant'
+import * as refreshTokenGrant from '../oauth/refreshTokenGrant'
 
 export default async function oauthGetTokenFromOptions(
   tokenFetcher: TokenRequester,

@@ -26,9 +26,12 @@ beforeEach(() => {
   mockOauthObtainTokenFromClientOptions.mockReturnValue(mockTokenResult)
 })
 
+const fakeOauthTokenFetcher = async (): Promise<typeof mockTokenResult> =>
+  mockTokenResult
+
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
-    await makeApiRequest({} as any, 'get', '', {
+    await makeApiRequest(fakeOauthTokenFetcher, {} as any, 'get', '', {
       body: {
         formData: {
           a: 'b',
@@ -47,9 +50,15 @@ describe('Request', () => {
       status: 200,
     })
 
-    await makeApiRequest(DEFAULT_API_WRAPPER_OPTIONS, 'get', '', {
-      headers: { 'x-man': 'universe' },
-    })({}, 0)
+    await makeApiRequest(
+      fakeOauthTokenFetcher,
+      DEFAULT_API_WRAPPER_OPTIONS,
+      'get',
+      '',
+      {
+        headers: { 'x-man': 'universe' },
+      },
+    )({}, 0)
 
     expect(mockFetch).toHaveBeenLastCalledWith(
       'https://api.dev.allthings.me/api',
@@ -74,6 +83,7 @@ describe('Request', () => {
       until(
         () => false,
         makeApiRequest(
+          fakeOauthTokenFetcher,
           {
             ...DEFAULT_API_WRAPPER_OPTIONS,
             requestBackOffInterval: 0,
@@ -97,10 +107,12 @@ describe('Request', () => {
       status: 200,
     })
 
-    const error = await makeApiRequest(DEFAULT_API_WRAPPER_OPTIONS, 'get', '')(
-      {},
-      0,
-    )
+    const error = await makeApiRequest(
+      fakeOauthTokenFetcher,
+      DEFAULT_API_WRAPPER_OPTIONS,
+      'get',
+      '',
+    )({}, 0)
 
     expect(() => {
       throw error
@@ -109,7 +121,7 @@ describe('Request', () => {
 
   it('should should call oauthObtainTokenFromClientOptions with mustRefresh argument is previous status was 401', async () => {
     const options = DEFAULT_API_WRAPPER_OPTIONS
-    await makeApiRequest(options, 'get', '')(
+    await makeApiRequest(fakeOauthTokenFetcher, options, 'get', '')(
       {
         status: 401,
       },

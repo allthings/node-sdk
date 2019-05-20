@@ -1,6 +1,6 @@
 // tslint:disable:no-expression-statement
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import { passwordGrant } from './'
+import * as passwordGrant from './passwordGrant'
 
 const mockOauthUrl = 'allthings.test'
 

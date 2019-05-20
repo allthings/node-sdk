@@ -9,7 +9,7 @@ import {
   QUEUE_RESERVOIR_REFILL_INTERVAL,
   USER_AGENT,
 } from '../constants'
-import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
+import { TokenRequester } from '../oauth/base'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
@@ -153,6 +153,7 @@ export function responseWasSuccessful(response: Response): boolean {
  * are implemented with exponential-backing off strategy with jitter.
  */
 export function makeApiRequest(
+  oauthTokenRequester: TokenRequester,
   options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
   apiMethod: string,
@@ -190,7 +191,7 @@ export function makeApiRequest(
     }
 
     const tokenResponse = await oauthObtainTokenFromClientOptions(
-      makeFetchTokenRequester(`${options.oauthUrl}/oauth/token`),
+      oauthTokenRequester,
       options,
       retryCount > 0 &&
         TOKEN_REFRESH_STATUS_CODES.includes(previousResult.status),
@@ -293,6 +294,7 @@ export function makeApiRequest(
  * is reused on subsequent requests.
  */
 export default async function request(
+  oauthTokenRequester: TokenRequester,
   options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
   apiMethod: string,
@@ -306,7 +308,13 @@ export default async function request(
 
   const result = await until(
     responseWasSuccessful,
-    makeApiRequest(options, httpMethod, apiMethod, payload),
+    makeApiRequest(
+      oauthTokenRequester,
+      options,
+      httpMethod,
+      apiMethod,
+      payload,
+    ),
   )
 
   if (result instanceof Error) {

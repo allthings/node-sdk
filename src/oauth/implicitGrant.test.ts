@@ -4,7 +4,7 @@
 
 // tslint:disable:no-expression-statement
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import { implicitGrant } from './'
+import * as implicitGrant from './implicitGrant'
 
 const mockOauthUrl = 'allthings.test'
 const mockRedirectUri = 'allthings'
