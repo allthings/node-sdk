@@ -1,29 +1,38 @@
 import querystring from 'query-string'
 
-import * as authorizationCodeGrant from '../oauth/authorizationCodeGrant'
-import { IOAuthToken, TokenRequester } from '../oauth/base'
-import * as implicitGrant from '../oauth/implicitGrant'
-import * as passwordGrant from '../oauth/passwordGrant'
-import * as refreshTokenGrant from '../oauth/refreshTokenGrant'
+import * as authorizationCodeGrant from './authorizationCodeGrant'
+import { ITokenStore, TokenRequester } from './base'
+import * as implicitGrant from './implicitGrant'
+import * as passwordGrant from './passwordGrant'
+import * as refreshTokenGrant from './refreshTokenGrant'
 
-export default async function oauthGetTokenFromOptions(
+export default async function maybeUpdateToken(
+  oauthTokenStore: ITokenStore,
   tokenFetcher: TokenRequester,
   options: IndexSignature,
   mustRefresh = false,
-): Promise<IOAuthToken | undefined> {
-  if (mustRefresh && refreshTokenGrant.isEligible(options)) {
-    return refreshTokenGrant.requestToken(tokenFetcher, options)
+): Promise<void> {
+  const alreadyHasToken = oauthTokenStore.hasToken()
+
+  const refreshOptions = {
+    ...options,
+    refreshToken: alreadyHasToken ? oauthTokenStore.get()!.refreshToken : null,
   }
 
-  if (options.accessToken) {
-    return {
-      accessToken: options.accessToken,
-      refreshToken: options.refreshToken,
-    }
+  if (mustRefresh && refreshTokenGrant.isEligible(refreshOptions)) {
+    return oauthTokenStore.set(
+      await refreshTokenGrant.requestToken(tokenFetcher, refreshOptions),
+    )
+  }
+
+  if (alreadyHasToken) {
+    return
   }
 
   if (passwordGrant.isEligible(options)) {
-    return passwordGrant.requestToken(tokenFetcher, options)
+    return oauthTokenStore.set(
+      await passwordGrant.requestToken(tokenFetcher, options),
+    )
   }
 
   if (typeof window !== 'undefined' && options.implicit) {
@@ -35,7 +44,7 @@ export default async function oauthGetTokenFromOptions(
       // tslint:disable-next-line:no-expression-statement
       window.history.replaceState({}, '', window.location.href.split('#')[0])
 
-      return { accessToken }
+      return oauthTokenStore.set({ accessToken })
     }
 
     if (implicitGrant.isEligibleForClientRedirect(options)) {
@@ -47,7 +56,9 @@ export default async function oauthGetTokenFromOptions(
   }
 
   if (authorizationCodeGrant.isEligible(options)) {
-    return authorizationCodeGrant.requestToken(tokenFetcher, options)
+    return oauthTokenStore.set(
+      await authorizationCodeGrant.requestToken(tokenFetcher, options),
+    )
   }
 
   if (

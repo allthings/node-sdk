@@ -4,10 +4,11 @@
 
 // tslint:disable:no-expression-statement
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import * as authorizationCodeGrant from '../oauth/authorizationCodeGrant'
-import * as passwordGrant from '../oauth/passwordGrant'
-import * as refreshTokenGrant from '../oauth/refreshTokenGrant'
-import oauthObtainTokenFromClientOptions from './oauthObtainTokenFromClientOptions'
+import * as authorizationCodeGrant from './authorizationCodeGrant'
+import makeOAuthTokenStore from './makeOAuthTokenStore'
+import maybeUpdateToken from './maybeUpdateToken'
+import * as passwordGrant from './passwordGrant'
+import * as refreshTokenGrant from './refreshTokenGrant'
 
 const mockTokenResult = {
   accessToken: '5c3de8a7bafd2dc34d155d40',
@@ -18,23 +19,29 @@ const mockRefreshToken = '5c3deb09a0367dad13f1609a'
 const mockAccessToken = '5c3deb09a0367dcd13f1609a'
 
 const mockTokenFetcher = jest.fn(async () => mockTokenResult)
+const mockTokenStore = makeOAuthTokenStore()
 
 beforeEach(() => {
+  mockTokenStore.set()
   mockTokenFetcher.mockClear()
 })
 
-describe('oauthObtainTokenFromClientOptions', () => {
+describe('maybeUpdateToken', () => {
   it('should invoke refresh token when mustRefresh provided and refresh token specified', async () => {
+    mockTokenStore.set({
+      accessToken: mockAccessToken,
+      refreshToken: mockRefreshToken,
+    })
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
-    const result = await oauthObtainTokenFromClientOptions(
+    await maybeUpdateToken(
+      mockTokenStore,
       mockTokenFetcher,
       {
         clientId,
-        refreshToken: mockRefreshToken,
       },
       true,
     )
-    expect(result).toBe(mockTokenResult)
+    expect(mockTokenStore.get()).toBe(mockTokenResult)
     expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       grant_type: refreshTokenGrant.GRANT_TYPE,
@@ -42,35 +49,41 @@ describe('oauthObtainTokenFromClientOptions', () => {
     })
   })
 
-  it('should return accessToken and refreshToken if they already exist', async () => {
-    const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+  it('should do nothing if token already exist and refresh is not required', async () => {
+    mockTokenStore.set({
       accessToken: mockAccessToken,
-      clientId,
       refreshToken: mockRefreshToken,
     })
-    expect(result).toEqual({
-      accessToken: mockAccessToken,
-      refreshToken: mockRefreshToken,
+    const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
+      clientId,
     })
 
     expect(mockTokenFetcher).not.toBeCalled()
+    expect(mockTokenStore.get()).toEqual(
+      expect.objectContaining({
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+      }),
+    )
   })
 
   it('should invoke password flow if has username and password provided', async () => {
     const { clientId, username, password } = DEFAULT_API_WRAPPER_OPTIONS
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       clientId,
       password,
       username,
     })
-    expect(result).toBe(mockTokenResult)
     expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       grant_type: passwordGrant.GRANT_TYPE,
       password,
       username,
     })
+    expect(mockTokenStore.get()).toEqual(
+      expect.objectContaining(mockTokenResult),
+    )
   })
 
   it('should take accessToken from location.href if implicit option provided', async () => {
@@ -78,18 +91,20 @@ describe('oauthObtainTokenFromClientOptions', () => {
 
     window.history.pushState({}, 'any', `test#access_token=${mockAccessToken}`)
 
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       clientId,
       implicit: true,
     })
 
-    expect(result).toEqual({ accessToken: mockAccessToken })
+    expect(mockTokenStore.get()).toEqual(
+      expect.objectContaining({ accessToken: mockAccessToken }),
+    )
   })
 
   it('should redirect browser if implicit option provided and no access token in the URL', async () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    const result = await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       clientId,
       implicit: true,
     })
@@ -99,7 +114,7 @@ describe('oauthObtainTokenFromClientOptions', () => {
   })
 
   it("should return undefined and don't redirect browser if implicit option provided and no clientId provided", async () => {
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    const result = await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       implicit: true,
     })
 
@@ -112,13 +127,12 @@ describe('oauthObtainTokenFromClientOptions', () => {
     const mockRedirectUri = 'allthings'
     const mockAuthCode = '973049753'
 
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       authCode: mockAuthCode,
       clientId,
       clientSecret,
       redirectUri: mockRedirectUri,
     })
-    expect(result).toBe(mockTokenResult)
     expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       client_secret: clientSecret,
@@ -126,6 +140,9 @@ describe('oauthObtainTokenFromClientOptions', () => {
       grant_type: authorizationCodeGrant.GRANT_TYPE,
       redirect_uri: mockRedirectUri,
     })
+    expect(mockTokenStore.get()).toEqual(
+      expect.objectContaining(mockTokenResult),
+    )
   })
 
   it('should call authorizationRedirect when redirectUri and authorizationRedirect provided', async () => {
@@ -133,7 +150,7 @@ describe('oauthObtainTokenFromClientOptions', () => {
     const mockRedirectUri = 'allthings'
     const mockRedirectFn = jest.fn()
 
-    await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       authorizationRedirect: mockRedirectFn,
       clientId,
       redirectUri: mockRedirectUri,
@@ -142,9 +159,9 @@ describe('oauthObtainTokenFromClientOptions', () => {
     expect(mockRedirectFn).toBeCalled()
   })
 
-  it('returns undefined if no flow is eligible', async () => {
+  it('should return undefined if no flow is eligible', async () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
-    const result = await oauthObtainTokenFromClientOptions(mockTokenFetcher, {
+    const result = await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
       clientId,
     })
 

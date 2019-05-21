@@ -10,10 +10,10 @@ import {
   USER_AGENT,
 } from '../constants'
 import { ITokenStore, TokenRequester } from '../oauth/base'
+import maybeUpdateToken from '../oauth/maybeUpdateToken'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
-import oauthObtainTokenFromClientOptions from './oauthObtainTokenFromClientOptions'
 import { IAllthingsRestClientOptions } from './types'
 
 const requestLogger = makeLogger('REST API Request')
@@ -191,19 +191,18 @@ export function makeApiRequest(
       )
     }
 
-    const tokenResponse = await oauthObtainTokenFromClientOptions(
+    // tslint:disable-next-line:no-expression-statement
+    await maybeUpdateToken(
+      oauthTokenStore,
       oauthTokenRequester,
       options,
       retryCount > 0 &&
         TOKEN_REFRESH_STATUS_CODES.includes(previousResult.status),
     )
 
-    if (!(tokenResponse && tokenResponse.accessToken)) {
+    if (!(oauthTokenStore.hasToken() && oauthTokenStore.get()!.accessToken)) {
       throw new Error('Unable to get OAuth2 access token.')
     }
-
-    // tslint:disable-next-line:no-expression-statement
-    oauthTokenStore.set(tokenResponse)
 
     try {
       return (
@@ -230,7 +229,7 @@ export function makeApiRequest(
 
           const headers = {
             accept: 'application/json',
-            authorization: `Bearer ${options.accessToken}`,
+            authorization: `Bearer ${oauthTokenStore.get()!.accessToken}`,
             ...(!hasForm ? { 'content-type': 'application/json' } : {}),
             'user-agent': USER_AGENT,
 

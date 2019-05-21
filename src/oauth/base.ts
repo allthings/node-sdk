@@ -4,7 +4,8 @@ export interface IOAuthToken {
 }
 
 export interface ITokenStore {
-  readonly set: (token: IOAuthToken) => void
+  readonly hasToken: () => boolean
+  readonly set: (token?: IOAuthToken) => void
   readonly get: () => IOAuthToken | undefined
 }
 

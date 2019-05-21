@@ -1,7 +1,7 @@
 // tslint:disable:no-expression-statement
 import restClient from '.'
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
+import * as makeFetchTokenRequesterModule from '../oauth/makeFetchTokenRequester'
 import * as passwordGrant from '../oauth/passwordGrant'
 
 describe('Rest API Client', () => {
@@ -14,7 +14,7 @@ describe('Rest API Client', () => {
 
   it('should use accessToken when provided in options object', async () => {
     const { accessToken } = await passwordGrant.requestToken(
-      makeFetchTokenRequester(
+      makeFetchTokenRequesterModule.default(
         `${DEFAULT_API_WRAPPER_OPTIONS.oauthUrl}/oauth/token`,
       ),
       DEFAULT_API_WRAPPER_OPTIONS,
@@ -82,5 +82,44 @@ describe('Rest API Client', () => {
     await expect(
       client.appCreate('foobar', { name: 'foobar', siteUrl: 'foobar.test' }),
     ).rejects.toThrow('Unable to get OAuth2 access token')
+  })
+
+  describe('exposed OAuth', () => {
+    const mockToken = { accessToken: '1234567890', refreshToken: null }
+
+    beforeEach(() => {
+      const mockTokenRequester = async () => mockToken
+
+      jest
+        .spyOn(makeFetchTokenRequesterModule, 'default')
+        .mockReturnValue(mockTokenRequester)
+    })
+
+    it('oauth.authorizationCode.getUri should return authorization URL', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+      const client = restClient({
+        clientId,
+        redirectUri: 'allthings://redirect',
+      })
+
+      expect(client.oauth.authorizationCode.getUri()).toEqual(
+        expect.stringContaining(`/oauth/authorize?client_id=${clientId}`),
+      )
+    })
+
+    it('oauth.authorizationCode.requestToken should make a /token request and return new token', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+      const client = restClient({
+        authCode: '1234',
+        clientId,
+        redirectUri: 'allthings://redirect',
+      })
+
+      await expect(
+        client.oauth.authorizationCode.requestToken(),
+      ).resolves.toEqual(mockToken)
+    })
   })
 })

@@ -2,8 +2,9 @@
 import fetch from 'cross-fetch'
 
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
+import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
+import maybeUpdateToken from '../oauth/maybeUpdateToken'
 import { until } from '../utils/functional'
-import oauthObtainTokenFromClientOptions from './oauthObtainTokenFromClientOptions'
 import { makeApiRequest } from './request'
 
 beforeEach(() => {
@@ -12,10 +13,11 @@ beforeEach(() => {
 })
 
 jest.mock('cross-fetch')
-jest.mock('./oauthObtainTokenFromClientOptions')
+jest.mock('../oauth/maybeUpdateToken')
 
 const mockFetch = fetch as jest.Mock
-const mockOauthObtainTokenFromClientOptions = oauthObtainTokenFromClientOptions as jest.Mock
+const mockmaybeUpdateToken = maybeUpdateToken as jest.Mock
+const mockTokenStore = makeOAuthTokenStore()
 
 const mockTokenResult = {
   accessToken: '5c4092ed6a9a44fece13bd73',
@@ -23,17 +25,16 @@ const mockTokenResult = {
 }
 
 beforeEach(() => {
-  mockOauthObtainTokenFromClientOptions.mockReturnValue(mockTokenResult)
+  mockTokenStore.set(mockTokenResult)
 })
 
-import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
 const fakeOauthTokenFetcher = async (): Promise<typeof mockTokenResult> =>
   mockTokenResult
 
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
     await makeApiRequest(
-      makeOAuthTokenStore(),
+      mockTokenStore,
       fakeOauthTokenFetcher,
       {} as any,
       'get',
@@ -59,7 +60,7 @@ describe('Request', () => {
     })
 
     await makeApiRequest(
-      makeOAuthTokenStore(),
+      mockTokenStore,
       fakeOauthTokenFetcher,
       DEFAULT_API_WRAPPER_OPTIONS,
       'get',
@@ -92,7 +93,7 @@ describe('Request', () => {
       until(
         () => false,
         makeApiRequest(
-          makeOAuthTokenStore(),
+          mockTokenStore,
           fakeOauthTokenFetcher,
           {
             ...DEFAULT_API_WRAPPER_OPTIONS,
@@ -118,7 +119,7 @@ describe('Request', () => {
     })
 
     const error = await makeApiRequest(
-      makeOAuthTokenStore(),
+      mockTokenStore,
       fakeOauthTokenFetcher,
       DEFAULT_API_WRAPPER_OPTIONS,
       'get',
@@ -130,10 +131,10 @@ describe('Request', () => {
     }).toThrow('Response content type was "text/html" but expected JSON')
   })
 
-  it('should should call oauthObtainTokenFromClientOptions with mustRefresh argument is previous status was 401', async () => {
+  it('should should call maybeUpdateToken with mustRefresh argument is previous status was 401', async () => {
     const options = DEFAULT_API_WRAPPER_OPTIONS
     await makeApiRequest(
-      makeOAuthTokenStore(),
+      mockTokenStore,
       fakeOauthTokenFetcher,
       options,
       'get',
@@ -145,7 +146,8 @@ describe('Request', () => {
       1,
     )
 
-    expect(mockOauthObtainTokenFromClientOptions).toBeCalledWith(
+    expect(mockmaybeUpdateToken).toBeCalledWith(
+      mockTokenStore,
       expect.any(Function),
       options,
       true,

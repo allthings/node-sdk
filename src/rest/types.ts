@@ -1,3 +1,4 @@
+import { TokenRequester } from '../oauth/base'
 import { MethodHttpDelete } from './delete'
 import { MethodHttpGet } from './get'
 import {
@@ -126,6 +127,13 @@ export interface IAllthingsRestClientOptions {
   readonly authorizationRedirect?: (url: string) => any
 }
 
+export interface IClientExposedOAuth {
+  readonly authorizationCode: {
+    readonly getUri: () => string
+    readonly requestToken: () => ReturnType<TokenRequester>
+  }
+}
+
 // Describes the REST API wrapper's resulting interface
 export interface IAllthingsRestClient {
   readonly options: Required<IAllthingsRestClientOptions>
@@ -134,6 +142,8 @@ export interface IAllthingsRestClient {
   readonly get: MethodHttpGet
   readonly post: MethodHttpPost
   readonly patch: MethodHttpPatch
+
+  readonly oauth: IClientExposedOAuth
 
   // Agent
 

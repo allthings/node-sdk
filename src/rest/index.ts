@@ -65,11 +65,16 @@ import {
 import httpPatch from './patch'
 import httpPost from './post'
 import httpRequest from './request'
-import { IAllthingsRestClient, IAllthingsRestClientOptions } from './types'
+import {
+  IAllthingsRestClient,
+  IAllthingsRestClientOptions,
+  IClientExposedOAuth,
+} from './types'
 
 import * as authorizationCodeGrant from '../oauth/authorizationCodeGrant'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
 import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
+import requestAndSaveToStore from '../oauth/requestAndSaveToStore'
 
 const API_METHODS: ReadonlyArray<any> = [
   // Agent
@@ -186,12 +191,9 @@ export default function restClient(
   const tokenRequester = makeFetchTokenRequester(
     `${options.oauthUrl}/oauth/token`,
   )
-  const request = partial(
-    httpRequest,
-    makeOAuthTokenStore(),
-    tokenRequester,
-    options,
-  )
+  const tokenStore = makeOAuthTokenStore()
+
+  const request = partial(httpRequest, tokenStore, tokenRequester, options)
 
   // partially apply the request method to the get/post
   // http request method functions
@@ -199,6 +201,17 @@ export default function restClient(
   const get = partial(httpGet, request)
   const post = partial(httpPost, request)
   const patch = partial(httpPatch, request)
+
+  const oauth: IClientExposedOAuth = {
+    authorizationCode: {
+      getUri: partial(authorizationCodeGrant.getRedirectUrl, options),
+      requestToken: () =>
+        requestAndSaveToStore(
+          partial(authorizationCodeGrant.requestToken, tokenRequester, options),
+          tokenStore,
+        ),
+    },
+  }
 
   const client: IAllthingsRestClient = API_METHODS.reduce(
     (methods, method) => ({
@@ -209,16 +222,7 @@ export default function restClient(
     {
       delete: del,
       get,
-      oauth: {
-        authorizationCode: {
-          getUri: partial(authorizationCodeGrant.getRedirectUrl, options),
-          requestToken: partial(
-            authorizationCodeGrant.requestToken,
-            tokenRequester,
-            options,
-          ),
-        },
-      },
+      oauth,
       options,
       patch,
       post,
