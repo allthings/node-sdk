@@ -9,7 +9,7 @@ import {
   QUEUE_RESERVOIR_REFILL_INTERVAL,
   USER_AGENT,
 } from '../constants'
-import { TokenRequester } from '../oauth/base'
+import { ITokenStore, TokenRequester } from '../oauth/base'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
@@ -153,6 +153,7 @@ export function responseWasSuccessful(response: Response): boolean {
  * are implemented with exponential-backing off strategy with jitter.
  */
 export function makeApiRequest(
+  oauthTokenStore: ITokenStore,
   oauthTokenRequester: TokenRequester,
   options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
@@ -202,7 +203,7 @@ export function makeApiRequest(
     }
 
     // tslint:disable-next-line:no-expression-statement
-    Object.assign(options, tokenResponse)
+    oauthTokenStore.set(tokenResponse)
 
     try {
       return (
@@ -294,6 +295,7 @@ export function makeApiRequest(
  * is reused on subsequent requests.
  */
 export default async function request(
+  oauthTokenStore: ITokenStore,
   oauthTokenRequester: TokenRequester,
   options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
@@ -309,6 +311,7 @@ export default async function request(
   const result = await until(
     responseWasSuccessful,
     makeApiRequest(
+      oauthTokenStore,
       oauthTokenRequester,
       options,
       httpMethod,

@@ -26,20 +26,28 @@ beforeEach(() => {
   mockOauthObtainTokenFromClientOptions.mockReturnValue(mockTokenResult)
 })
 
+import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
 const fakeOauthTokenFetcher = async (): Promise<typeof mockTokenResult> =>
   mockTokenResult
 
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
-    await makeApiRequest(fakeOauthTokenFetcher, {} as any, 'get', '', {
-      body: {
-        formData: {
-          a: 'b',
-          c: 'd',
+    await makeApiRequest(
+      makeOAuthTokenStore(),
+      fakeOauthTokenFetcher,
+      {} as any,
+      'get',
+      '',
+      {
+        body: {
+          formData: {
+            a: 'b',
+            c: 'd',
+          },
         },
+        query: {},
       },
-      query: {},
-    })(0, 0)
+    )(0, 0)
   })
 
   it('should use customer headers when passed', async () => {
@@ -51,6 +59,7 @@ describe('Request', () => {
     })
 
     await makeApiRequest(
+      makeOAuthTokenStore(),
       fakeOauthTokenFetcher,
       DEFAULT_API_WRAPPER_OPTIONS,
       'get',
@@ -83,6 +92,7 @@ describe('Request', () => {
       until(
         () => false,
         makeApiRequest(
+          makeOAuthTokenStore(),
           fakeOauthTokenFetcher,
           {
             ...DEFAULT_API_WRAPPER_OPTIONS,
@@ -108,6 +118,7 @@ describe('Request', () => {
     })
 
     const error = await makeApiRequest(
+      makeOAuthTokenStore(),
       fakeOauthTokenFetcher,
       DEFAULT_API_WRAPPER_OPTIONS,
       'get',
@@ -121,7 +132,13 @@ describe('Request', () => {
 
   it('should should call oauthObtainTokenFromClientOptions with mustRefresh argument is previous status was 401', async () => {
     const options = DEFAULT_API_WRAPPER_OPTIONS
-    await makeApiRequest(fakeOauthTokenFetcher, options, 'get', '')(
+    await makeApiRequest(
+      makeOAuthTokenStore(),
+      fakeOauthTokenFetcher,
+      options,
+      'get',
+      '',
+    )(
       {
         status: 401,
       },

@@ -1,8 +1,11 @@
-export interface IAuthorizationResponse {
+export interface IOAuthToken {
   readonly accessToken: string
   readonly refreshToken?: string
 }
 
-export type TokenRequester = (
-  params: IndexSignature,
-) => Promise<IAuthorizationResponse>
+export interface ITokenStore {
+  readonly set: (token: IOAuthToken) => void
+  readonly get: () => IOAuthToken | undefined
+}
+
+export type TokenRequester = (params: IndexSignature) => Promise<IOAuthToken>

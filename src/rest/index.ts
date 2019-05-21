@@ -69,6 +69,7 @@ import { IAllthingsRestClient, IAllthingsRestClientOptions } from './types'
 
 import * as authorizationCodeGrant from '../oauth/authorizationCodeGrant'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
+import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
 
 const API_METHODS: ReadonlyArray<any> = [
   // Agent
@@ -185,7 +186,12 @@ export default function restClient(
   const tokenRequester = makeFetchTokenRequester(
     `${options.oauthUrl}/oauth/token`,
   )
-  const request = partial(tokenRequester, httpRequest, options)
+  const request = partial(
+    httpRequest,
+    makeOAuthTokenStore(),
+    tokenRequester,
+    options,
+  )
 
   // partially apply the request method to the get/post
   // http request method functions
@@ -194,31 +200,29 @@ export default function restClient(
   const post = partial(httpPost, request)
   const patch = partial(httpPatch, request)
 
-  const baseClient = {
-    delete: del,
-    get,
-    oauth: {
-      authorizationCode: {
-        getUri: partial(authorizationCodeGrant.getRedirectUrl, options),
-        requestToken: partial(
-          authorizationCodeGrant.requestToken,
-          tokenRequester,
-          options,
-        ),
-      },
-    },
-    options,
-    patch,
-    post,
-  }
-
   const client: IAllthingsRestClient = API_METHODS.reduce(
     (methods, method) => ({
       ...methods,
       // tslint:disable-next-line readonly-array
       [method.name]: (...args: any[]) => method(client, ...args),
     }),
-    baseClient,
+    {
+      delete: del,
+      get,
+      oauth: {
+        authorizationCode: {
+          getUri: partial(authorizationCodeGrant.getRedirectUrl, options),
+          requestToken: partial(
+            authorizationCodeGrant.requestToken,
+            tokenRequester,
+            options,
+          ),
+        },
+      },
+      options,
+      patch,
+      post,
+    },
   )
 
   return client
