@@ -64,6 +64,24 @@ export async function registrationCodeCreate(
 }
 
 /*
+  update a registration code by id
+*/
+export type MethodRegistrationCodeUpdateById = (
+  registrationCodeId: string,
+  data: PartialRegistrationCode,
+) => RegistrationCodeResult
+
+export async function registrationCodeUpdateById(
+  client: InterfaceAllthingsRestClient,
+  registrationCodeId: string,
+  data: PartialRegistrationCode,
+): RegistrationCodeResult {
+  return remapRegistationCodeResult(
+    await client.patch(`/v1/registration-codes/${registrationCodeId}`, data),
+  )
+}
+
+/*
   find a registration code by id
 */
 

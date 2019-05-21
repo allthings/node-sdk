@@ -33,6 +33,7 @@ import {
   MethodRegistrationCodeCreate,
   MethodRegistrationCodeDelete,
   MethodRegistrationCodeGetById,
+  MethodRegistrationCodeUpdateById,
 } from './methods/registrationCode'
 import {
   MethodUnitCreate,
@@ -238,6 +239,11 @@ export interface InterfaceAllthingsRestClient {
    * Create a new registration code
    */
   readonly registrationCodeCreate: MethodRegistrationCodeCreate
+
+  /**
+   * Update a registration code
+   */
+  readonly registrationCodeUpdateById: MethodRegistrationCodeUpdateById
 
   /**
    * Find a registration code by it
