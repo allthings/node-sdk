@@ -4,6 +4,11 @@ export interface IRegistrationCodeOptions {
   readonly expiresAt?: string | null
   readonly externalId?: string
   readonly permanent?: boolean
+  readonly tenant?: {
+    readonly email?: string
+    readonly phone?: string
+    readonly name?: string
+  }
 }
 
 export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
