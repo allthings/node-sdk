@@ -49,7 +49,7 @@ describe('registrationCodeCreate()', async () => {
 
     const tenant = {
       email: 'foo@bar.de',
-      name: 'Jon Doe',
+      name: 'John Doe',
       phone: '+14343490343',
     }
     const result = await client.registrationCodeCreate(
@@ -122,8 +122,8 @@ describe('registrationCodeUpdateById()', async () => {
       },
     )
     const tenant = {
-      email: 'foo@bar.de',
-      name: 'Jon Doe',
+      email: 'foo2@bar.de',
+      name: 'John Doe',
       phone: '+14343490343',
     }
     const result = await client.registrationCodeUpdateById(
