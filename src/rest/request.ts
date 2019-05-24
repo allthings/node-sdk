@@ -16,7 +16,7 @@ import {
   getNewTokenUsingImplicitFlow,
   getNewTokenUsingPasswordGrant,
 } from './oauth'
-import { InterfaceAllthingsRestClientOptions } from './types'
+import { IAllthingsRestClientOptions } from './types'
 
 const requestLogger = makeLogger('REST API Request')
 const responseLogger = makeLogger('REST API Response')
@@ -146,7 +146,7 @@ export function responseWasSuccessful(response: Response): boolean {
  * are implemented with exponential-backing off strategy with jitter.
  */
 export function makeApiRequest(
-  options: InterfaceAllthingsRestClientOptions,
+  options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
   apiUrl: string,
   apiMethod: string,
@@ -281,7 +281,7 @@ export function makeApiRequest(
  * is reused on subsequent requests.
  */
 export default async function request(
-  options: InterfaceAllthingsRestClientOptions,
+  options: IAllthingsRestClientOptions,
   httpMethod: HttpVerb,
   apiMethod: string,
   payload?: IRequestOptions,

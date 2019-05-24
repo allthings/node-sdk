@@ -10,6 +10,6 @@ export {
   EnumLocale,
   EnumResource,
   EnumTimezone,
-  InterfaceAllthingsRestClient,
-  InterfaceAllthingsRestClientOptions,
+  IAllthingsRestClient,
+  IAllthingsRestClientOptions,
 } from './rest/types'

@@ -1,4 +1,4 @@
-import { EnumCountryCode, InterfaceAllthingsRestClient } from '../types'
+import { EnumCountryCode, IAllthingsRestClient } from '../types'
 
 export interface IGroup {
   readonly address: Partial<{
@@ -43,7 +43,7 @@ export type MethodGroupCreate = (
 ) => GroupResult
 
 export async function groupCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   propertyId: string,
   data: PartialGroup & {
     readonly name: string
@@ -66,7 +66,7 @@ export async function groupCreate(
 export type MethodGroupGetById = (id: string) => GroupResult
 
 export async function groupGetById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   groupId: string,
 ): GroupResult {
   const { propertyManagerID: propertyManagerId, ...result } = await client.get(
@@ -87,7 +87,7 @@ export type MethodGroupUpdateById = (
 ) => GroupResult
 
 export async function groupUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   groupId: string,
   data: PartialGroup,
 ): GroupResult {

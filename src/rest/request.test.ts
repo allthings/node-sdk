@@ -3,7 +3,7 @@ import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import { until } from '../utils/functional'
 import { getNewTokenUsingPasswordGrant } from './oauth'
 import request, { HttpVerb, makeApiRequest } from './request'
-import { InterfaceAllthingsRestClientOptions } from './types'
+import { IAllthingsRestClientOptions } from './types'
 
 describe('Request', () => {
   it('should not get the headers, when in browser', async () => {
@@ -127,7 +127,7 @@ describe('Request', () => {
     }
 
     // tslint:enable no-object-mutation
-    const clientOptions: InterfaceAllthingsRestClientOptions = {
+    const clientOptions: IAllthingsRestClientOptions = {
       ...DEFAULT_API_WRAPPER_OPTIONS,
       apiUrl: '',
     }

@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export enum EnumUnitType {
   rented = 'rented',
@@ -33,7 +33,7 @@ export type MethodUnitCreate = (
 ) => UnitResult
 
 export async function unitCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   groupId: string,
   data: PartialUnit & {
     readonly name: string
@@ -50,7 +50,7 @@ export async function unitCreate(
 export type MethodUnitGetById = (id: string) => UnitResult
 
 export async function unitGetById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   unitId: string,
 ): UnitResult {
   return client.get(`/v1/units/${unitId}`)
@@ -66,7 +66,7 @@ export type MethodUnitUpdateById = (
 ) => UnitResult
 
 export async function unitUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   unitId: string,
   data: PartialUnit,
 ): UnitResult {

@@ -107,7 +107,7 @@ export enum EnumTimezone {
 }
 
 // Describes the options with which to construct a new API wrapper instance
-export interface InterfaceAllthingsRestClientOptions {
+export interface IAllthingsRestClientOptions {
   readonly apiUrl: string
   readonly accessToken?: string
   readonly clientId?: string
@@ -123,8 +123,8 @@ export interface InterfaceAllthingsRestClientOptions {
 }
 
 // Describes the REST API wrapper's resulting interface
-export interface InterfaceAllthingsRestClient {
-  readonly options: Required<InterfaceAllthingsRestClientOptions>
+export interface IAllthingsRestClient {
+  readonly options: Required<IAllthingsRestClientOptions>
 
   readonly delete: MethodHttpDelete
   readonly get: MethodHttpGet

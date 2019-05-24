@@ -3,7 +3,7 @@ import memoize from 'mem'
 import querystring from 'query-string'
 import { USER_AGENT } from '../constants'
 import makeLogger from '../utils/logger'
-import { InterfaceAllthingsRestClientOptions } from './types'
+import { IAllthingsRestClientOptions } from './types'
 
 const logger = makeLogger('OAuth Request')
 
@@ -11,7 +11,7 @@ const MEMOIZE_OPTIONS = { cachePromiseRejection: false, maxAge: 3600 * 1000 }
 
 export const getNewTokenUsingPasswordGrant = memoize(
   async (
-    clientOptions: InterfaceAllthingsRestClientOptions,
+    clientOptions: IAllthingsRestClientOptions,
   ): Promise<string | undefined> => {
     // tslint:disable-next-line:no-expression-statement
     logger.log('Performing password grant flow')
@@ -76,7 +76,7 @@ export const getNewTokenUsingPasswordGrant = memoize(
 )
 
 export const unmemoizedGetNewTokenUsingImplicitFlow = async (
-  clientOptions: InterfaceAllthingsRestClientOptions,
+  clientOptions: IAllthingsRestClientOptions,
 ): Promise<string | undefined> => {
   // tslint:disable-next-line:no-expression-statement
   logger.log('Performing implicit grant flow')

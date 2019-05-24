@@ -1,4 +1,4 @@
-import { EnumLocale, InterfaceAllthingsRestClient } from '../types'
+import { EnumLocale, IAllthingsRestClient } from '../types'
 import {
   EnumUserPermissionObjectType,
   EnumUserPermissionRole,
@@ -25,7 +25,7 @@ export type MethodAgentCreate = (
 ) => UserResult
 
 export async function agentCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   appId: string,
   propertyManagerId: string,
   username: string,
@@ -74,7 +74,7 @@ export type MethodAgentCreatePermissions = (
  * Returns a datastore-specific object of redis clients.
  */
 export async function agentCreatePermissions(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   agentId: string,
   objectId: string,
   objectType: EnumUserPermissionObjectType,

@@ -171,7 +171,7 @@ export type MethodCreateAgent = (
 
 ```typescript
 // Describes the API wrapper's resulting interface
-export interface InterfaceAllthingsRestClient {
+export interface IAllthingsRestClient {
   readonly delete: MethodHttpDelete
   readonly get: MethodHttpGet
   readonly post: MethodHttpPost

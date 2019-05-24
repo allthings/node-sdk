@@ -1,5 +1,5 @@
 import { version } from '../package.json'
-import { InterfaceAllthingsRestClientOptions } from './rest/types'
+import { IAllthingsRestClientOptions } from './rest/types'
 
 const REST_API_URL = 'https://api.allthings.me'
 const OAUTH_URL = 'https://accounts.allthings.me'
@@ -15,7 +15,7 @@ export const REQUEST_BACK_OFF_INTERVAL = 200
 export const REQUEST_MAX_RETRIES = 50
 
 // Default options passed to the api wrapper on instansiation
-export const DEFAULT_API_WRAPPER_OPTIONS: InterfaceAllthingsRestClientOptions = {
+export const DEFAULT_API_WRAPPER_OPTIONS: IAllthingsRestClientOptions = {
   apiUrl: process.env.ALLTHINGS_REST_API_URL || REST_API_URL,
   clientId: process.env.ALLTHINGS_OAUTH_CLIENT_ID,
   clientSecret: process.env.ALLTHINGS_OAUTH_CLIENT_SECRET,

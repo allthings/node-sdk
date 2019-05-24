@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface IApp {
   readonly id: string
@@ -20,7 +20,7 @@ export type MethodAppCreate = (
 
 // @TODO: this is very much incomplete.
 export async function appCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialApp & {
     readonly name: string
