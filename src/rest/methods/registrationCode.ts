@@ -72,7 +72,7 @@ export type MethodRegistrationCodeUpdateById = (
 ) => RegistrationCodeResult
 
 export async function registrationCodeUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   registrationCodeId: string,
   data: PartialRegistrationCode,
 ): RegistrationCodeResult {
