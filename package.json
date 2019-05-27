@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "bottleneck": "2.18.1",
-    "cross-fetch": "3.0.2",
+    "cross-fetch": "3.0.3",
     "mem": "4.3.0",
     "query-string": "6.5.0"
   },
