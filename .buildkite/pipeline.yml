@@ -19,6 +19,14 @@ steps:
     agents:
       queue: t2-large
 
+  - name: browsertest
+    command: >
+      bin/artifacts-download.sh &&
+      bin/docker-node.sh yarn browsertest
+    branches: '!HEAD'
+    agents:
+      queue: t2-large
+
   - name: test
     command: >
       bin/artifacts-download.sh &&
