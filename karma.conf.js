@@ -7,7 +7,13 @@ module.exports = function(config) {
     reporters: ['progress'],
     colors: true,
     logLevel: config.LOG_ERROR,
-    browsers: ['ChromeHeadless'],
+    browsers: ['HeadlessChrome'],
+    customLaunchers: {
+      HeadlessChrome: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox'],
+      },
+    },
     singleRun: true,
     browserDisconnectTolerance: 3,
     browserNoActivityTimeout: 30000,
