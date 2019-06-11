@@ -6,12 +6,17 @@ module.exports = function(config) {
     files: [require('./package.json').browser, './test/browser.test.js'],
     reporters: ['progress'],
     colors: true,
-    logLevel: config.LOG_ERROR,
+    logLevel: config.LOG_DEBUG,
     browsers: ['HeadlessChrome'],
     customLaunchers: {
       HeadlessChrome: {
         base: 'ChromeHeadless',
-        flags: ['--no-sandbox', '--headless', '--disable-gpu'],
+        flags: [
+          '--no-sandbox',
+          '--headless',
+          '--disable-gpu',
+          '--disable-setuid-sandbox',
+        ],
       },
     },
     singleRun: true,
