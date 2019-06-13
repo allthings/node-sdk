@@ -31,9 +31,14 @@ const makeFetchTokenRequester = (url: string) => async (
     const {
       access_token: newAccessToken,
       refresh_token: newRefreshToken,
+      expires_in: expiresIn,
     } = await response.json()
 
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken }
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      ...(expiresIn ? { expiresAt: Date.now() + expiresIn * 1000 } : {}),
+    }
   } catch (error) {
     if (!error.status) {
       throw error
