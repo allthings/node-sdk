@@ -5,18 +5,7 @@ import { TokenRequester } from './base'
 
 export const GRANT_TYPE = 'password'
 
-export interface IAccessTokenRequestParams {
-  readonly client_id: string
-  readonly grant_type: string
-  readonly username: string
-  readonly password: string
-  readonly client_secret?: string
-  readonly scope?: string
-}
-
-const castToTokenRequestParams = (
-  params: IndexSignature,
-): IAccessTokenRequestParams => {
+const castToTokenRequestParams = (params: IndexSignature) => {
   const { username, password, scope, clientId, clientSecret } = params
 
   if (!clientId) {

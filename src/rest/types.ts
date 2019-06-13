@@ -109,7 +109,7 @@ export enum EnumTimezone {
 // Describes the options with which to construct a new API wrapper instance
 export interface IAllthingsRestClientOptions {
   readonly apiUrl: string
-  readonly authCode?: string
+  readonly authenticationCode?: string
   readonly accessToken?: string
   readonly clientId?: string
   readonly clientSecret?: string
@@ -129,8 +129,10 @@ export interface IAllthingsRestClientOptions {
 
 export interface IClientExposedOAuth {
   readonly authorizationCode: {
-    readonly getUri: () => string
-    readonly requestToken: () => ReturnType<TokenRequester>
+    readonly getUri: (state?: string) => string
+    readonly requestToken: (
+      authenticationCode?: string,
+    ) => ReturnType<TokenRequester>
   }
 }
 

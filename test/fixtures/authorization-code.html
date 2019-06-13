@@ -29,10 +29,10 @@
         redirectUri: window.location.href.replace(window.location.search, ''),
       };
 
-      async function runQueryWithAuthCode(authCode) {
+      async function runQueryWithAuthCode(authenticationCode) {
         const client = allthings.restClient({
           ...clientOpts,
-          authCode
+          authenticationCode
         });
 
         const user = await client.getCurrentUser()

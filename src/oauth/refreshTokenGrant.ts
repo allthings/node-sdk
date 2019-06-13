@@ -5,17 +5,7 @@ import { TokenRequester } from './base'
 
 export const GRANT_TYPE = 'refresh_token'
 
-export interface IAccessTokenRequestParams {
-  readonly client_id: string
-  readonly grant_type: string
-  readonly refresh_token: string
-  readonly client_secret?: string
-  readonly scope?: string
-}
-
-const castToTokenRequestParams = (
-  params: IndexSignature,
-): IAccessTokenRequestParams => {
+const castToTokenRequestParams = (params: IndexSignature) => {
   const { clientId, clientSecret, refreshToken, scope } = params
 
   if (!clientId) {

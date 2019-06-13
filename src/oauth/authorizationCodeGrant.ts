@@ -7,25 +7,7 @@ import { TokenRequester } from './base'
 export const RESPONSE_TYPE = 'code'
 export const GRANT_TYPE = 'authorization_code'
 
-export interface IAuthorizationRequestParams {
-  readonly client_id: string
-  readonly response_type: string
-  readonly redirect_uri: string
-  readonly scope?: string
-  readonly state?: string
-}
-
-export interface IAccessTokenRequestParams {
-  readonly client_id: string
-  readonly code: string
-  readonly grant_type: string
-  readonly redirect_uri: string
-  readonly client_secret?: string
-}
-
-const castToAuthorizationRequestParams = (
-  params: IndexSignature,
-): IAuthorizationRequestParams => {
+const castToAuthorizationRequestParams = (params: IndexSignature) => {
   const { redirectUri, clientId, scope, state } = params
 
   if (!clientId) {
@@ -64,10 +46,8 @@ export const getRedirectUrl = (params: IndexSignature) =>
     castToAuthorizationRequestParams(params),
   )}`
 
-const castToTokenRequestParams = (
-  params: IndexSignature,
-): IAccessTokenRequestParams => {
-  const { authCode, redirectUri, clientId, clientSecret } = params
+const castToTokenRequestParams = (params: IndexSignature) => {
+  const { authenticationCode, redirectUri, clientId, clientSecret } = params
 
   if (!clientId) {
     throw new Error(
@@ -81,15 +61,15 @@ const castToTokenRequestParams = (
     )
   }
 
-  if (!authCode) {
+  if (!authenticationCode) {
     throw new Error(
-      'Missing required "authCode" parameter to perform authorization code grant',
+      'Missing required "authenticationCode" parameter to perform authorization code grant',
     )
   }
 
   return {
     client_id: clientId,
-    code: authCode,
+    code: authenticationCode,
     grant_type: GRANT_TYPE,
     redirect_uri: redirectUri,
     ...(clientSecret ? { client_secret: clientSecret } : {}),

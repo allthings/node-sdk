@@ -1,6 +1,7 @@
 // tslint:disable:no-expression-statement
 import restClient from '.'
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
+import * as authenticationCodeGrant from '../oauth/authorizationCodeGrant'
 import * as makeFetchTokenRequesterModule from '../oauth/makeFetchTokenRequester'
 import * as passwordGrant from '../oauth/passwordGrant'
 
@@ -99,27 +100,46 @@ describe('Rest API Client', () => {
     it('oauth.authorizationCode.getUri should return authorization URL', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
+      const redirectUri = 'allthings://redirect'
+
       const client = restClient({
         clientId,
-        redirectUri: 'allthings://redirect',
+        redirectUri,
       })
 
-      expect(client.oauth.authorizationCode.getUri()).toEqual(
-        expect.stringContaining(`/oauth/authorize?client_id=${clientId}`),
+      const state = 'qwerty'
+
+      const uri = new URL(client.oauth.authorizationCode.getUri(state))
+
+      expect(uri).toMatchObject({
+        origin: DEFAULT_API_WRAPPER_OPTIONS.oauthUrl,
+        pathname: '/oauth/authorize',
+      })
+      expect(uri.searchParams.get('client_id')).toEqual(
+        DEFAULT_API_WRAPPER_OPTIONS.clientId,
       )
+      expect(uri.searchParams.get('redirect_uri')).toEqual(redirectUri)
+      expect(uri.searchParams.get('response_type')).toEqual(
+        authenticationCodeGrant.RESPONSE_TYPE,
+      )
+      expect(uri.searchParams.get('scope')).toEqual(
+        DEFAULT_API_WRAPPER_OPTIONS.scope,
+      )
+      expect(uri.searchParams.get('state')).toEqual(state)
     })
 
     it('oauth.authorizationCode.requestToken should make a /token request and return new token', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const client = restClient({
-        authCode: '1234',
         clientId,
         redirectUri: 'allthings://redirect',
       })
 
+      const authCode = '1234'
+
       await expect(
-        client.oauth.authorizationCode.requestToken(),
+        client.oauth.authorizationCode.requestToken(authCode),
       ).resolves.toEqual(mockToken)
     })
   })

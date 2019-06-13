@@ -204,10 +204,18 @@ export default function restClient(
 
   const oauth: IClientExposedOAuth = {
     authorizationCode: {
-      getUri: partial(authorizationCodeGrant.getRedirectUrl, options),
-      requestToken: () =>
+      getUri: (state?: string) =>
+        partial(authorizationCodeGrant.getRedirectUrl, {
+          ...options,
+          state: state || options.state,
+        })(),
+      requestToken: (authenticationCode?: string) =>
         requestAndSaveToStore(
-          partial(authorizationCodeGrant.requestToken, tokenRequester, options),
+          partial(authorizationCodeGrant.requestToken, tokenRequester, {
+            ...options,
+            authenticationCode:
+              authenticationCode || options.authenticationCode,
+          }),
           tokenStore,
         ),
     },

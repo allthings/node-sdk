@@ -2,17 +2,7 @@ import querystring from 'query-string'
 
 export const RESPONSE_TYPE = 'token'
 
-export interface IAuthorizationRequestParams {
-  readonly client_id: string
-  readonly redirect_uri: string
-  readonly response_type: string
-  readonly scope?: string
-  readonly state?: string
-}
-
-const castToAuthorizationRequestParams = (
-  params: IndexSignature,
-): IAuthorizationRequestParams => {
+const castToAuthorizationRequestParams = (params: IndexSignature) => {
   const { clientId, scope, state, redirectUri } = params
 
   if (!clientId) {

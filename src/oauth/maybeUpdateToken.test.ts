@@ -123,13 +123,13 @@ describe('maybeUpdateToken', () => {
     expect(mockTokenFetcher).not.toBeCalled()
   })
 
-  it('should invoke authorization code flow if has authCode and redirectUri provided', async () => {
+  it('should invoke authorization code flow if has authenticationCode and redirectUri provided', async () => {
     const { clientId, clientSecret } = DEFAULT_API_WRAPPER_OPTIONS
     const mockRedirectUri = 'allthings'
     const mockAuthCode = '973049753'
 
     await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
-      authCode: mockAuthCode,
+      authenticationCode: mockAuthCode,
       clientId,
       clientSecret,
       redirectUri: mockRedirectUri,
