@@ -142,5 +142,17 @@ describe('Rest API Client', () => {
         client.oauth.authorizationCode.requestToken(authCode),
       ).resolves.toEqual(mockToken)
     })
+
+    it('oauth.refreshToken should make a token request and return a new token', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+      const client = restClient({
+        clientId,
+        redirectUri: 'allthings://redirect',
+        refreshToken: 'qwerty',
+      })
+
+      await expect(client.oauth.refreshToken()).resolves.toEqual(mockToken)
+    })
   })
 })

@@ -71,9 +71,13 @@ import {
   IClientExposedOAuth,
 } from './types'
 
-import * as authorizationCodeGrant from '../oauth/authorizationCodeGrant'
+import {
+  getRedirectUrl as getAuthirizationUrl,
+  requestToken as requestTokenByCode,
+} from '../oauth/authorizationCodeGrant'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
 import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
+import { requestToken as performRefreshTokenGrant } from '../oauth/refreshTokenGrant'
 import requestAndSaveToStore from '../oauth/requestAndSaveToStore'
 
 const API_METHODS: ReadonlyArray<any> = [
@@ -205,13 +209,13 @@ export default function restClient(
   const oauth: IClientExposedOAuth = {
     authorizationCode: {
       getUri: (state?: string) =>
-        partial(authorizationCodeGrant.getRedirectUrl, {
+        partial(getAuthirizationUrl, {
           ...options,
           state: state || options.state,
         })(),
       requestToken: (authenticationCode?: string) =>
         requestAndSaveToStore(
-          partial(authorizationCodeGrant.requestToken, tokenRequester, {
+          partial(requestTokenByCode, tokenRequester, {
             ...options,
             authenticationCode:
               authenticationCode || options.authenticationCode,
@@ -219,6 +223,16 @@ export default function restClient(
           tokenStore,
         ),
     },
+    refreshToken: () =>
+      requestAndSaveToStore(
+        partial(performRefreshTokenGrant, tokenRequester, {
+          ...options,
+          refreshToken: tokenStore.hasToken()
+            ? tokenStore.get()!.refreshToken
+            : options.refreshToken,
+        }),
+        tokenStore,
+      ),
   }
 
   const client: IAllthingsRestClient = API_METHODS.reduce(
