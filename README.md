@@ -10,6 +10,7 @@ Allthings Node/Javascript SDK
 1.  [Authentication](#authentication)
 1.  [API](#api)
 1.  [OAuth Implicit Grant Example](#oauth-implicit-grant-example-example)
+1.  [OAuth Authorization Code Grant Example](#oauth-authorization-code-grant-example)
 
 ## Installation & Usage
 
