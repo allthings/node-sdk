@@ -47,6 +47,11 @@ describe('registrationCodeCreate()', async () => {
     const code = generateId()
     const testExternalId = generateId()
 
+    const tenant = {
+      email: 'foo@bar.de',
+      name: 'John Doe',
+      phone: '+14343490343',
+    }
     const result = await client.registrationCodeCreate(
       code,
       sharedUtilisationPeriodIds,
@@ -54,6 +59,7 @@ describe('registrationCodeCreate()', async () => {
         expiresAt: null,
         externalId: testExternalId,
         permanent: false,
+        tenant,
       },
     )
 
@@ -71,6 +77,9 @@ describe('registrationCodeCreate()', async () => {
     expect(result.utilisationPeriods).toContainEqual(
       sharedUtilisationPeriodIds[2],
     )
+    expect(result.tenant.email).toBe(tenant.email)
+    expect(result.tenant.name).toBe(tenant.name)
+    expect(result.tenant.phone).toBe(tenant.phone)
 
     const singleUtilisationPeriod = await client.registrationCodeCreate(
       generateId(),
@@ -96,6 +105,35 @@ describe('registrationCodeCreate()', async () => {
     expect(emptyOptions.utilisationPeriods).toContainEqual(
       sharedUtilisationPeriodIds[0],
     )
+  })
+})
+
+describe('registrationCodeUpdateById()', async () => {
+  it('should be able to update an existing registration code by id', async () => {
+    const testExternalId = generateId()
+
+    const createdRegistrationCode = await client.registrationCodeCreate(
+      generateId(),
+      sharedUtilisationPeriodIds,
+      {
+        expiresAt: null,
+        externalId: testExternalId,
+        permanent: false,
+      },
+    )
+    const tenant = {
+      email: 'foo2@bar.de',
+      name: 'John Doe',
+      phone: '+14343490343',
+    }
+    const result = await client.registrationCodeUpdateById(
+      createdRegistrationCode.id,
+      { tenant },
+    )
+
+    expect(result.tenant.email).toBe(tenant.email)
+    expect(result.tenant.name).toBe(tenant.name)
+    expect(result.tenant.phone).toBe(tenant.phone)
   })
 })
 

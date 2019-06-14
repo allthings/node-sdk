@@ -4,6 +4,11 @@ export interface IRegistrationCodeOptions {
   readonly expiresAt?: string | null
   readonly externalId?: string
   readonly permanent?: boolean
+  readonly tenant?: {
+    readonly email?: string
+    readonly phone?: string
+    readonly name?: string
+  }
 }
 
 export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
@@ -55,6 +60,24 @@ export async function registrationCodeCreate(
       ...(externalId ? { tenantID: externalId } : {}),
       ...moreOptions,
     }),
+  )
+}
+
+/*
+  update a registration code by id
+*/
+export type MethodRegistrationCodeUpdateById = (
+  registrationCodeId: string,
+  data: PartialRegistrationCode,
+) => RegistrationCodeResult
+
+export async function registrationCodeUpdateById(
+  client: IAllthingsRestClient,
+  registrationCodeId: string,
+  data: PartialRegistrationCode,
+): RegistrationCodeResult {
+  return remapRegistationCodeResult(
+    await client.patch(`/v1/registration-codes/${registrationCodeId}`, data),
   )
 }
 
