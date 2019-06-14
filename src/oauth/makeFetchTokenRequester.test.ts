@@ -1,6 +1,5 @@
 // tslint:disable:no-expression-statement
 import fetch from 'cross-fetch'
-import mockDate from 'mockdate'
 import querystring from 'query-string'
 import { DEFAULT_API_WRAPPER_OPTIONS, USER_AGENT } from '../constants'
 import makeFetchTokenRequester from './makeFetchTokenRequester'
@@ -39,14 +38,6 @@ const resolvedAccessToken = '1234'
 const resolvedRefreshToken = '5678'
 const resolvedExpiresIn = 60 * 60
 
-beforeAll(() => {
-  mockDate.set(Date.now())
-})
-
-afterAll(() => {
-  mockDate.reset()
-})
-
 describe('makeFetchTokenRequester', () => {
   it('fetches supplied URL with params and return tokens', async () => {
     mockFetch.mockResolvedValueOnce(
@@ -74,7 +65,7 @@ describe('makeFetchTokenRequester', () => {
     expect(refreshToken).toBe(resolvedRefreshToken)
   })
 
-  it('returns token with expiresAt if expires_in was provided in response', async () => {
+  it('returns token with expiresIn if expires_in was provided in response', async () => {
     mockFetch.mockResolvedValueOnce(
       getMockedResponse(
         resolvedAccessToken,
@@ -83,11 +74,11 @@ describe('makeFetchTokenRequester', () => {
       ),
     )
 
-    const { expiresAt } = await makeFetchTokenRequester(
+    const { expiresIn } = await makeFetchTokenRequester(
       'allthings://oauth/token',
     )(defaultParams)
 
-    expect(expiresAt).toBe(Date.now() + resolvedExpiresIn * 1000)
+    expect(expiresIn).toBe(resolvedExpiresIn)
   })
 
   it('throws HTTP status - statusText error when request fails with status other than 200', async () => {
