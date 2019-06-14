@@ -84,6 +84,50 @@ client
   .then(viewer => console.log(`Welcome back ${viewer.username}!`))
 ```
 
+## OAuth Authorization Code Grant Example
+
+1. Initialize instance of `client`:
+```javascript
+const allthings = require('@allthings/sdk')
+
+const client = allthings.restClient({
+  clientId: '5d038ef2441f4de574005c54_example',
+  clientSecret: '40f63f981ff082dbc8d273983ac3852c2e51e90856123156',
+  redirectUri: 'https://example-app.com/callback'
+})
+```
+
+2. Construct a URI to send authorization request to, optionally providing `state`:
+```javascript
+const authorizationUri = client.oauth.authorizationCode.getUri(state)
+```
+If `state` is not provided, default string is used.
+
+3. Direct user's browser to the constructed URI. That can be done by either placing a button
+```html
+<a href="{{authorizationUri}}">Login with Allthings account</a>
+```
+or by doing HTTP redirect server-side when a protected resource is requested.
+
+4. When user completes authentication process, he is redirected to the `redirectUri` having `code` and `state` query string arguments, e.g.:
+```
+https://example-app.com/callback?code=ebc110bee11b2829&state=mysecretstate
+```
+
+At this point `state` should match the one provided when constructing authorization request URL.
+
+5. Use the code extracted from query parameters on the previous step to obtain an access token:
+
+```javascript
+await client.oauth.authorizationCode.requestToken(code)
+```
+
+6. Client is ready to make API requests:
+
+```javascript
+const user = await client.getCurrentUser()
+```
+
 ## API
 
 ### Allthings SDK module
