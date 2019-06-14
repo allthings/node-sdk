@@ -13,7 +13,7 @@ beforeEach(() => mockTokenFetcher.mockClear())
 
 describe('OAuth client credentials grant', () => {
   it('uses client credentials GRANT_TYPE', () => {
-    expect(clientCredentialsGrant.GRANT_TYPE).toBe('client-credentials')
+    expect(clientCredentialsGrant.GRANT_TYPE).toBe('client_credentials')
   })
 
   it('is eligible when client options have clientId, clientSecret', () => {
@@ -61,7 +61,7 @@ describe('OAuth client credentials grant', () => {
       expect(mockTokenFetcher).toBeCalledWith({
         client_id: clientId,
         client_secret: clientSecret,
-        grant_type: 'client-credentials',
+        grant_type: 'client_credentials',
         scope,
       })
     })

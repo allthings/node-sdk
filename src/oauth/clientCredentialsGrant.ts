@@ -3,7 +3,7 @@ import memoize from 'mem'
 import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
 import { TokenRequester } from './base'
 
-export const GRANT_TYPE = 'client-credentials'
+export const GRANT_TYPE = 'client_credentials'
 
 const castClientOptionsToRequestParams = (clientOptions: IndexSignature) => {
   const { scope, clientId, clientSecret } = clientOptions
