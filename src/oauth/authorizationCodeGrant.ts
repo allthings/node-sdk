@@ -47,7 +47,7 @@ export const getRedirectUrl = (params: IndexSignature) =>
   )}`
 
 const castToTokenRequestParams = (params: IndexSignature) => {
-  const { authenticationCode, redirectUri, clientId, clientSecret } = params
+  const { authorizationCode, redirectUri, clientId, clientSecret } = params
 
   if (!clientId) {
     throw new Error(
@@ -61,15 +61,15 @@ const castToTokenRequestParams = (params: IndexSignature) => {
     )
   }
 
-  if (!authenticationCode) {
+  if (!authorizationCode) {
     throw new Error(
-      'Missing required "authenticationCode" parameter to perform authorization code grant',
+      'Missing required "authorizationCode" parameter to perform authorization code grant',
     )
   }
 
   return {
     client_id: clientId,
-    code: authenticationCode,
+    code: authorizationCode,
     grant_type: GRANT_TYPE,
     redirect_uri: redirectUri,
     ...(clientSecret ? { client_secret: clientSecret } : {}),

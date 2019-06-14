@@ -143,7 +143,7 @@ describe('Rest API Client', () => {
       ).toEqual(DEFAULT_API_WRAPPER_OPTIONS.state)
     })
 
-    it('oauth.authorizationCode.requestToken should make a /token request and return new token for provided authentication code', async () => {
+    it('oauth.authorizationCode.requestToken should make a /token request and return new token for provided authorization code', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const client = restClient({
@@ -158,13 +158,13 @@ describe('Rest API Client', () => {
       ).resolves.toEqual(mockToken)
     })
 
-    it('oauth.authorizationCode.requestToken should make a /token request and return new token authentication code provided in options', async () => {
+    it('oauth.authorizationCode.requestToken should make a /token request and return new token authorization code provided in options', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const authCode = '1234'
 
       const client = restClient({
-        authenticationCode: authCode,
+        authorizationCode: authCode,
         clientId,
         redirectUri: 'allthings://redirect',
       })
@@ -190,7 +190,7 @@ describe('Rest API Client', () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const client = restClient({
-        authenticationCode: '1234',
+        authorizationCode: '1234',
         clientId,
         redirectUri: 'allthings://redirect',
       })

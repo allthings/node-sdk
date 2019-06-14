@@ -221,12 +221,11 @@ export default function restClient(
           ...options,
           state: state || options.state,
         })(),
-      requestToken: (authenticationCode?: string) =>
+      requestToken: (authorizationCode?: string) =>
         requestAndSaveToStore(
           partial(requestTokenByCode, tokenRequester, {
             ...options,
-            authenticationCode:
-              authenticationCode || options.authenticationCode,
+            authorizationCode: authorizationCode || options.authorizationCode,
           }),
           tokenStore,
         ),

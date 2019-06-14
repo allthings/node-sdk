@@ -31,8 +31,8 @@
         redirectUri: window.location.href.replace(window.location.search, ''),
       })
 
-      async function runQueryWithAuthCode(authenticationCode) {
-        await client.oauth.authorizationCode.requestToken(authenticationCode)
+      async function runQueryWithAuthCode(authorizationCode) {
+        await client.oauth.authorizationCode.requestToken(authorizationCode)
 
         const user = await client.getCurrentUser()
 
