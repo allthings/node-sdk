@@ -1,8 +1,10 @@
 import { IOAuthToken, ITokenStore } from './base'
 
-export default function makeOAuthTokenStore(): ITokenStore {
+export default function makeOAuthTokenStore(
+  initialToken?: IOAuthToken,
+): ITokenStore {
   // tslint:disable-next-line no-let
-  let token: IOAuthToken | undefined
+  let token: IOAuthToken | undefined = initialToken
 
   return {
     get: () => token,

@@ -26,8 +26,6 @@ describe('Rest API Client', () => {
     })
 
     const me = await client.get('/v1/me')
-
-    expect(client.options.accessToken).toBe(accessToken)
     expect(me).toHaveProperty('id')
   })
 
