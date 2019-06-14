@@ -21,19 +21,18 @@
 
       sessionStorage.setItem('clientSecret', clientSecret);
 
-      const clientOpts = {
+      const state = 'qwerty';
+
+      const client = allthings.restClient({
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
         clientId,
         clientSecret,
         redirectUri: window.location.href.replace(window.location.search, ''),
-      };
+      })
 
       async function runQueryWithAuthCode(authenticationCode) {
-        const client = allthings.restClient({
-          ...clientOpts,
-          authenticationCode
-        });
+        await client.oauth.authorizationCode.requestToken(authenticationCode)
 
         const user = await client.getCurrentUser()
 
@@ -42,23 +41,17 @@
           } (${user.email})</div>`
       }
 
-      function followRedirectUrl() {
-        const client = allthings.restClient({
-          ...clientOpts,
-          authorizationRedirect: (url) => {
-            window.location.href = url;
-          }
-        })
-
-        client.getCurrentUser();
-      }
-
       window.addEventListener('load', async () => {
         const codeMatch = window.location.search.match(/code=(\w+)/);
+        const stateMatch = window.location.search.match(/state=(\w+)/);
 
         if (codeMatch) {
+          if (!(stateMatch && stateMatch[1]) === state) {
+            throw new Error(`'state mismatch: expected ${state}, got ${stateMatch && stateMatch[1]}`)
+          }
           runQueryWithAuthCode(codeMatch[1]);
         } else {
+          window.location.href = client.oauth.authorizationCode.getUri('qwerty');
           followRedirectUrl();
         }
       });
