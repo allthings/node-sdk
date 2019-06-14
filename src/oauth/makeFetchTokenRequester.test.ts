@@ -1,5 +1,6 @@
 // tslint:disable:no-expression-statement
 import fetch from 'cross-fetch'
+import mockDate from 'mockdate'
 import querystring from 'query-string'
 import { DEFAULT_API_WRAPPER_OPTIONS, USER_AGENT } from '../constants'
 import makeFetchTokenRequester from './makeFetchTokenRequester'
@@ -8,11 +9,15 @@ jest.mock('cross-fetch')
 
 const mockFetch = fetch as jest.Mock
 
-const getMockedResponse = (accessToken: string, refreshToken: string) => ({
+const getMockedResponse = (
+  accessToken: string,
+  refreshToken: string,
+  expiresIn?: number,
+) => ({
   headers: new Map([['application/json', 'charset= utf-8']]),
   json: () => ({
     access_token: accessToken,
-    expires_in: 14400,
+    ...(expiresIn ? { expires_in: expiresIn } : {}),
     refresh_token: refreshToken,
     scope: 'user:profile',
     token_type: 'Bearer',
@@ -32,6 +37,15 @@ const defaultParams = {
 
 const resolvedAccessToken = '1234'
 const resolvedRefreshToken = '5678'
+const resolvedExpiresIn = 60 * 60
+
+beforeAll(() => {
+  mockDate.set(Date.now())
+})
+
+afterAll(() => {
+  mockDate.reset()
+})
 
 describe('makeFetchTokenRequester', () => {
   it('fetches supplied URL with params and return tokens', async () => {
@@ -58,6 +72,22 @@ describe('makeFetchTokenRequester', () => {
 
     expect(accessToken).toBe(resolvedAccessToken)
     expect(refreshToken).toBe(resolvedRefreshToken)
+  })
+
+  it('returns token with expiresAt if expires_in was provided in response', async () => {
+    mockFetch.mockResolvedValueOnce(
+      getMockedResponse(
+        resolvedAccessToken,
+        resolvedRefreshToken,
+        resolvedExpiresIn,
+      ),
+    )
+
+    const { expiresAt } = await makeFetchTokenRequester(
+      'allthings://oauth/token',
+    )(defaultParams)
+
+    expect(expiresAt).toBe(Date.now() + resolvedExpiresIn * 1000)
   })
 
   it('throws HTTP status - statusText error when request fails with status other than 200', async () => {

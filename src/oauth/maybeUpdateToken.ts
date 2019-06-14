@@ -17,7 +17,9 @@ export default async function maybeUpdateToken(
 
   const refreshOptions = {
     ...options,
-    refreshToken: alreadyHasToken ? oauthTokenStore.get()!.refreshToken : null,
+    refreshToken: alreadyHasToken
+      ? oauthTokenStore.get()!.refreshToken
+      : options.refreshToken,
   }
 
   if (mustRefresh && refreshTokenGrant.isEligible(refreshOptions)) {

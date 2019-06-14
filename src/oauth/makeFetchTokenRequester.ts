@@ -2,12 +2,13 @@ import fetch from 'cross-fetch'
 import querystring from 'query-string'
 import { USER_AGENT } from '../constants'
 import makeLogger from '../utils/logger'
+import { IOAuthToken } from './base'
 
 const logger = makeLogger('OAuth Token Request')
 
 const makeFetchTokenRequester = (url: string) => async (
   params: IndexSignature,
-) => {
+): Promise<IOAuthToken> => {
   try {
     const response = await fetch(url, {
       body: querystring.stringify(params),

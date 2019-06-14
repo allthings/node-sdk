@@ -87,7 +87,7 @@ describe('Rest API Client', () => {
   })
 
   describe('exposed OAuth', () => {
-    const mockToken = { accessToken: '1234567890', refreshToken: null }
+    const mockToken = { accessToken: '1234567890', refreshToken: 'ABCDEF200' }
 
     beforeEach(() => {
       const mockTokenRequester = async () => mockToken
@@ -97,7 +97,7 @@ describe('Rest API Client', () => {
         .mockReturnValue(mockTokenRequester)
     })
 
-    it('oauth.authorizationCode.getUri should return authorization URL', async () => {
+    it('oauth.authorizationCode.getUri should return authorization URL for provided state', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const redirectUri = 'allthings://redirect'
@@ -128,7 +128,24 @@ describe('Rest API Client', () => {
       expect(uri.searchParams.get('state')).toEqual(state)
     })
 
-    it('oauth.authorizationCode.requestToken should make a /token request and return new token', async () => {
+    it('oauth.authorizationCode.getUri should return authorization URL for provided state', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+      const redirectUri = 'allthings://redirect'
+
+      const client = restClient({
+        clientId,
+        redirectUri,
+      })
+
+      expect(
+        new URL(client.oauth.authorizationCode.getUri()).searchParams.get(
+          'state',
+        ),
+      ).toEqual(DEFAULT_API_WRAPPER_OPTIONS.state)
+    })
+
+    it('oauth.authorizationCode.requestToken should make a /token request and return new token for provided authentication code', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const client = restClient({
@@ -143,6 +160,22 @@ describe('Rest API Client', () => {
       ).resolves.toEqual(mockToken)
     })
 
+    it('oauth.authorizationCode.requestToken should make a /token request and return new token authentication code provided in options', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+      const authCode = '1234'
+
+      const client = restClient({
+        authenticationCode: authCode,
+        clientId,
+        redirectUri: 'allthings://redirect',
+      })
+
+      await expect(
+        client.oauth.authorizationCode.requestToken(),
+      ).resolves.toEqual(mockToken)
+    })
+
     it('oauth.refreshToken should make a token request and return a new token', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
@@ -151,6 +184,20 @@ describe('Rest API Client', () => {
         redirectUri: 'allthings://redirect',
         refreshToken: 'qwerty',
       })
+
+      await expect(client.oauth.refreshToken()).resolves.toEqual(mockToken)
+    })
+
+    it('oauth.refreshToken should make a token request and return a new token based on refreshToken already stored', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+      const client = restClient({
+        authenticationCode: '1234',
+        clientId,
+        redirectUri: 'allthings://redirect',
+      })
+
+      await client.oauth.authorizationCode.requestToken()
 
       await expect(client.oauth.refreshToken()).resolves.toEqual(mockToken)
     })

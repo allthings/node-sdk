@@ -72,7 +72,7 @@ import {
 } from './types'
 
 import {
-  getRedirectUrl as getAuthirizationUrl,
+  getRedirectUrl as getAuthorizationUrl,
   requestToken as requestTokenByCode,
 } from '../oauth/authorizationCodeGrant'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
@@ -209,7 +209,7 @@ export default function restClient(
   const oauth: IClientExposedOAuth = {
     authorizationCode: {
       getUri: (state?: string) =>
-        partial(getAuthirizationUrl, {
+        partial(getAuthorizationUrl, {
           ...options,
           state: state || options.state,
         })(),
