@@ -2,7 +2,7 @@ import memoize from 'mem'
 import querystring from 'query-string'
 
 import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
-import { TokenRequester } from './base'
+import { TokenRequester } from './types'
 
 export const RESPONSE_TYPE = 'code'
 export const GRANT_TYPE = 'authorization_code'

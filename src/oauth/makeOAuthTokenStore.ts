@@ -1,4 +1,4 @@
-import { IOAuthToken, ITokenStore } from './base'
+import { IOAuthToken, ITokenStore } from './types'
 
 export default function makeOAuthTokenStore(
   initialToken?: IOAuthToken,

@@ -1,11 +1,11 @@
 import querystring from 'query-string'
 
 import * as authorizationCodeGrant from './authorizationCodeGrant'
-import { ITokenStore, TokenRequester } from './base'
 import * as clientCredentialsGrant from './clientCredentialsGrant'
 import * as implicitGrant from './implicitGrant'
 import * as passwordGrant from './passwordGrant'
 import * as refreshTokenGrant from './refreshTokenGrant'
+import { ITokenStore, TokenRequester } from './types'
 
 export default async function maybeUpdateToken(
   oauthTokenStore: ITokenStore,

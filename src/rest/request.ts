@@ -9,8 +9,8 @@ import {
   QUEUE_RESERVOIR_REFILL_INTERVAL,
   USER_AGENT,
 } from '../constants'
-import { ITokenStore, TokenRequester } from '../oauth/base'
 import maybeUpdateToken from '../oauth/maybeUpdateToken'
+import { ITokenStore, TokenRequester } from '../oauth/types'
 import { fnClearInterval, until } from '../utils/functional'
 import makeLogger from '../utils/logger'
 import sleep from '../utils/sleep'
@@ -163,9 +163,7 @@ export function makeApiRequest(
   return async (previousResult, retryCount) => {
     if (retryCount > 0) {
       if (retryCount > options.requestMaxRetries) {
-        const error = `Maximum number of retries reached while retrying ${
-          previousResult.method
-        } request ${previousResult.path}.`
+        const error = `Maximum number of retries reached while retrying ${previousResult.method} request ${previousResult.path}.`
 
         // tslint:disable-next-line:no-expression-statement
         requestLogger.error(error)
@@ -175,9 +173,7 @@ export function makeApiRequest(
 
       // tslint:disable-next-line:no-expression-statement
       requestLogger.warn(
-        `Warning: encountered ${previousResult.status}. Retrying ${
-          previousResult.method
-        } request ${previousResult.path} (retry #${retryCount}).`,
+        `Warning: encountered ${previousResult.status}. Retrying ${previousResult.method} request ${previousResult.path} (retry #${retryCount}).`,
       )
 
       // disabling linter here for better readabiliy

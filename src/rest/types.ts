@@ -1,4 +1,4 @@
-import { TokenRequester } from '../oauth/base'
+import { TokenRequester } from '../oauth/types'
 import { MethodHttpDelete } from './delete'
 import { MethodHttpGet } from './get'
 import {

@@ -1,7 +1,7 @@
 import memoize from 'mem'
 
 import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
-import { TokenRequester } from './base'
+import { TokenRequester } from './types'
 
 export const GRANT_TYPE = 'password'
 

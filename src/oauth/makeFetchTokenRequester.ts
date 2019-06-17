@@ -2,7 +2,7 @@ import fetch from 'cross-fetch'
 import querystring from 'query-string'
 import { USER_AGENT } from '../constants'
 import makeLogger from '../utils/logger'
-import { IOAuthToken } from './base'
+import { IOAuthToken } from './types'
 
 const logger = makeLogger('OAuth Token Request')
 

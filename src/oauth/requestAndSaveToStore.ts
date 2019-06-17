@@ -1,4 +1,4 @@
-import { IOAuthToken, ITokenStore } from './base'
+import { IOAuthToken, ITokenStore } from './types'
 
 export default async function requestAndSaveToStore(
   requester: () => Promise<IOAuthToken>,
