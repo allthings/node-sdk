@@ -6,7 +6,7 @@
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import * as authorizationCodeGrant from './authorizationCodeGrant'
 import * as clientCredentialsGrant from './clientCredentialsGrant'
-import makeOAuthTokenStore from './makeOAuthTokenStore'
+import makeTokenStore from './makeTokenStore'
 import maybeUpdateToken from './maybeUpdateToken'
 import * as passwordGrant from './passwordGrant'
 import * as refreshTokenGrant from './refreshTokenGrant'
@@ -20,7 +20,7 @@ const mockRefreshToken = '5c3deb09a0367dad13f1609a'
 const mockAccessToken = '5c3deb09a0367dcd13f1609a'
 
 const mockTokenFetcher = jest.fn(async () => mockTokenResult)
-const mockTokenStore = makeOAuthTokenStore()
+const mockTokenStore = makeTokenStore()
 
 beforeEach(() => {
   mockTokenStore.set()

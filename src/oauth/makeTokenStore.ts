@@ -1,6 +1,6 @@
 import { IOAuthToken, ITokenStore } from './types'
 
-export default function makeOAuthTokenStore(
+export default function makeTokenStore(
   initialToken?: IOAuthToken,
 ): ITokenStore {
   // tslint:disable-next-line no-let

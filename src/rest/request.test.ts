@@ -2,7 +2,7 @@
 import fetch from 'cross-fetch'
 
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
-import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
+import makeTokenStore from '../oauth/makeTokenStore'
 import maybeUpdateToken from '../oauth/maybeUpdateToken'
 import { until } from '../utils/functional'
 import { makeApiRequest } from './request'
@@ -17,7 +17,7 @@ jest.mock('../oauth/maybeUpdateToken')
 
 const mockFetch = fetch as jest.Mock
 const mockmaybeUpdateToken = maybeUpdateToken as jest.Mock
-const mockTokenStore = makeOAuthTokenStore()
+const mockTokenStore = makeTokenStore()
 
 const mockTokenResult = {
   accessToken: '5c4092ed6a9a44fece13bd73',

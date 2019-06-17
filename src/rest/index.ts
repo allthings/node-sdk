@@ -77,7 +77,7 @@ import {
   requestToken as requestTokenByCode,
 } from '../oauth/authorizationCodeGrant'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
-import makeOAuthTokenStore from '../oauth/makeOAuthTokenStore'
+import makeTokenStore from '../oauth/makeTokenStore'
 import { requestToken as performRefreshTokenGrant } from '../oauth/refreshTokenGrant'
 import requestAndSaveToStore from '../oauth/requestAndSaveToStore'
 
@@ -197,7 +197,7 @@ export default function restClient(
   const tokenRequester = makeFetchTokenRequester(
     `${options.oauthUrl}/oauth/token`,
   )
-  const tokenStore = makeOAuthTokenStore(
+  const tokenStore = makeTokenStore(
     options.accessToken
       ? {
           accessToken: options.accessToken,
