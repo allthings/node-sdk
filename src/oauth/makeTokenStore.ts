@@ -3,15 +3,12 @@ import { IOAuthToken, ITokenStore } from './types'
 export default function makeTokenStore(
   initialToken?: IOAuthToken,
 ): ITokenStore {
-  // tslint:disable-next-line no-let
-  let token: IOAuthToken | undefined = initialToken
+  const token = new Map<string, string>(Object.entries(initialToken || {}))
 
   return {
-    get: () => token,
-    hasToken: () => !!token,
-    set: (newToken?: IOAuthToken) => {
-      // tslint:disable-next-line no-expression-statement
-      token = newToken
-    },
+    get: key => token.get(key),
+    reset: () => token.clear(),
+    set: update =>
+      Object.entries(update).forEach(([key, value]) => token.set(key, value)),
   }
 }

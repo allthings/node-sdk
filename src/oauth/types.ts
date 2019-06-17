@@ -1,13 +1,13 @@
 export interface IOAuthToken {
-  readonly accessToken: string
+  readonly accessToken?: string
   readonly expiresIn?: number
   readonly refreshToken?: string
 }
 
 export interface ITokenStore {
-  readonly hasToken: () => boolean
-  readonly set: (token?: IOAuthToken) => void
-  readonly get: () => IOAuthToken | undefined
+  readonly set: (token: IOAuthToken) => void
+  readonly get: (key: keyof IOAuthToken) => string | undefined
+  readonly reset: () => void
 }
 
 export type TokenRequester = (params: IndexSignature) => Promise<IOAuthToken>

@@ -13,13 +13,9 @@ export default async function maybeUpdateToken(
   options: IndexSignature,
   mustRefresh = false,
 ): Promise<void> {
-  const alreadyHasToken = oauthTokenStore.hasToken()
-
   const refreshOptions = {
     ...options,
-    refreshToken: alreadyHasToken
-      ? oauthTokenStore.get()!.refreshToken
-      : options.refreshToken,
+    refreshToken: oauthTokenStore.get('refreshToken'),
   }
 
   if (mustRefresh && refreshTokenGrant.isEligible(refreshOptions)) {
@@ -28,7 +24,7 @@ export default async function maybeUpdateToken(
     )
   }
 
-  if (alreadyHasToken) {
+  if (oauthTokenStore.get('accessToken')) {
     return
   }
 

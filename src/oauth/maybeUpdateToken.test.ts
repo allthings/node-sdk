@@ -23,7 +23,7 @@ const mockTokenFetcher = jest.fn(async () => mockTokenResult)
 const mockTokenStore = makeTokenStore()
 
 beforeEach(() => {
-  mockTokenStore.set()
+  mockTokenStore.reset()
   mockTokenFetcher.mockClear()
 })
 
@@ -42,7 +42,10 @@ describe('maybeUpdateToken', () => {
       },
       true,
     )
-    expect(mockTokenStore.get()).toBe(mockTokenResult)
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
+    )
     expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,
       grant_type: refreshTokenGrant.GRANT_TYPE,
@@ -61,12 +64,8 @@ describe('maybeUpdateToken', () => {
     })
 
     expect(mockTokenFetcher).not.toBeCalled()
-    expect(mockTokenStore.get()).toEqual(
-      expect.objectContaining({
-        accessToken: mockAccessToken,
-        refreshToken: mockRefreshToken,
-      }),
-    )
+    expect(mockTokenStore.get('accessToken')).toBe(mockAccessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(mockRefreshToken)
   })
 
   it('should invoke password flow if has username and password provided', async () => {
@@ -82,8 +81,9 @@ describe('maybeUpdateToken', () => {
       password,
       username,
     })
-    expect(mockTokenStore.get()).toEqual(
-      expect.objectContaining(mockTokenResult),
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
     )
   })
 
@@ -97,9 +97,7 @@ describe('maybeUpdateToken', () => {
       implicit: true,
     })
 
-    expect(mockTokenStore.get()).toEqual(
-      expect.objectContaining({ accessToken: mockAccessToken }),
-    )
+    expect(mockTokenStore.get('accessToken')).toBe(mockAccessToken)
   })
 
   it('should redirect browser if implicit option provided and no access token in the URL', async () => {
@@ -141,8 +139,9 @@ describe('maybeUpdateToken', () => {
       grant_type: authorizationCodeGrant.GRANT_TYPE,
       redirect_uri: mockRedirectUri,
     })
-    expect(mockTokenStore.get()).toEqual(
-      expect.objectContaining(mockTokenResult),
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
     )
   })
 
@@ -167,8 +166,9 @@ describe('maybeUpdateToken', () => {
       clientSecret,
       scope,
     })
-    expect(mockTokenStore.get()).toEqual(
-      expect.objectContaining(mockTokenResult),
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
     )
     expect(mockTokenFetcher).toBeCalledWith({
       client_id: clientId,

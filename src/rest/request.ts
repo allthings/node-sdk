@@ -196,7 +196,7 @@ export function makeApiRequest(
         TOKEN_REFRESH_STATUS_CODES.includes(previousResult.status),
     )
 
-    if (!(oauthTokenStore.hasToken() && oauthTokenStore.get()!.accessToken)) {
+    if (!oauthTokenStore.get('accessToken')) {
       throw new Error('Unable to get OAuth2 access token.')
     }
 
@@ -225,7 +225,7 @@ export function makeApiRequest(
 
           const headers = {
             accept: 'application/json',
-            authorization: `Bearer ${oauthTokenStore.get()!.accessToken}`,
+            authorization: `Bearer ${oauthTokenStore.get('accessToken')}`,
             ...(!hasForm ? { 'content-type': 'application/json' } : {}),
             'user-agent': USER_AGENT,
 

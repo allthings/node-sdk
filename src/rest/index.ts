@@ -197,13 +197,10 @@ export default function restClient(
   const tokenRequester = makeFetchTokenRequester(
     `${options.oauthUrl}/oauth/token`,
   )
-  const tokenStore = makeTokenStore(
-    options.accessToken
-      ? {
-          accessToken: options.accessToken,
-        }
-      : undefined,
-  )
+  const tokenStore = makeTokenStore({
+    accessToken: options.accessToken,
+    refreshToken: options.refreshToken,
+  })
 
   const request = partial(httpRequest, tokenStore, tokenRequester, options)
 
@@ -234,9 +231,7 @@ export default function restClient(
       requestAndSaveToStore(
         partial(performRefreshTokenGrant, tokenRequester, {
           ...options,
-          refreshToken: tokenStore.hasToken()
-            ? tokenStore.get()!.refreshToken
-            : options.refreshToken,
+          refreshToken: tokenStore.get('refreshToken'),
         }),
         tokenStore,
       ),
