@@ -1,5 +1,5 @@
 export interface IOAuthToken {
-  readonly accessToken?: string
+  readonly accessToken: string
   readonly expiresIn?: number
   readonly refreshToken?: string
 }

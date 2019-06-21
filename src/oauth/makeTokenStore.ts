@@ -1,7 +1,7 @@
-import { IOAuthToken, ITokenStore } from './types'
+import { ITokenStore } from './types'
 
 export default function makeTokenStore(
-  initialToken?: IOAuthToken,
+  initialToken?: IndexSignature,
 ): ITokenStore {
   const token = new Map<string, string>(Object.entries(initialToken || {}))
 
