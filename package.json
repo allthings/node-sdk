@@ -60,7 +60,7 @@
     "bottleneck": "2.19.1",
     "cross-fetch": "3.0.4",
     "mem": "4.3.0",
-    "query-string": "6.8.0"
+    "query-string": "6.8.1"
   },
   "devDependencies": {
     "@allthings/tslint-preset": "1.10.1",
