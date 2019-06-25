@@ -227,11 +227,11 @@ export default function restClient(
           tokenStore,
         ),
     },
-    refreshToken: () =>
+    refreshToken: (refreshToken?: string) =>
       requestAndSaveToStore(
         partial(performRefreshTokenGrant, tokenRequester, {
           ...options,
-          refreshToken: tokenStore.get('refreshToken'),
+          refreshToken: refreshToken || tokenStore.get('refreshToken'),
         }),
         tokenStore,
       ),

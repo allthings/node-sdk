@@ -136,7 +136,7 @@ export interface IClientExposedOAuth {
     ) => ReturnType<TokenRequester>
   }
   // tslint:disable-next-line no-mixed-interface
-  readonly refreshToken: () => ReturnType<TokenRequester>
+  readonly refreshToken: (refreshToken?: string) => ReturnType<TokenRequester>
 }
 
 // Describes the REST API wrapper's resulting interface
