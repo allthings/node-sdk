@@ -63,7 +63,7 @@
     "query-string": "6.8.1"
   },
   "devDependencies": {
-    "@allthings/tslint-preset": "1.10.1",
+    "@allthings/tslint-preset": "2.0.0",
     "@commitlint/cli": "7.6.1",
     "@commitlint/config-conventional": "7.6.0",
     "@types/form-data": "2.2.1",
