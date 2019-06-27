@@ -1,4 +1,4 @@
-import { EnumLocale, IAllthingsRestClient } from '../types'
+import { EntityResultList, EnumLocale, IAllthingsRestClient } from '../types'
 import {
   UtilisationPeriodResult,
   UtilisationPeriodResults,
@@ -45,10 +45,7 @@ export interface IUser {
 export type PartialUser = Partial<IUser>
 
 export type UserResult = Promise<IUser>
-export type UserResultList = Promise<{
-  readonly _embedded: { readonly items: ReadonlyArray<IUser> }
-  readonly total: number
-}>
+export type UserResultList = EntityResultList<IUser>
 
 export enum EnumUserPermissionRole {
   appAdmin = 'app-admin',
