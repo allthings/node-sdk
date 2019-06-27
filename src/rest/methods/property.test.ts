@@ -49,3 +49,15 @@ describe('propertyUpdateById()', () => {
     expect(result.externalId).toEqual(updateData.externalId)
   })
 })
+
+describe('getProperties()', () => {
+  it('should be able to get a list of properties', async () => {
+    const limit = 3
+
+    const result = await client.getProperties()
+    expect(result._embedded).toHaveProperty('items')
+
+    const result2 = await client.getProperties(1, limit)
+    expect(result2._embedded.items).toHaveLength(limit)
+  })
+})
