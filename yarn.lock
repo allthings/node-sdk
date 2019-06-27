@@ -408,10 +408,10 @@
   resolved "https://registry.yarnpkg.com/@types/mem/-/mem-1.1.2.tgz#e3c8b095f2f2563b518f0aad59df9fe6a8b82065"
   integrity sha1-48iwlfLyVjtRjwqtWd+f5qi4IGU=
 
-"@types/nanoid@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@types/nanoid/-/nanoid-1.2.1.tgz#995bd0538ef04c4751d88d2fa15a97f0b85dd848"
-  integrity sha512-G3fQNcOYPHLXigI5nxpmSCCJIAEqgd+DP3p1IaxcdXJRJxdoeIZi/MGt58j/lI0AIsgajwG10Vs6J2xzkGZfEQ==
+"@types/nanoid@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/nanoid/-/nanoid-2.0.0.tgz#b59002c475e6dfcc26e67ba563ff61b512e5ebf8"
+  integrity sha512-NtwPHfAyU3IDXdKAB2OMPpAauHBg9gUjpOYr3FAzI84D70nWdS8k5mryteLvT/s1ACeAFAkGg132/XJVN4qx/w==
   dependencies:
     "@types/node" "*"
 
