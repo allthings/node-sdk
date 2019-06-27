@@ -1,4 +1,4 @@
-import { IAllthingsRestClient } from '../types'
+import { EntityResultList, IAllthingsRestClient } from '../types'
 
 export enum EnumUnitType {
   rented = 'rented',
@@ -19,6 +19,7 @@ export interface IUnit {
 export type PartialUnit = Partial<IUnit>
 
 export type UnitResult = Promise<IUnit>
+export type UnitResultList = EntityResultList<IUnit>
 
 /*
   Create new unit
@@ -71,4 +72,30 @@ export async function unitUpdateById(
   data: PartialUnit,
 ): UnitResult {
   return client.patch(`/v1/units/${unitId}`, data)
+}
+
+/*
+  Get a list of units
+*/
+
+export type MethodGetUnits = (
+  page?: number,
+  limit?: number,
+  filter?: IndexSignature,
+) => UnitResultList
+
+export async function getUnits(
+  client: IAllthingsRestClient,
+  page = 1,
+  limit = -1,
+  filter = {},
+): UnitResultList {
+  const {
+    _embedded: { items: units },
+    total,
+  } = await client.get(
+    `/v1/units?page=${page}&limit=${limit}&filter=${JSON.stringify(filter)}`,
+  )
+
+  return { _embedded: { items: units }, total }
 }
