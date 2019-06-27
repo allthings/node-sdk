@@ -14,6 +14,7 @@ import {
 } from './methods/bucket'
 import { MethodFileCreate, MethodFileDelete } from './methods/file'
 import {
+  MethodGetGroups,
   MethodGroupCreate,
   MethodGroupGetById,
   MethodGroupUpdateById,
@@ -25,6 +26,7 @@ import {
   MethodNotificationUpdateRead,
 } from './methods/notification'
 import {
+  MethodGetProperties,
   MethodPropertyCreate,
   MethodPropertyGetById,
   MethodPropertyUpdateById,
@@ -36,6 +38,7 @@ import {
   MethodRegistrationCodeUpdateById,
 } from './methods/registrationCode'
 import {
+  MethodGetUnits,
   MethodUnitCreate,
   MethodUnitGetById,
   MethodUnitUpdateById,
@@ -105,6 +108,13 @@ export enum EnumTimezone {
   EuropeZurich = 'Europe/Zurich',
   UTC = 'UTC',
 }
+
+export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
+  {
+    readonly _embedded: { readonly items: ReadonlyArray<Entity> }
+    readonly total: number
+  } & ExtensionInterface
+>
 
 // Describes the options with which to construct a new API wrapper instance
 export interface IAllthingsRestClientOptions {
@@ -199,6 +209,11 @@ export interface IAllthingsRestClient {
    */
   readonly groupUpdateById: MethodGroupUpdateById
 
+  /**
+   * Get a list of units
+   */
+  readonly getUnits: MethodGetUnits
+
   // Notification
 
   /**
@@ -232,6 +247,11 @@ export interface IAllthingsRestClient {
    * Update a property by its ID
    */
   readonly propertyUpdateById: MethodPropertyUpdateById
+
+  /**
+   * Get a list of properties
+   */
+  readonly getProperties: MethodGetProperties
 
   // Registration Code
 
@@ -283,6 +303,11 @@ export interface IAllthingsRestClient {
    * Update a unit by its ID
    */
   readonly unitUpdateById: MethodUnitUpdateById
+
+  /**
+   * Get a list of groups
+   */
+  readonly getGroups: MethodGetGroups
 
   // User
 
