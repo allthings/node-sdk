@@ -14,6 +14,7 @@ export interface IUnit {
     readonly invitationCount: number | null
   }
   readonly type: EnumUnitType
+  readonly readOnly: boolean
 }
 
 export type PartialUnit = Partial<IUnit>

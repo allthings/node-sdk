@@ -34,6 +34,7 @@ describe('utilisationPeriodCreate()', () => {
     const data = {
       endDate: '2050-01-01',
       externalId: generateId(),
+      readOnly: true,
       startDate: '2050-01-01',
     }
     const result = await client.utilisationPeriodCreate(sharedUnitId, data)

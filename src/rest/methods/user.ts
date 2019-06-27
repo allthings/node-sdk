@@ -40,6 +40,7 @@ export interface IUser {
   readonly tenantIds: { readonly [key: string]: string }
   readonly type: EnumUserType | null
   readonly username: string
+  readonly readOnly: boolean
 }
 
 export type PartialUser = Partial<IUser>

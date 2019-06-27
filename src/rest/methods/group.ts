@@ -23,6 +23,7 @@ export interface IGroup {
     readonly unitCount: number | null
     readonly inhabitedUnits: number | null
   }
+  readonly readOnly: boolean
 }
 
 export type PartialGroup = Partial<IGroup>

@@ -9,6 +9,7 @@ export interface IRegistrationCodeOptions {
     readonly phone?: string
     readonly name?: string
   }
+  readonly readOnly?: boolean
 }
 
 export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {

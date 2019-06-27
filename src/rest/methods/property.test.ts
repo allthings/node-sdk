@@ -7,6 +7,7 @@ const client = restClient()
 
 const testData = {
   name: 'Foobar Property',
+  readOnly: true,
   timezone: 'Europe/Berlin',
 }
 

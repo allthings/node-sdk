@@ -14,6 +14,7 @@ const testPropertyData = {
 const testData = {
   name: 'Foobar Group',
   propertyManagerId: APP_PROPERTY_MANAGER_ID,
+  readOnly: true,
 }
 
 const testAddressData = {

@@ -14,6 +14,7 @@ const client = restClient()
 const testData = {
   description: 'Foobar User',
   locale: EnumLocale.en_US,
+  readOnly: true,
 }
 
 describe('agentCreate()', () => {

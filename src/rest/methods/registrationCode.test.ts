@@ -59,6 +59,7 @@ describe('registrationCodeCreate()', async () => {
         expiresAt: null,
         externalId: testExternalId,
         permanent: false,
+        readOnly: true,
         tenant,
       },
     )

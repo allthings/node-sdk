@@ -10,6 +10,7 @@ const client = restClient()
 
 const testData = {
   name: 'Foobar Unit',
+  readOnly: true,
   type: EnumUnitType.rented,
 }
 

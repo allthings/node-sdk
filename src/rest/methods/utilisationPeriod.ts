@@ -20,6 +20,7 @@ export interface IUtilisationPeriod {
   readonly tenantIds: ReadonlyArray<string>
   readonly userCount: number | null
   readonly users: ReadonlyArray<IUser>
+  readonly readOnly: boolean
 }
 
 export interface IUtilisationPeriodInvite {
