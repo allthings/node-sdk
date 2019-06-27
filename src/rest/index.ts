@@ -12,7 +12,12 @@ import {
   bucketRemoveFilesInPath,
 } from './methods/bucket'
 import { fileCreate, fileDelete } from './methods/file'
-import { groupCreate, groupGetById, groupUpdateById } from './methods/group'
+import {
+  getGroups,
+  groupCreate,
+  groupGetById,
+  groupUpdateById,
+} from './methods/group'
 import { lookupIds } from './methods/idLookup'
 import {
   notificationsGetByUser,
@@ -20,6 +25,7 @@ import {
   notificationUpdateRead,
 } from './methods/notification'
 import {
+  getProperties,
   propertyCreate,
   propertyGetById,
   propertyUpdateById,
@@ -32,6 +38,7 @@ import {
 } from './methods/registrationCode'
 import {
   EnumUnitType,
+  getUnits,
   unitCreate,
   unitGetById,
   unitUpdateById,
@@ -83,6 +90,16 @@ const API_METHODS: ReadonlyArray<any> = [
   bucketRemoveFilesInPath,
   bucketGet,
 
+  // File
+  fileCreate,
+  fileDelete,
+
+  // Group
+  groupCreate,
+  groupGetById,
+  groupUpdateById,
+  getGroups,
+
   // ID Lookup
   lookupIds,
 
@@ -91,15 +108,11 @@ const API_METHODS: ReadonlyArray<any> = [
   notificationUpdateRead,
   notificationsUpdateReadByUser,
 
-  // Group
-  groupCreate,
-  groupGetById,
-  groupUpdateById,
-
   // Property
   propertyCreate,
   propertyGetById,
   propertyUpdateById,
+  getProperties,
 
   // Registration Code
   registrationCodeCreate,
@@ -107,14 +120,11 @@ const API_METHODS: ReadonlyArray<any> = [
   registrationCodeDelete,
   registrationCodeGetById,
 
-  // File
-  fileCreate,
-  fileDelete,
-
   // Unit
   unitCreate,
   unitGetById,
   unitUpdateById,
+  getUnits,
 
   // User
   userCreate,
