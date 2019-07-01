@@ -1,6 +1,3 @@
-import memoize from 'mem'
-
-import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
 import { TokenRequester } from './types'
 
 export const GRANT_TYPE = 'client_credentials'
@@ -36,12 +33,7 @@ export const isEligible = (clientOptions: IndexSignature): boolean => {
   }
 }
 
-export const getTokenFromClientOptions = memoize(
-  async (oauthTokenRequest: TokenRequester, clientOptions: IndexSignature) =>
-    oauthTokenRequest(castClientOptionsToRequestParams(clientOptions)),
-  {
-    ...DEFAULT_MEMOIZE_OPTIONS,
-    cacheKey: (_: TokenRequester, clientOptions: IndexSignature) =>
-      JSON.stringify(castClientOptionsToRequestParams(clientOptions)),
-  },
-)
+export const getTokenFromClientOptions = (
+  oauthTokenRequest: TokenRequester,
+  clientOptions: IndexSignature,
+) => oauthTokenRequest(castClientOptionsToRequestParams(clientOptions))

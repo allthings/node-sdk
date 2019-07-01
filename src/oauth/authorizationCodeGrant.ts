@@ -1,7 +1,5 @@
-import memoize from 'mem'
 import querystring from 'query-string'
 
-import { DEFAULT_MEMOIZE_OPTIONS } from '../constants'
 import { TokenRequester } from './types'
 
 export const RESPONSE_TYPE = 'code'
@@ -84,12 +82,7 @@ export const isEligible = (params: IndexSignature): boolean => {
   }
 }
 
-export const requestToken = memoize(
-  async (tokenRequester: TokenRequester, params: IndexSignature) =>
-    tokenRequester(castToTokenRequestParams(params)),
-  {
-    ...DEFAULT_MEMOIZE_OPTIONS,
-    cacheKey: (_: TokenRequester, params: IndexSignature) =>
-      JSON.stringify(castToTokenRequestParams(params)),
-  },
-)
+export const requestToken = (
+  tokenRequester: TokenRequester,
+  params: IndexSignature,
+) => tokenRequester(castToTokenRequestParams(params))
