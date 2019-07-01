@@ -109,7 +109,9 @@ describe('OAuth authorization code grant', () => {
     })
 
     it('includes scope and state if provided in options', () => {
-      const { clientId, state, scope } = DEFAULT_API_WRAPPER_OPTIONS
+      const { clientId, scope } = DEFAULT_API_WRAPPER_OPTIONS
+      const state = 'provided-state'
+
       const url = authorizationCodeGrant.getRedirectUrl({
         clientId,
         oauthUrl: mockOauthUrl,

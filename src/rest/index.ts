@@ -1,5 +1,6 @@
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import { partial } from '../utils/functional'
+import { pseudoRandomString } from '../utils/random'
 import httpDelete from './delete'
 import httpGet from './get'
 import { agentCreate, agentCreatePermissions } from './methods/agent'
@@ -213,10 +214,10 @@ export default function restClient(
 
   const oauth: IClientExposedOAuth = {
     authorizationCode: {
-      getUri: (state?: string) =>
+      getUri: (state = options.state || pseudoRandomString()) =>
         partial(getAuthorizationUrl, {
           ...options,
-          state: state || options.state,
+          state,
         })(),
       requestToken: (authorizationCode?: string) =>
         requestAndSaveToStore(
@@ -227,6 +228,7 @@ export default function restClient(
           tokenStore,
         ),
     },
+    generateState: pseudoRandomString,
     refreshToken: (refreshToken?: string) =>
       requestAndSaveToStore(
         partial(performRefreshTokenGrant, tokenRequester, {

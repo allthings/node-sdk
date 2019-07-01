@@ -98,24 +98,20 @@ const client = allthings.restClient({
 })
 ```
 
-2. Construct a URI to send authorization request to, optionally providing `state`:
+2. Construct a URI to send authorization request to using a `state` which should be unique per request and hard to guess. It can be generated with `client.oauth.generateState()` method:
 ```javascript
+const state = client.oauth.generateState()
 const authorizationUri = client.oauth.authorizationCode.getUri(state)
 ```
-If `state` is not provided, default string is used.
 
-3. Direct user's browser to the constructed URI. That can be done by either placing a button
-```html
-<a href="{{authorizationUri}}">Login with Allthings account</a>
-```
-or by doing HTTP redirect server-side when a protected resource is requested.
+3. Direct user's browser to the constructed URI.
 
 4. When user completes authentication process, he is redirected to the `redirectUri` having `code` and `state` query string arguments, e.g.:
 ```
 https://example-app.com/callback?code=ebc110bee11b2829&state=mysecretstate
 ```
 
-At this point `state` should match the one provided when constructing authorization request URL.
+At this point `state` be validated - if it doesn't match the one generated on step 2, such request is probably malicious and should be aborted.
 
 5. Use the code extracted from query parameters on the previous step to obtain an access token:
 

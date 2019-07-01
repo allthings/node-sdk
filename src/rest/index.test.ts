@@ -5,6 +5,8 @@ import * as authenticationCodeGrant from '../oauth/authorizationCodeGrant'
 import * as makeFetchTokenRequesterModule from '../oauth/makeFetchTokenRequester'
 import * as passwordGrant from '../oauth/passwordGrant'
 
+const redirectUri = 'allthings://redirect'
+
 describe('Rest API Client', () => {
   it('should return a client', async () => {
     const client = restClient()
@@ -98,14 +100,12 @@ describe('Rest API Client', () => {
     it('oauth.authorizationCode.getUri should return authorization URL for provided state', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
-      const redirectUri = 'allthings://redirect'
-
       const client = restClient({
         clientId,
         redirectUri,
       })
 
-      const state = 'qwerty'
+      const state = 'state-as-argument'
 
       const uri = new URL(client.oauth.authorizationCode.getUri(state))
 
@@ -126,10 +126,26 @@ describe('Rest API Client', () => {
       expect(uri.searchParams.get('state')).toEqual(state)
     })
 
-    it('oauth.authorizationCode.getUri should return authorization URL for provided state', async () => {
+    it('oauth.authorizationCode.getUri should return authorization URL for state provided in options', async () => {
       const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
-      const redirectUri = 'allthings://redirect'
+      const state = 'state-from-options'
+
+      const client = restClient({
+        clientId,
+        redirectUri,
+        state,
+      })
+
+      expect(
+        new URL(client.oauth.authorizationCode.getUri()).searchParams.get(
+          'state',
+        ),
+      ).toEqual(state)
+    })
+
+    it('oauth.authorizationCode.getUri should return authorization URL randomly generated state', async () => {
+      const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
       const client = restClient({
         clientId,
@@ -140,7 +156,7 @@ describe('Rest API Client', () => {
         new URL(client.oauth.authorizationCode.getUri()).searchParams.get(
           'state',
         ),
-      ).toEqual(DEFAULT_API_WRAPPER_OPTIONS.state)
+      ).toMatch(/^[0-9a-z]{16}$/)
     })
 
     it('oauth.authorizationCode.requestToken should make a /token request and return new token for provided authorization code', async () => {
@@ -148,7 +164,7 @@ describe('Rest API Client', () => {
 
       const client = restClient({
         clientId,
-        redirectUri: 'allthings://redirect',
+        redirectUri,
       })
 
       const authCode = '1234'
@@ -166,7 +182,7 @@ describe('Rest API Client', () => {
       const client = restClient({
         authorizationCode: authCode,
         clientId,
-        redirectUri: 'allthings://redirect',
+        redirectUri,
       })
 
       await expect(
@@ -179,7 +195,7 @@ describe('Rest API Client', () => {
 
       const client = restClient({
         clientId,
-        redirectUri: 'allthings://redirect',
+        redirectUri,
         refreshToken: 'qwerty',
       })
 
@@ -192,12 +208,21 @@ describe('Rest API Client', () => {
       const client = restClient({
         authorizationCode: '1234',
         clientId,
-        redirectUri: 'allthings://redirect',
+        redirectUri,
       })
 
       await client.oauth.authorizationCode.requestToken()
 
       await expect(client.oauth.refreshToken()).resolves.toEqual(mockToken)
+    })
+
+    it('oauth.generateState generates a unique 16 symbol string per invocation', () => {
+      const client = restClient(DEFAULT_API_WRAPPER_OPTIONS)
+      const state1 = client.oauth.generateState()
+      const state2 = client.oauth.generateState()
+      expect(state1).toMatch(/^[0-9a-z]{16}$/)
+      expect(state2).toMatch(/^[0-9a-z]{16}$/)
+      expect(state1).not.toEqual(state2)
     })
   })
 })
