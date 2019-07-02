@@ -67,3 +67,15 @@ describe('unitUpdateById()', () => {
     expect(result.externalId).toEqual(updateData.externalId)
   })
 })
+
+describe('getUnits()', () => {
+  it('should be able to get a list of units', async () => {
+    const limit = 3
+
+    const result = await client.getUnits()
+    expect(result._embedded).toHaveProperty('items')
+
+    const result2 = await client.getUnits(1, limit)
+    expect(result2._embedded.items).toHaveLength(limit)
+  })
+})

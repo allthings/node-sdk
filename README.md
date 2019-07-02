@@ -11,6 +11,7 @@ Allthings Node/Javascript SDK
 1.  [API](#api)
 1.  [OAuth Implicit Grant Example](#oauth-implicit-grant-example-example)
 1.  [OAuth Authorization Code Grant Example](#oauth-authorization-code-grant-example)
+1.  [Release management & versioning](#release-management--versioning)
 
 ## Installation & Usage
 
@@ -137,13 +138,16 @@ const user = await client.getCurrentUser()
   - [`client.groupCreate()`](#restclient-client-createagent)
   - [`client.groupGetById()`](#restclient-client-createagent)
   - [`client.groupUpdateById()`](#restclient-client-createagent)
+  - [`client.getGroups()`](#restclient-client-createagent)
   - [`client.propertyCreate()`](#restclient-client-createagent)
   - [`client.propertyGetById()`](#restclient-client-createagent)
   - [`client.propertyUpdateById()`](#restclient-client-createagent)
+  - [`client.getProperties()`](#restclient-client-createagent)
   - [`client.registrationCodeCreate()`](#restclient-client-createagent)
   - [`client.unitCreate()`](#restclient-client-createagent)
   - [`client.unitGetById()`](#restclient-client-createagent)
   - [`client.unitUpdateById()`](#restclient-client-createagent)
+  - [`client.getUnits()`](#restclient-client-createagent)
   - [`client.userCreate()`](#restclient-client-createagent)
   - [`client.userGetById()`](#restclient-client-createagent)
   - [`client.userUpdateById()`](#restclient-client-createagent)
@@ -409,3 +413,8 @@ export interface IAllthingsRestClient {
   readonly utilisationPeriodCheckInUser: MethodUtilisationPeriodCheckInUser
 }
 ```
+
+## Release management & versioning
+
+The Allthings SDK makes use of [semantic-release](https://github.com/semantic-release/semantic-release) which automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package. This repository is configured to `squash-merge` ([see here](https://github.blog/2016-04-01-squash-your-commits/)).
+When you squash merge, GitHub takes the title of the PR for the squash-merge's commit subject. By choosing a proper PR title e.g. `feat: my new feature` your merged PR will trigger a new release. See semantic-releases [docs](https://github.com/semantic-release/semantic-release#how-does-it-work) for available prefixes.
