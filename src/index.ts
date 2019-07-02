@@ -13,4 +13,3 @@ export {
   IAllthingsRestClient,
   IAllthingsRestClientOptions,
 } from './rest/types'
-export { IOAuthToken } from './oauth/types'
