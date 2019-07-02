@@ -109,10 +109,10 @@ const authorizationUri = client.oauth.authorizationCode.getUri(state)
 
 4. When user completes authentication process, he is redirected to the `redirectUri` having `code` and `state` query string arguments, e.g.:
 ```
-https://example-app.com/callback?code=ebc110bee11b2829&state=mysecretstate
+https://example-app.com/callback?code=ebc110bee11b2829&state=k1bt3c1d0vnfu7qk
 ```
 
-At this point `state` be validated - if it doesn't match the one generated on step 2, such request is probably malicious and should be aborted.
+At this point `state` must be validated - if it doesn't match the one generated on step 2, such request is probably malicious and should be aborted.
 
 5. Use the code extracted from query parameters on the previous step to obtain an access token:
 
