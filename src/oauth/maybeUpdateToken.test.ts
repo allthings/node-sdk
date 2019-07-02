@@ -53,6 +53,27 @@ describe('maybeUpdateToken', () => {
     })
   })
 
+  it('should invoke refresh token when refresh is not required and missing access token when refresh is eligible', async () => {
+    mockTokenStore.set({
+      accessToken: undefined as any,
+      refreshToken: mockRefreshToken,
+    })
+
+    const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+    await maybeUpdateToken(mockTokenStore, mockTokenFetcher, {
+      clientId,
+    })
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
+    )
+    expect(mockTokenFetcher).toBeCalledWith({
+      client_id: clientId,
+      grant_type: refreshTokenGrant.GRANT_TYPE,
+      refresh_token: mockRefreshToken,
+    })
+  })
+
   it('should do nothing if token already exist and refresh is not required', async () => {
     mockTokenStore.set({
       accessToken: mockAccessToken,
@@ -87,6 +108,35 @@ describe('maybeUpdateToken', () => {
     )
   })
 
+  it('should invoke password flow if access token exist and refresh is required and password grant is eligible', async () => {
+    const { clientId, username, password } = DEFAULT_API_WRAPPER_OPTIONS
+
+    mockTokenStore.set({
+      accessToken: mockAccessToken,
+    })
+
+    await maybeUpdateToken(
+      mockTokenStore,
+      mockTokenFetcher,
+      {
+        clientId,
+        password,
+        username,
+      },
+      true,
+    )
+    expect(mockTokenFetcher).toBeCalledWith({
+      client_id: clientId,
+      grant_type: passwordGrant.GRANT_TYPE,
+      password,
+      username,
+    })
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
+    )
+  })
+
   it('should take accessToken from location.href if implicit option provided', async () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
@@ -100,6 +150,32 @@ describe('maybeUpdateToken', () => {
     expect(mockTokenStore.get('accessToken')).toBe(mockAccessToken)
   })
 
+  it('should take accessToken from location.href if accessToken already exists and refresh is required and if implicit option provided', async () => {
+    const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+    mockTokenStore.set({
+      accessToken: mockAccessToken,
+    })
+
+    window.history.pushState(
+      {},
+      'any',
+      `test#access_token=${mockTokenResult.accessToken}`,
+    )
+
+    await maybeUpdateToken(
+      mockTokenStore,
+      mockTokenFetcher,
+      {
+        clientId,
+        implicit: true,
+      },
+      true,
+    )
+
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+  })
+
   it('should redirect browser if implicit option provided and no access token in the URL', async () => {
     const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
 
@@ -109,6 +185,26 @@ describe('maybeUpdateToken', () => {
     })
 
     expect(result).toBeUndefined()
+    expect(mockTokenFetcher).not.toBeCalled()
+  })
+
+  it('should redirect browser if accessToken already exists and refresh is required and if implicit option provided and no access token in the URL', async () => {
+    const { clientId } = DEFAULT_API_WRAPPER_OPTIONS
+
+    mockTokenStore.set({
+      accessToken: mockAccessToken,
+    })
+
+    await maybeUpdateToken(
+      mockTokenStore,
+      mockTokenFetcher,
+      {
+        clientId,
+        implicit: true,
+      },
+      true,
+    )
+
     expect(mockTokenFetcher).not.toBeCalled()
   })
 
@@ -166,6 +262,31 @@ describe('maybeUpdateToken', () => {
       clientSecret,
       scope,
     })
+    expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
+    expect(mockTokenStore.get('refreshToken')).toBe(
+      mockTokenResult.refreshToken,
+    )
+    expect(mockTokenFetcher).toBeCalledWith({
+      client_id: clientId,
+      client_secret: clientSecret,
+      grant_type: clientCredentialsGrant.GRANT_TYPE,
+      scope,
+    })
+  })
+
+  it('should invoke client credentials flow if has client id, client secret and scope provided and when mustRefresh ', async () => {
+    const { clientId, clientSecret, scope } = DEFAULT_API_WRAPPER_OPTIONS
+    await maybeUpdateToken(
+      mockTokenStore,
+      mockTokenFetcher,
+      {
+        accessToken: mockAccessToken,
+        clientId,
+        clientSecret,
+        scope,
+      },
+      true,
+    )
     expect(mockTokenStore.get('accessToken')).toBe(mockTokenResult.accessToken)
     expect(mockTokenStore.get('refreshToken')).toBe(
       mockTokenResult.refreshToken,

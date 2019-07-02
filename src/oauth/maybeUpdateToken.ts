@@ -13,19 +13,19 @@ export default async function maybeUpdateToken(
   options: IndexSignature,
   mustRefresh = false,
 ): Promise<void> {
+  if (!mustRefresh && oauthTokenStore.get('accessToken')) {
+    return
+  }
+
   const refreshOptions = {
     ...options,
     refreshToken: oauthTokenStore.get('refreshToken'),
   }
 
-  if (mustRefresh && refreshTokenGrant.isEligible(refreshOptions)) {
+  if (refreshTokenGrant.isEligible(refreshOptions)) {
     return oauthTokenStore.set(
       await refreshTokenGrant.requestToken(tokenFetcher, refreshOptions),
     )
-  }
-
-  if (oauthTokenStore.get('accessToken')) {
-    return
   }
 
   if (passwordGrant.isEligible(options)) {
@@ -54,7 +54,7 @@ export default async function maybeUpdateToken(
     }
   }
 
-  if (authorizationCodeGrant.isEligible(options)) {
+  if (!mustRefresh && authorizationCodeGrant.isEligible(options)) {
     return oauthTokenStore.set(
       await authorizationCodeGrant.requestToken(tokenFetcher, options),
     )
