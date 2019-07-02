@@ -21,8 +21,6 @@
 
       sessionStorage.setItem('clientSecret', clientSecret);
 
-      const state = 'qwerty';
-
       const client = allthings.restClient({
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
@@ -30,6 +28,8 @@
         clientSecret,
         redirectUri: window.location.href.replace(window.location.search, ''),
       })
+
+      const state = client.oauth.generateState();
 
       async function runQueryWithAuthCode(authorizationCode) {
         await client.oauth.authorizationCode.requestToken(authorizationCode)
@@ -51,7 +51,7 @@
           }
           runQueryWithAuthCode(codeMatch[1]);
         } else {
-          window.location.href = client.oauth.authorizationCode.getUri('qwerty');
+          window.location.href = client.oauth.authorizationCode.getUri(state);
         }
       });
     </script>
