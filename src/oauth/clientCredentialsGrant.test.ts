@@ -35,10 +35,10 @@ describe('OAuth client credentials grant', () => {
     ).toBe(false)
   })
 
-  describe('getTokenFromClientOptions', () => {
+  describe('requestToken', () => {
     it('throws when clientId is missing in client options', () => {
       expect(() =>
-        clientCredentialsGrant.getTokenFromClientOptions(mockTokenFetcher, {}),
+        clientCredentialsGrant.requestToken(mockTokenFetcher, {}),
       ).toThrow('Missing required "clientId"')
       expect(mockTokenFetcher).not.toBeCalled()
     })
@@ -47,15 +47,12 @@ describe('OAuth client credentials grant', () => {
       const { clientId, clientSecret, scope } = DEFAULT_API_WRAPPER_OPTIONS
 
       expect(
-        await clientCredentialsGrant.getTokenFromClientOptions(
-          mockTokenFetcher,
-          {
-            clientId,
-            clientSecret,
-            oauthUrl: mockOauthUrl,
-            scope,
-          },
-        ),
+        await clientCredentialsGrant.requestToken(mockTokenFetcher, {
+          clientId,
+          clientSecret,
+          oauthUrl: mockOauthUrl,
+          scope,
+        }),
       ).toEqual(mockTokenResult)
 
       expect(mockTokenFetcher).toBeCalledWith({

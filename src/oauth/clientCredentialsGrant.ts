@@ -33,7 +33,7 @@ export const isEligible = (clientOptions: IndexSignature): boolean => {
   }
 }
 
-export const getTokenFromClientOptions = (
+export const requestToken = (
   oauthTokenRequest: TokenRequester,
   clientOptions: IndexSignature,
 ) => oauthTokenRequest(castClientOptionsToRequestParams(clientOptions))

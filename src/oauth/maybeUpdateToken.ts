@@ -71,10 +71,7 @@ export default async function maybeUpdateToken(
 
   if (clientCredentialsGrant.isEligible(options)) {
     return oauthTokenStore.set(
-      await clientCredentialsGrant.getTokenFromClientOptions(
-        tokenFetcher,
-        options,
-      ),
+      await clientCredentialsGrant.requestToken(tokenFetcher, options),
     )
   }
 
