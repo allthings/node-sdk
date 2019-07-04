@@ -29,8 +29,6 @@ export async function appCreate(
 ): CreateAppResult {
   return client.post(`/v1/users/${userId}/apps`, {
     availableLocales: { '0': 'de_DE' },
-    contactEmail: 'no-reply@allthings.me',
-    fromEmailAddress: 'no-reply@alltings.me',
     ...data,
     siteUrl: data.siteUrl.replace('_', ''),
   })
