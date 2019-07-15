@@ -1,5 +1,5 @@
 import { dateToString, stringToDate } from '../../utils/stringToDate'
-import { IAllthingsRestClient } from '../types'
+import { EntityResultList, IAllthingsRestClient } from '../types'
 
 export enum EnumNotificationCategory {
   events = 'events',
@@ -67,11 +67,10 @@ function remapNotificationResult({
   }
 }
 
-export type NotificationResultList = Promise<{
-  readonly _embedded: { readonly items: ReadonlyArray<INotification> }
-  readonly total: number
-  readonly metaData: { readonly unreadNotifications: number }
-}>
+export type NotificationResultList = EntityResultList<
+  INotification,
+  { readonly metaData: { readonly unreadNotifications: number } }
+>
 
 export type MethodNotificationsGetByUser = (
   userId: string,

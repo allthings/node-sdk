@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>OAuth Authorization Flow</title>
+    <meta charset="UTF-8" />
+    <script src="/dist/lib.umd.min.js"></script>
+  </head>
+
+  <body>
+    <div id="app">Loading...</div>
+
+    <script type="text/javascript">
+      const clientId = window.location.search.match(/clientId=(\w+)/) &&
+        window.location.search.match(/clientId=(\w+)/)[1] ||
+        sessionStorage.getItem('clientId');
+
+      sessionStorage.setItem('clientId', clientId);
+
+      const clientSecret = window.location.search.match(/clientSecret=(\w+)/) &&
+        window.location.search.match(/clientSecret=(\w+)/)[1] ||
+        sessionStorage.getItem('clientSecret');
+
+      sessionStorage.setItem('clientSecret', clientSecret);
+
+      const client = allthings.restClient({
+        oauthUrl: 'https://accounts.dev.allthings.me',
+        apiUrl: 'https://api.dev.allthings.me',
+        clientId,
+        clientSecret,
+        redirectUri: window.location.href.replace(window.location.search, ''),
+      })
+
+      const state = client.oauth.generateState();
+
+      async function runQueryWithAuthCode(authorizationCode) {
+        await client.oauth.authorizationCode.requestToken(authorizationCode)
+
+        const user = await client.getCurrentUser()
+
+        document.getElementById('app').innerHTML = `<div>Hi there, ${
+          user.username
+          } (${user.email})</div>`
+      }
+
+      window.addEventListener('load', async () => {
+        const codeMatch = window.location.search.match(/code=(\w+)/);
+        const stateMatch = window.location.search.match(/state=(\w+)/);
+
+        if (codeMatch) {
+          if (!(stateMatch && stateMatch[1]) === state) {
+            throw new Error(`'state mismatch: expected ${state}, got ${stateMatch && stateMatch[1]}`)
+          }
+          runQueryWithAuthCode(codeMatch[1]);
+        } else {
+          window.location.href = client.oauth.authorizationCode.getUri(state);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,3 +1,4 @@
+import { TokenRequester } from '../oauth/types'
 import { MethodHttpDelete } from './delete'
 import { MethodHttpGet } from './get'
 import {
@@ -14,6 +15,7 @@ import {
 } from './methods/bucket'
 import { MethodFileCreate, MethodFileDelete } from './methods/file'
 import {
+  MethodGetGroups,
   MethodGroupCreate,
   MethodGroupGetById,
   MethodGroupUpdateById,
@@ -25,6 +27,7 @@ import {
   MethodNotificationUpdateRead,
 } from './methods/notification'
 import {
+  MethodGetProperties,
   MethodPropertyCreate,
   MethodPropertyGetById,
   MethodPropertyUpdateById,
@@ -36,6 +39,7 @@ import {
   MethodRegistrationCodeUpdateById,
 } from './methods/registrationCode'
 import {
+  MethodGetUnits,
   MethodUnitCreate,
   MethodUnitGetById,
   MethodUnitUpdateById,
@@ -106,20 +110,44 @@ export enum EnumTimezone {
   UTC = 'UTC',
 }
 
+export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
+  {
+    readonly _embedded: { readonly items: ReadonlyArray<Entity> }
+    readonly total: number
+  } & ExtensionInterface
+>
+
 // Describes the options with which to construct a new API wrapper instance
 export interface IAllthingsRestClientOptions {
   readonly apiUrl: string
+  readonly authorizationCode?: string
   readonly accessToken?: string
   readonly clientId?: string
   readonly clientSecret?: string
   readonly oauthUrl: string
   readonly password?: string
   readonly redirectUri?: string
+  readonly refreshToken?: string | undefined
   readonly requestBackOffInterval: number
   readonly requestMaxRetries: number
   readonly scope?: string
   readonly state?: string
   readonly username?: string
+  readonly implicit?: boolean
+  // tslint:disable-next-line no-mixed-interface
+  readonly authorizationRedirect?: (url: string) => any
+}
+
+export interface IClientExposedOAuth {
+  readonly authorizationCode: {
+    readonly getUri: (state?: string) => string
+    readonly requestToken: (
+      authorizationCode?: string,
+    ) => ReturnType<TokenRequester>
+  }
+  // tslint:disable-next-line no-mixed-interface
+  readonly refreshToken: (refreshToken?: string) => ReturnType<TokenRequester>
+  readonly generateState: () => string
 }
 
 // Describes the REST API wrapper's resulting interface
@@ -130,6 +158,8 @@ export interface IAllthingsRestClient {
   readonly get: MethodHttpGet
   readonly post: MethodHttpPost
   readonly patch: MethodHttpPatch
+
+  readonly oauth: IClientExposedOAuth
 
   // Agent
 
@@ -199,6 +229,11 @@ export interface IAllthingsRestClient {
    */
   readonly groupUpdateById: MethodGroupUpdateById
 
+  /**
+   * Get a list of units
+   */
+  readonly getUnits: MethodGetUnits
+
   // Notification
 
   /**
@@ -232,6 +267,11 @@ export interface IAllthingsRestClient {
    * Update a property by its ID
    */
   readonly propertyUpdateById: MethodPropertyUpdateById
+
+  /**
+   * Get a list of properties
+   */
+  readonly getProperties: MethodGetProperties
 
   // Registration Code
 
@@ -283,6 +323,11 @@ export interface IAllthingsRestClient {
    * Update a unit by its ID
    */
   readonly unitUpdateById: MethodUnitUpdateById
+
+  /**
+   * Get a list of groups
+   */
+  readonly getGroups: MethodGetGroups
 
   // User
 
