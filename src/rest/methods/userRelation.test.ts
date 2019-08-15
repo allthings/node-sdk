@@ -25,9 +25,9 @@ describe('userRelationCreate()', () => {
 
     expect(userRelation.user).toBe(user.id)
     expect(userRelation.type).toBe(EnumUserRelationType.isResponsible)
-    expect(userRelation.properties).toHaveLength(2)
-    expect(userRelation.properties).toContain(property1.id)
-    expect(userRelation.properties).toContain(property2.id)
+    expect(userRelation.responsibilities[0].properties).toHaveLength(2)
+    expect(userRelation.responsibilities[0].properties).toContain(property1.id)
+    expect(userRelation.responsibilities[0].properties).toContain(property2.id)
   })
 
   it('should be able to delete a user relation', async () => {
@@ -52,7 +52,7 @@ describe('userRelationCreate()', () => {
 
     expect(userRelation.user).toBe(user.id)
     expect(userRelation.type).toBe(EnumUserRelationType.isResponsible)
-    expect(userRelation.properties).toHaveLength(1)
-    expect(userRelation.properties).toEqual([property2.id])
+    expect(userRelation.responsibilities[0].properties).toHaveLength(1)
+    expect(userRelation.responsibilities[0].properties).toEqual([property2.id])
   })
 })

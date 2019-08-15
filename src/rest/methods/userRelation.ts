@@ -4,7 +4,11 @@ export interface IUserRelation {
   readonly id: string
   readonly user: string
   readonly type: string
-  readonly properties: ReadonlyArray<string>
+  readonly responsibilities: ReadonlyArray<{
+    readonly id: string
+    readonly role: string
+    readonly properties: ReadonlyArray<string>
+  }>
 }
 
 export type UserRelationResult = Promise<IUserRelation>
