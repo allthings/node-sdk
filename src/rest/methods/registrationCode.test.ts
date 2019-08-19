@@ -59,6 +59,7 @@ describe('registrationCodeCreate()', async () => {
         expiresAt: null,
         externalId: testExternalId,
         permanent: false,
+        readOnly: true,
         tenant,
       },
     )
@@ -108,7 +109,7 @@ describe('registrationCodeCreate()', async () => {
   })
 })
 
-describe('registrationCodeUpdateById()', async () => {
+describe('registrationCodeUpdateById()', () => {
   it('should be able to update an existing registration code by id', async () => {
     const testExternalId = generateId()
 
@@ -137,7 +138,7 @@ describe('registrationCodeUpdateById()', async () => {
   })
 })
 
-describe('registrationCodeGetById()', async () => {
+describe('registrationCodeGetById()', () => {
   it('should be able to find a registration code by id', async () => {
     const testExternalId = generateId()
 
@@ -170,7 +171,7 @@ describe('registrationCodeGetById()', async () => {
   })
 })
 
-describe('registrationCodeDelete()', async () => {
+describe('registrationCodeDelete()', () => {
   it('should delete a registrationCode', async () => {
     const testExternalId = generateId()
 

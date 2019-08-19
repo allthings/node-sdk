@@ -1,32 +1,31 @@
 <html>
+  <head>
+    <title>OAuth Implicit Flow</title>
+    <meta charset="UTF-8" />
+    <script src="/dist/lib.umd.min.js"></script>
+  </head>
 
-<head>
-  <title>OAuth Implicit Flow</title>
-  <meta charset="UTF-8" />
-  <script src="/dist/lib.umd.min.js"></script>
-</head>
+  <body>
+    <div id="app">Loading...</div>
 
-<body>
-  <div id="app">Loading...</div>
-
-  <script type="text/javascript">	
-    window.addEventListener('load', async () => {
-      // e.g. 
-      // http://localhost:3333/test/fixtures/implicit-flow?clientId=foobarIdHere
+    <script type="text/javascript">
       const OAUTH_CLIENT = window.location.search.split('=')[1]
 
       const client = allthings.restClient({
         oauthUrl: 'https://accounts.dev.allthings.me',
         apiUrl: 'https://api.dev.allthings.me',
+        implicit: true,
         clientId: OAUTH_CLIENT,
+        redirectUri: window.location.href.replace(window.location.search, '')
       })
 
-      const user = await client.getCurrentUser()
+      window.addEventListener('load', async () => {
+        const user = await client.getCurrentUser()
 
-      document.getElementById('app').innerHTML =
-        `<div>Hi there, ${user.username} (${user.email})</div>`
-    })
-  </script>
-</body>
-
+        document.getElementById('app').innerHTML = `<div>Hi there, ${
+          user.username
+        } (${user.email})</div>`
+      })
+    </script>
+  </body>
 </html>

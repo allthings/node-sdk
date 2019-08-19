@@ -1,4 +1,4 @@
-import { IAllthingsRestClient } from '../types'
+import { EntityResultList, IAllthingsRestClient } from '../types'
 
 export interface IProperty {
   readonly externalId: string
@@ -6,11 +6,13 @@ export interface IProperty {
   readonly label: string
   readonly name: string
   readonly timezone: string
+  readonly readOnly: boolean
 }
 
 export type PartialProperty = Partial<IProperty>
 
 export type PropertyResult = Promise<IProperty>
+export type PropertyResultList = EntityResultList<IProperty>
 
 /*
   Create new property
@@ -60,4 +62,32 @@ export async function propertyUpdateById(
   data: PartialProperty,
 ): PropertyResult {
   return client.patch(`/v1/properties/${propertyId}`, data)
+}
+
+/*
+  Get a list of properties
+*/
+
+export type MethodGetProperties = (
+  page?: number,
+  limit?: number,
+  filter?: IndexSignature,
+) => PropertyResultList
+
+export async function getProperties(
+  client: IAllthingsRestClient,
+  page = 1,
+  limit = -1,
+  filter = {},
+): PropertyResultList {
+  const {
+    _embedded: { items: properties },
+    total,
+  } = await client.get(
+    `/v1/properties?page=${page}&limit=${limit}&filter=${JSON.stringify(
+      filter,
+    )}`,
+  )
+
+  return { _embedded: { items: properties }, total }
 }

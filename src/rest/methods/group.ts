@@ -1,4 +1,8 @@
-import { EnumCountryCode, IAllthingsRestClient } from '../types'
+import {
+  EntityResultList,
+  EnumCountryCode,
+  IAllthingsRestClient,
+} from '../types'
 
 export interface IGroup {
   readonly address: Partial<{
@@ -23,11 +27,13 @@ export interface IGroup {
     readonly unitCount: number | null
     readonly inhabitedUnits: number | null
   }
+  readonly readOnly: boolean
 }
 
 export type PartialGroup = Partial<IGroup>
 
 export type GroupResult = Promise<IGroup>
+export type GroupResultList = EntityResultList<IGroup>
 
 /*
   Create new group
@@ -92,4 +98,30 @@ export async function groupUpdateById(
   data: PartialGroup,
 ): GroupResult {
   return client.patch(`/v1/groups/${groupId}`, data)
+}
+
+/*
+  Get a list of groups
+*/
+
+export type MethodGetGroups = (
+  page?: number,
+  limit?: number,
+  filter?: IndexSignature,
+) => GroupResultList
+
+export async function getGroups(
+  client: IAllthingsRestClient,
+  page = 1,
+  limit = -1,
+  filter = {},
+): GroupResultList {
+  const {
+    _embedded: { items: groups },
+    total,
+  } = await client.get(
+    `/v1/groups?page=${page}&limit=${limit}&filter=${JSON.stringify(filter)}`,
+  )
+
+  return { _embedded: { items: groups }, total }
 }

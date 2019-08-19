@@ -10,6 +10,8 @@ Allthings Node/Javascript SDK
 1.  [Authentication](#authentication)
 1.  [API](#api)
 1.  [OAuth Implicit Grant Example](#oauth-implicit-grant-example-example)
+1.  [OAuth Authorization Code Grant Example](#oauth-authorization-code-grant-example)
+1.  [Release management & versioning](#release-management--versioning)
 
 ## Installation & Usage
 
@@ -84,6 +86,46 @@ client
   .then(viewer => console.log(`Welcome back ${viewer.username}!`))
 ```
 
+## OAuth Authorization Code Grant Example
+
+1. Initialize instance of `client`:
+```javascript
+const allthings = require('@allthings/sdk')
+
+const client = allthings.restClient({
+  clientId: '5d038ef2441f4de574005c54_example',
+  clientSecret: '40f63f981ff082dbc8d273983ac3852c2e51e90856123156',
+  redirectUri: 'https://example-app.com/callback'
+})
+```
+
+2. Construct a URI to send authorization request to using a `state` which should be unique per request and hard to guess. It can be generated with `client.oauth.generateState()` method:
+```javascript
+const state = client.oauth.generateState()
+const authorizationUri = client.oauth.authorizationCode.getUri(state)
+```
+
+3. Direct user's browser to the constructed URI.
+
+4. When user completes authentication process, he is redirected to the `redirectUri` having `code` and `state` query string arguments, e.g.:
+```
+https://example-app.com/callback?code=ebc110bee11b2829&state=k1bt3c1d0vnfu7qk
+```
+
+At this point `state` must be validated - if it doesn't match the one generated on step 2, such request is probably malicious and should be aborted.
+
+5. Use the code extracted from query parameters on the previous step to obtain an access token:
+
+```javascript
+await client.oauth.authorizationCode.requestToken(code)
+```
+
+6. Client is ready to make API requests:
+
+```javascript
+const user = await client.getCurrentUser()
+```
+
 ## API
 
 ### Allthings SDK module
@@ -96,13 +138,16 @@ client
   - [`client.groupCreate()`](#restclient-client-createagent)
   - [`client.groupGetById()`](#restclient-client-createagent)
   - [`client.groupUpdateById()`](#restclient-client-createagent)
+  - [`client.getGroups()`](#restclient-client-createagent)
   - [`client.propertyCreate()`](#restclient-client-createagent)
   - [`client.propertyGetById()`](#restclient-client-createagent)
   - [`client.propertyUpdateById()`](#restclient-client-createagent)
+  - [`client.getProperties()`](#restclient-client-createagent)
   - [`client.registrationCodeCreate()`](#restclient-client-createagent)
   - [`client.unitCreate()`](#restclient-client-createagent)
   - [`client.unitGetById()`](#restclient-client-createagent)
   - [`client.unitUpdateById()`](#restclient-client-createagent)
+  - [`client.getUnits()`](#restclient-client-createagent)
   - [`client.userCreate()`](#restclient-client-createagent)
   - [`client.userGetById()`](#restclient-client-createagent)
   - [`client.userUpdateById()`](#restclient-client-createagent)
@@ -368,3 +413,8 @@ export interface IAllthingsRestClient {
   readonly utilisationPeriodCheckInUser: MethodUtilisationPeriodCheckInUser
 }
 ```
+
+## Release management & versioning
+
+The Allthings SDK makes use of [semantic-release](https://github.com/semantic-release/semantic-release) which automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package. This repository is configured to `squash-merge` ([see here](https://github.blog/2016-04-01-squash-your-commits/)).
+When you squash merge, GitHub takes the title of the PR for the squash-merge's commit subject. By choosing a proper PR title e.g. `feat: my new feature` your merged PR will trigger a new release. See semantic-releases [docs](https://github.com/semantic-release/semantic-release#how-does-it-work) for available prefixes.
