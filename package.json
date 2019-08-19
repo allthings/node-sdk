@@ -58,7 +58,7 @@
     "test:authorization-code": "open http://localhost:3333/test/fixtures/authorization-code?clientId=$ALLTHINGS_OAUTH_CLIENT_ID&clientSecret=$ALLTHINGS_OAUTH_CLIENT_SECRET"
   },
   "dependencies": {
-    "bottleneck": "2.19.4",
+    "bottleneck": "2.19.5",
     "cross-fetch": "3.0.4",
     "query-string": "6.8.1"
   },
