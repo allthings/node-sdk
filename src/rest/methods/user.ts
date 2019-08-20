@@ -19,8 +19,8 @@ export enum EnumUserType {
 }
 
 enum EnumCommunicationPreferenceChannel {
-  Push = 'push',
-  Email = 'email',
+  push = 'push',
+  email = 'email',
 }
 
 export interface IUser {
