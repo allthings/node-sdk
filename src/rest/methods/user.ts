@@ -19,7 +19,10 @@ export enum EnumUserType {
 }
 
 export interface IUser {
-  readonly communicationPreferences: ReadonlyArray<string>
+  readonly communicationPreferences: {
+    readonly channels: ReadonlyArray<string>
+    readonly event: string
+  }
   readonly createdAt: string
   readonly deletionRequestedAt: string | null
   readonly description: string
