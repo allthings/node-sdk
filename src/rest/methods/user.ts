@@ -24,10 +24,10 @@ enum EnumCommunicationPreferenceChannel {
 }
 
 export interface IUser {
-  readonly communicationPreferences: {
+  readonly communicationPreferences: ReadonlyArray<{
     readonly channels: ReadonlyArray<EnumCommunicationPreferenceChannel>
     readonly event: string
-  }
+  }>
   readonly createdAt: string
   readonly deletionRequestedAt: string | null
   readonly description: string
