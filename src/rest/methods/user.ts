@@ -18,9 +18,14 @@ export enum EnumUserType {
   partner = 'partner',
 }
 
+enum EnumCommunicationPreferenceChannel {
+  Push = 'push',
+  Email = 'email',
+}
+
 export interface IUser {
   readonly communicationPreferences: {
-    readonly channels: ReadonlyArray<string>
+    readonly channels: ReadonlyArray<EnumCommunicationPreferenceChannel>
     readonly event: string
   }
   readonly createdAt: string
