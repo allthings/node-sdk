@@ -45,6 +45,7 @@ import {
   unitUpdateById,
 } from './methods/unit'
 import {
+  EnumCommunicationPreferenceChannel,
   EnumUserPermissionObjectType,
   EnumUserPermissionRole,
   getCurrentUser,
@@ -166,6 +167,7 @@ const API_METHODS: ReadonlyArray<any> = [
 ]
 
 export {
+  EnumCommunicationPreferenceChannel,
   EnumUserPermissionRole,
   EnumUnitType,
   EnumUserPermissionObjectType,

@@ -1,5 +1,6 @@
 export {
   default as restClient,
+  EnumCommunicationPreferenceChannel,
   EnumUserPermissionRole,
   EnumUnitType,
   EnumUserPermissionObjectType,

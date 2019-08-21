@@ -18,7 +18,7 @@ export enum EnumUserType {
   partner = 'partner',
 }
 
-enum EnumCommunicationPreferenceChannel {
+export enum EnumCommunicationPreferenceChannel {
   push = 'push',
   email = 'email',
 }
