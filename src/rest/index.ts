@@ -66,6 +66,7 @@ import {
   userRelationDelete,
 } from './methods/userRelation'
 import {
+  utilisationPeriodAddRegistrationCode,
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
   utilisationPeriodCreate,
@@ -164,6 +165,7 @@ const API_METHODS: ReadonlyArray<any> = [
   utilisationPeriodUpdateById,
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
+  utilisationPeriodAddRegistrationCode,
 ]
 
 export {

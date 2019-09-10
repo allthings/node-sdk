@@ -171,3 +171,29 @@ describe('utilisationPeriodCheckInUser()', () => {
     })
   })
 })
+
+describe('utilisationPeriodAddRegistrationCode()', () => {
+  it('should be able to add registration code by utilisation period ID', async () => {
+    const initialData = {
+      endDate: '2050-01-03',
+      externalId: generateId(),
+      startDate: '2050-01-03',
+    }
+    const utilisationPeriod = await client.utilisationPeriodCreate(
+      sharedUnitId,
+      initialData,
+    )
+
+    expect(utilisationPeriod.endDate).toEqual(initialData.endDate)
+    expect(utilisationPeriod.externalId).toEqual(initialData.externalId)
+    expect(utilisationPeriod.id).toBeDefined()
+
+    const registrationCode = Date.now().toString()
+    const result = await client.utilisationPeriodAddRegistrationCode(
+      utilisationPeriod.id,
+      registrationCode,
+    )
+
+    expect(result.invitations[0].code).toEqual(registrationCode)
+  })
+})

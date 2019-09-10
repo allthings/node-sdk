@@ -89,17 +89,19 @@ client
 ## OAuth Authorization Code Grant Example
 
 1. Initialize instance of `client`:
+
 ```javascript
 const allthings = require('@allthings/sdk')
 
 const client = allthings.restClient({
   clientId: '5d038ef2441f4de574005c54_example',
   clientSecret: '40f63f981ff082dbc8d273983ac3852c2e51e90856123156',
-  redirectUri: 'https://example-app.com/callback'
+  redirectUri: 'https://example-app.com/callback',
 })
 ```
 
 2. Construct a URI to send authorization request to using a `state` which should be unique per request and hard to guess. It can be generated with `client.oauth.generateState()` method:
+
 ```javascript
 const state = client.oauth.generateState()
 const authorizationUri = client.oauth.authorizationCode.getUri(state)
@@ -108,6 +110,7 @@ const authorizationUri = client.oauth.authorizationCode.getUri(state)
 3. Direct user's browser to the constructed URI.
 
 4. When user completes authentication process, he is redirected to the `redirectUri` having `code` and `state` query string arguments, e.g.:
+
 ```
 https://example-app.com/callback?code=ebc110bee11b2829&state=k1bt3c1d0vnfu7qk
 ```
@@ -164,6 +167,7 @@ const user = await client.getCurrentUser()
   - [`client.utilisationPeriodGetById()`](#restclient-client-createagent)
   - [`client.utilisationPeriodUpdateById()`](#restclient-client-createagent)
   - [`client.utilisationPeriodCheckInUser()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodAddRegistrationCode()`](#restclient-client-createagent)
   - [`client.delete()`](#restclient-client-delete)
   - [`client.get()`](#restclient-client-get)
   - [`client.post()`](#restclient-client-post)

@@ -62,6 +62,7 @@ import {
   MethodUserRelationDelete,
 } from './methods/userRelation'
 import {
+  MethodUtilisationPeriodAddRegistrationCode,
   MethodUtilisationPeriodCheckInUser,
   MethodUtilisationPeriodCheckOutUser,
   MethodUtilisationPeriodCreate,
@@ -426,4 +427,9 @@ export interface IAllthingsRestClient {
    * and userId
    */
   readonly utilisationPeriodCheckOutUser: MethodUtilisationPeriodCheckOutUser
+
+  /**
+   * Add new registratation code by utilisation period
+   */
+  readonly utilisationPeriodAddRegistrationCode: MethodUtilisationPeriodAddRegistrationCode
 }
