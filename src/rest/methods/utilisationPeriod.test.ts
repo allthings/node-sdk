@@ -194,6 +194,6 @@ describe('utilisationPeriodAddRegistrationCode()', () => {
       registrationCode,
     )
 
-    expect(result.invitations[0].code).toEqual(registrationCode)
+    expect(result.code).toEqual(registrationCode)
   })
 })
