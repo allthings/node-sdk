@@ -46,8 +46,6 @@ export type UtilisationPeriodResults = Promise<
   ReadonlyArray<IUtilisationPeriod>
 >
 
-export type UtilisationPeriodInvite = Promise<IUtilisationPeriodInvite>
-
 /*
   Create new Utilisation Period
 */
@@ -174,13 +172,13 @@ export async function utilisationPeriodCheckOutUser(
 export type MethodUtilisationPeriodAddRegistrationCode = (
   utilisationPeriodId: string,
   code: string,
-) => UtilisationPeriodInvite
+) => Promise<IUtilisationPeriodInvite>
 
 export async function utilisationPeriodAddRegistrationCode(
   client: IAllthingsRestClient,
   utilisationPeriodId: string,
   code: string,
-): UtilisationPeriodInvite {
+): Promise<IUtilisationPeriodInvite> {
   return client.post(
     `/v1/utilisation-periods/${utilisationPeriodId}/registration-codes`,
     { code },
