@@ -6,7 +6,7 @@ export interface IUserRelation {
   readonly type: string
   readonly responsibilities: ReadonlyArray<{
     readonly id: string
-    readonly role: string
+    readonly role?: string
     readonly properties: ReadonlyArray<string>
   }>
 }
@@ -21,6 +21,7 @@ export type MethodUserRelationCreate = (
   userId: string,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly role?: string
     readonly type: EnumUserRelationType
   },
 ) => UserRelationResult
@@ -29,6 +30,7 @@ export type MethodUserRelationDelete = (
   userId: string,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly role?: string
     readonly type: EnumUserRelationType
   },
 ) => UserRelationResult
@@ -39,11 +41,13 @@ export async function userRelationCreate(
   userId: string,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly role?: string
     readonly type: EnumUserRelationType
   },
 ): UserRelationResult {
   return client.post(`/v1/users/${userId}/user-relations/${data.type}`, {
     properties: data.properties,
+    role: data.role,
   })
 }
 
@@ -53,10 +57,12 @@ export async function userRelationDelete(
   userId: string,
   data: {
     readonly properties: ReadonlyArray<string>
+    readonly role?: string
     readonly type: EnumUserRelationType
   },
 ): UserRelationResult {
   return client.delete(`/v1/users/${userId}/user-relations/${data.type}`, {
     properties: data.properties,
+    role: data.role,
   })
 }
