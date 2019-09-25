@@ -164,7 +164,7 @@
     "repositoryUrl": "https://github.com/allthings/node-sdk.git"
   },
   "resolutions": {
-    "handlebars": ">=4.1.2",
+    "handlebars": ">=4.3.0",
     "jest/**/braces": ">=2.3.1",
     "js-yaml": ">=3.13.1",
     "tar": ">=4.4.2",
