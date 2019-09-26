@@ -32,6 +32,11 @@ import {
   propertyUpdateById,
 } from './methods/property'
 import {
+  propertyManagerCreate,
+  propertyManagerGetById,
+  propertyManagerUpdateById,
+} from './methods/propertyManager'
+import {
   registrationCodeCreate,
   registrationCodeDelete,
   registrationCodeGetById,
@@ -129,6 +134,11 @@ const API_METHODS: ReadonlyArray<any> = [
   propertyGetById,
   propertyUpdateById,
   getProperties,
+
+  // Property Manager
+  propertyManagerCreate,
+  propertyManagerGetById,
+  propertyManagerUpdateById,
 
   // Registration Code
   registrationCodeCreate,
