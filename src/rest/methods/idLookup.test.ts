@@ -1,7 +1,9 @@
 // tslint:disable:no-expression-statement
+import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
-import { EnumResource } from '../types'
+import { EnumCountryCode, EnumResource } from '../types'
+import { EnumPropertyManagerType } from './propertyManager'
 
 const client = restClient()
 
@@ -27,6 +29,38 @@ describe('lookupIds()', () => {
       bar: null,
       foo: null,
       foobar: null,
+    })
+  })
+  it('should be able to lookup up property-managers with parent', async () => {
+    const propertyManagerParent = await client.propertyManagerCreate({
+      externalId: generateId(),
+      name: 'Parent',
+    })
+
+    const propertyManager = await client.propertyManagerCreate({
+      address: {
+        city: 'Freiburg',
+        country: EnumCountryCode.DE,
+        houseNumber: '1337a',
+        postalCode: '79112',
+        street: 'street',
+      },
+      email: 'foo@bar.de',
+      externalId: generateId(),
+      name: 'Foobar Property-manager',
+      parent: propertyManagerParent.id,
+      phoneNumber: '+493434343343',
+      type: EnumPropertyManagerType.craftsPeople,
+    })
+
+    const result = await client.lookupIds(APP_ID, {
+      externalIds: [propertyManager.externalId],
+      parentId: propertyManagerParent.id,
+      resource: EnumResource.propertyManager,
+    })
+
+    expect(result).toEqual({
+      [propertyManager.externalId]: propertyManager.id,
     })
   })
 })

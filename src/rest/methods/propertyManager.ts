@@ -1,9 +1,28 @@
-import { IAllthingsRestClient } from '../types'
+import { EnumCountryCode, IAllthingsRestClient } from '../types'
 
+export enum EnumPropertyManagerType {
+  propertyManager = 'property-manager',
+  craftsPeople = 'crafstpeople',
+}
 export interface IPropertyManager {
+  readonly address: Partial<{
+    readonly city: string | null
+    readonly country: EnumCountryCode | null
+    readonly houseNumber: string | null
+    readonly latitude: number | null
+    readonly longitude: number | null
+    readonly postalCode: string | null
+    readonly street: string | null
+    readonly type: string | null
+  }>
+  readonly email: string
   readonly externalId: string
   readonly id: string
   readonly name: string
+  readonly parent: string
+  readonly phoneNumber: string | null
+  readonly type: EnumPropertyManagerType
+  readonly website: string | null
 }
 
 export type PartialPropertyManager = Partial<IPropertyManager>
