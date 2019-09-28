@@ -3,7 +3,7 @@ import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
 import { EnumCountryCode, EnumResource } from '../types'
-import { EnumPropertyManagerType } from './propertyManager'
+import { EnumServiceProviderType } from './serviceProvider'
 
 const client = restClient()
 
@@ -31,13 +31,13 @@ describe('lookupIds()', () => {
       foobar: null,
     })
   })
-  it('should be able to lookup up property-managers with parent', async () => {
-    const propertyManagerParent = await client.propertyManagerCreate({
+  it('should be able to lookup up service-providers with parent', async () => {
+    const serviceProviderParent = await client.serviceProviderCreate({
       externalId: generateId(),
       name: 'Parent',
     })
 
-    const propertyManager = await client.propertyManagerCreate({
+    const serviceProvider = await client.serviceProviderCreate({
       address: {
         city: 'Freiburg',
         country: EnumCountryCode.DE,
@@ -48,19 +48,19 @@ describe('lookupIds()', () => {
       email: 'foo@bar.de',
       externalId: generateId(),
       name: 'Foobar Property-manager',
-      parent: propertyManagerParent.id,
+      parent: serviceProviderParent.id,
       phoneNumber: '+493434343343',
-      type: EnumPropertyManagerType.craftsPeople,
+      type: EnumServiceProviderType.craftsPeople,
     })
 
     const result = await client.lookupIds(APP_ID, {
-      externalIds: [propertyManager.externalId],
-      parentId: propertyManagerParent.id,
-      resource: EnumResource.propertyManager,
+      externalIds: [serviceProvider.externalId],
+      parentId: serviceProviderParent.id,
+      resource: EnumResource.serviceProvider,
     })
 
     expect(result).toEqual({
-      [propertyManager.externalId]: propertyManager.id,
+      [serviceProvider.externalId]: serviceProvider.id,
     })
   })
 })

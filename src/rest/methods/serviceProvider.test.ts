@@ -2,7 +2,7 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { EnumCountryCode } from '../types'
-import { EnumPropertyManagerType } from './propertyManager'
+import { EnumServiceProviderType } from './serviceProvider'
 
 const client = restClient()
 
@@ -17,24 +17,24 @@ const testData = {
   email: 'foo@bar.de',
   name: 'Foobar Property-manager',
   phoneNumber: '+493434343343',
-  type: EnumPropertyManagerType.craftsPeople,
+  type: EnumServiceProviderType.craftsPeople,
 }
 
-describe('propertyManagerCreate()', () => {
+describe('serviceProviderCreate()', () => {
   it('should be able to create a new property-manager', async () => {
     const data = { ...testData, externalId: generateId() }
-    const result = await client.propertyManagerCreate(data)
+    const result = await client.serviceProviderCreate(data)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
   })
 })
 
-describe('propertyManagerGetById()', () => {
+describe('serviceProviderGetById()', () => {
   it('should be able to get a property by ID', async () => {
     const data = { ...testData, externalId: generateId() }
-    const { id } = await client.propertyManagerCreate(data)
-    const result = await client.propertyManagerGetById(id)
+    const { id } = await client.serviceProviderCreate(data)
+    const result = await client.serviceProviderGetById(id)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
@@ -44,17 +44,17 @@ describe('propertyManagerGetById()', () => {
 describe('propertyUpdateById()', () => {
   it('should be able to update a property by ID', async () => {
     const data = { ...testData, externalId: generateId() }
-    const propertyManager = await client.propertyManagerCreate(data)
+    const serviceProvider = await client.serviceProviderCreate(data)
 
-    expect(propertyManager.name).toEqual(data.name)
-    expect(propertyManager.externalId).toEqual(data.externalId)
+    expect(serviceProvider.name).toEqual(data.name)
+    expect(serviceProvider.externalId).toEqual(data.externalId)
 
     const updateData = {
       externalId: generateId(),
       name: 'Bio craftspeople',
     }
-    const result = await client.propertyManagerUpdateById(
-      propertyManager.id,
+    const result = await client.serviceProviderUpdateById(
+      serviceProvider.id,
       updateData,
     )
 

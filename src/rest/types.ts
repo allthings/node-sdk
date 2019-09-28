@@ -33,16 +33,16 @@ import {
   MethodPropertyUpdateById,
 } from './methods/property'
 import {
-  MethodPropertyManagerCreate,
-  MethodPropertyManagerGetById,
-  MethodPropertyManagerUpdateById,
-} from './methods/propertyManager'
-import {
   MethodRegistrationCodeCreate,
   MethodRegistrationCodeDelete,
   MethodRegistrationCodeGetById,
   MethodRegistrationCodeUpdateById,
 } from './methods/registrationCode'
+import {
+  MethodServiceProviderCreate,
+  MethodServiceProviderGetById,
+  MethodServiceProviderUpdateById,
+} from './methods/serviceProvider'
 import {
   MethodGetUnits,
   MethodUnitCreate,
@@ -81,7 +81,7 @@ import { MethodHttpPost } from './post'
 export enum EnumResource {
   group = 'group',
   property = 'property',
-  propertyManager = 'propertyManager',
+  serviceProvider = 'propertyManager',
   registrationCode = 'registrationCode',
   unit = 'unit',
   user = 'user',
@@ -286,17 +286,17 @@ export interface IAllthingsRestClient {
   /**
    * Create a new property-managar
    */
-  readonly propertyManagerCreate: MethodPropertyManagerCreate
+  readonly serviceProviderCreate: MethodServiceProviderCreate
 
   /**
    * Get a property-manager by its ID
    */
-  readonly propertyManagerGetById: MethodPropertyManagerGetById
+  readonly serviceProviderGetById: MethodServiceProviderGetById
 
   /**
    * Update a property-manager by its ID
    */
-  readonly propertyManagerUpdateById: MethodPropertyManagerUpdateById
+  readonly serviceProviderUpdateById: MethodServiceProviderUpdateById
 
   // Registration Code
 

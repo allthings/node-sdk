@@ -32,16 +32,16 @@ import {
   propertyUpdateById,
 } from './methods/property'
 import {
-  propertyManagerCreate,
-  propertyManagerGetById,
-  propertyManagerUpdateById,
-} from './methods/propertyManager'
-import {
   registrationCodeCreate,
   registrationCodeDelete,
   registrationCodeGetById,
   registrationCodeUpdateById,
 } from './methods/registrationCode'
+import {
+  serviceProviderCreate,
+  serviceProviderGetById,
+  serviceProviderUpdateById,
+} from './methods/serviceProvider'
 import {
   EnumUnitType,
   getUnits,
@@ -136,9 +136,9 @@ const API_METHODS: ReadonlyArray<any> = [
   getProperties,
 
   // Property Manager
-  propertyManagerCreate,
-  propertyManagerGetById,
-  propertyManagerUpdateById,
+  serviceProviderCreate,
+  serviceProviderGetById,
+  serviceProviderUpdateById,
 
   // Registration Code
   registrationCodeCreate,
