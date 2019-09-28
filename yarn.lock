@@ -744,10 +744,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.11.5.tgz#6489ebda4452592d3fd37aefa57eedc01ed13378"
   integrity sha512-3j1EFLfrjYRHRFjBb+RIXXwr1YGzcfpQVMP39thZa6tMY+JjVgQddPF+hsdV800JqbuLwpwAWclDpbGSAw44vQ==
 
-"@types/node@10.14.18":
-  version "10.14.18"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.18.tgz#b7d45fc950e6ffd7edc685e890d13aa7b8535dce"
-  integrity sha512-ryO3Q3++yZC/+b8j8BdKd/dn9JlzlHBPdm80656xwYUdmPkpTGTjkAdt6BByiNupGPE8w0FhBgvYy/fX9hRNGQ==
+"@types/node@10.14.19":
+  version "10.14.19"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.19.tgz#f52742c7834a815dedf66edfc8a51547e2a67342"
+  integrity sha512-j6Sqt38ssdMKutXBUuAcmWF8QtHW1Fwz/mz4Y+Wd9mzpBiVFirjpNQf363hG5itkG+yGaD+oiLyb50HxJ36l9Q==
 
 "@types/node@^12.0.2":
   version "12.7.2"
@@ -2990,10 +2990,10 @@ growly@^1.3.0:
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
   integrity sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
 
-handlebars@>=4.1.2, handlebars@^4.0.2, handlebars@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.1.2.tgz#b6b37c1ced0306b221e094fc7aca3ec23b131b67"
-  integrity sha512-nvfrjqvt9xQ8Z/w0ijewdD/vvWDTOweBUm96NTr66Wfvo1mJenBLwcYmPs3TIBP5ruzYGD7Hx/DaM9RmhroGPw==
+handlebars@>=4.3.0, handlebars@^4.0.2, handlebars@^4.1.2:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.3.3.tgz#56dd05fe33d6bd8a7d797351c39a0cdcfd576be5"
+  integrity sha512-VupOxR91xcGojfINrzMqrvlyYbBs39sXIrWa7YdaQWeBudOlvKEGvCczMfJPgnuwHE/zyH1M6J+IUP6cgDVyxg==
   dependencies:
     neo-async "^2.6.0"
     optimist "^0.6.1"
@@ -3147,10 +3147,10 @@ humanize-ms@^1.2.1:
   dependencies:
     ms "^2.0.0"
 
-husky@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-3.0.5.tgz#d7db27c346645a8dc52df02aa534a377ad7925e0"
-  integrity sha512-cKd09Jy9cDyNIvAdN2QQAP/oA21sle4FWXjIMDttailpLAYZuBE7WaPmhrkj+afS8Sj9isghAtFvWSQ0JiwOHg==
+husky@3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-3.0.7.tgz#05e869006c7d9a31b27893aeda520e730bd125b9"
+  integrity sha512-fIrkaREoQk6DO8KnSX16Aq7Kg9SxqYYQZH/9b+4AxXyXNNgpJLsc8lWlQCShLus1nbujIyZ/WQZBHGwClohK/w==
   dependencies:
     chalk "^2.4.2"
     cosmiconfig "^5.2.1"
@@ -4308,10 +4308,10 @@ libnpx@^10.2.0:
     y18n "^4.0.0"
     yargs "^11.0.0"
 
-lint-staged@9.3.0:
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-9.3.0.tgz#522a79f166050ab5777887348f2cbdb03f71acac"
-  integrity sha512-OuL3xo6XpBErl16+3W9PdnFmgeGp12lM8I1Ii/B56S8Edy1kyrf4W8VD4IBn9v17QlutRQEWUJ54YF/VVQ7J2A==
+lint-staged@9.4.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-9.4.0.tgz#dd4abcc9a82539fd290aed1584e3241b8f8af687"
+  integrity sha512-jTu1KoGiGTSffM539wK+3igVqDGVsby3KwDBaXL471YndahkjnavLX+R5Nsk49JwklyMo0ZAXay1BaoyA6d2Jw==
   dependencies:
     chalk "^2.4.2"
     commander "^2.20.0"
