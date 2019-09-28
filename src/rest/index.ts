@@ -135,7 +135,7 @@ const API_METHODS: ReadonlyArray<any> = [
   propertyUpdateById,
   getProperties,
 
-  // Property Manager
+  // Service Provider
   serviceProviderCreate,
   serviceProviderGetById,
   serviceProviderUpdateById,
