@@ -69,7 +69,7 @@
     "@types/form-data": "2.2.1",
     "@types/jest": "24.0.18",
     "@types/nanoid": "2.1.0",
-    "@types/node": "10.14.19",
+    "@types/node": "10.14.20",
     "@types/query-string": "6.2.0",
     "coveralls": "3.0.6",
     "form-data": "2.5.1",
