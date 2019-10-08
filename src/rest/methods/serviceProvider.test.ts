@@ -42,7 +42,7 @@ describe('serviceProviderGetById()', () => {
 })
 
 describe('propertyUpdateById()', () => {
-  it('should be able to update a property by ID', async () => {
+  it('should be able to update a service provider by ID', async () => {
     const data = { ...testData, externalId: generateId() }
     const serviceProviderParent = await client.serviceProviderCreate({
       externalId: generateId(),
