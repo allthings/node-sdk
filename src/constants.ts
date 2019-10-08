@@ -8,7 +8,8 @@ const OAUTH_URL = 'https://accounts.allthings.me'
 export const QUEUE_CONCURRENCY = undefined
 export const QUEUE_DELAY = 0
 export const QUEUE_RESERVOIR = 30
-export const QUEUE_RESERVOIR_REFILL_INTERVAL = 500
+// Reflect nginx rate limit here (6 req/sec = ~166ms)
+export const QUEUE_RESERVOIR_REFILL_INTERVAL = 166
 
 // Request error handling options
 export const REQUEST_BACK_OFF_INTERVAL = 200
