@@ -21,7 +21,7 @@ const testData = {
 }
 
 describe('serviceProviderCreate()', () => {
-  it('should be able to create a new property-manager', async () => {
+  it('should be able to create a new service provider', async () => {
     const data = { ...testData, externalId: generateId() }
     const result = await client.serviceProviderCreate(data)
 
