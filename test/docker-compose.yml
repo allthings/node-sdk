@@ -89,6 +89,7 @@ services:
     extra_hosts:
       - app:127.0.0.1
       - cockpit:127.0.0.1
+      - insights:127.0.0.1
   yarntest:
     image: allthings/node
     links:
