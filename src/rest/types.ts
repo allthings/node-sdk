@@ -281,20 +281,20 @@ export interface IAllthingsRestClient {
    */
   readonly getProperties: MethodGetProperties
 
-  // Property managers
+  // Service providers
 
   /**
-   * Create a new property-managar
+   * Create a new service provider
    */
   readonly serviceProviderCreate: MethodServiceProviderCreate
 
   /**
-   * Get a property-manager by its ID
+   * Get a service provider by its ID
    */
   readonly serviceProviderGetById: MethodServiceProviderGetById
 
   /**
-   * Update a property-manager by its ID
+   * Update a service provider by its ID
    */
   readonly serviceProviderUpdateById: MethodServiceProviderUpdateById
 
