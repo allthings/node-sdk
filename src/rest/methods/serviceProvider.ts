@@ -1,7 +1,7 @@
 import { EnumCountryCode, IAllthingsRestClient } from '../types'
 
 export enum EnumServiceProviderType {
-  serviceProvider = 'property-manager',
+  serviceProvider = 'service-provider',
   craftsPeople = 'crafstpeople',
 }
 export interface IServiceProvider {
@@ -30,7 +30,7 @@ export type PartialServiceProvider = Partial<IServiceProvider>
 export type ServiceProviderResult = Promise<IServiceProvider>
 
 /*
-  Create new property-manager
+  Create new service-provider
   https://api-doc.allthings.me/#/Property%20Manager/post_property_managers
 */
 
@@ -42,11 +42,11 @@ export async function serviceProviderCreate(
   client: IAllthingsRestClient,
   data: PartialServiceProvider & { readonly name: string },
 ): ServiceProviderResult {
-  return client.post('/v1/property-managers', data)
+  return client.post('/v1/service-providers', data)
 }
 
 /*
-  Get a property-manager by its ID
+  Get a service-provider by its ID
   https://api-doc.allthings.me/#/Property%20Manager/get_property_managers__serviceProviderID_
 */
 
@@ -58,11 +58,11 @@ export async function serviceProviderGetById(
   client: IAllthingsRestClient,
   serviceProviderId: string,
 ): ServiceProviderResult {
-  return client.get(`/v1/property-managers/${serviceProviderId}`)
+  return client.get(`/v1/service-providers/${serviceProviderId}`)
 }
 
 /*
-  Update a property-manager by its ID
+  Update a service-provider by its ID
   https://api-doc.allthings.me/#/Property%20Manager/patch_property_managers__serviceProviderID_
 */
 
@@ -76,5 +76,5 @@ export async function serviceProviderUpdateById(
   serviceProviderId: string,
   data: PartialServiceProvider,
 ): ServiceProviderResult {
-  return client.patch(`/v1/property-managers/${serviceProviderId}`, data)
+  return client.patch(`/v1/service-providers/${serviceProviderId}`, data)
 }

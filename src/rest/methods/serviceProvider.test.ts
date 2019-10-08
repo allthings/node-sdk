@@ -44,7 +44,14 @@ describe('serviceProviderGetById()', () => {
 describe('propertyUpdateById()', () => {
   it('should be able to update a property by ID', async () => {
     const data = { ...testData, externalId: generateId() }
-    const serviceProvider = await client.serviceProviderCreate(data)
+    const serviceProviderParent = await client.serviceProviderCreate({
+      externalId: generateId(),
+      name: 'Parent',
+    })
+    const serviceProvider = await client.serviceProviderCreate({
+      ...data,
+      parent: serviceProviderParent.id,
+    })
 
     expect(serviceProvider.name).toEqual(data.name)
     expect(serviceProvider.externalId).toEqual(data.externalId)
