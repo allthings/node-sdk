@@ -2,8 +2,11 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
-import { EnumCountryCode, EnumResource } from '../types'
-import { EnumServiceProviderType } from './serviceProvider'
+import {
+  EnumCountryCode,
+  EnumResource,
+  EnumServiceProviderType,
+} from '../types'
 
 const client = restClient()
 

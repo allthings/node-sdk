@@ -10,6 +10,7 @@ export {
   EnumCountryCode,
   EnumLocale,
   EnumResource,
+  EnumServiceProviderType,
   EnumTimezone,
   IAllthingsRestClient,
   IAllthingsRestClientOptions,
