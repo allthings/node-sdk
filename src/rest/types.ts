@@ -119,7 +119,7 @@ export enum EnumTimezone {
 
 export enum EnumServiceProviderType {
   serviceProvider = 'service-provider',
-  craftspeople = 'crafstpeople',
+  craftspeople = 'craftspeople',
 }
 
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
