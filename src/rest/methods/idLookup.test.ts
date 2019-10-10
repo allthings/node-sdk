@@ -53,7 +53,7 @@ describe('lookupIds()', () => {
       name: 'Foobar Property-manager',
       parent: serviceProviderParent.id,
       phoneNumber: '+493434343343',
-      type: EnumServiceProviderType.craftsPeople,
+      type: EnumServiceProviderType.craftspeople,
     })
 
     const result = await client.lookupIds(APP_ID, {

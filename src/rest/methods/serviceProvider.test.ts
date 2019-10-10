@@ -16,7 +16,7 @@ const testData = {
   email: 'foo@bar.de',
   name: 'Foobar Property-manager',
   phoneNumber: '+493434343343',
-  type: EnumServiceProviderType.craftsPeople,
+  type: EnumServiceProviderType.craftspeople,
 }
 
 describe('serviceProviderCreate()', () => {
