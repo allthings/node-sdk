@@ -1,9 +1,9 @@
-import { EnumCountryCode, IAllthingsRestClient } from '../types'
+import {
+  EnumCountryCode,
+  EnumServiceProviderType,
+  IAllthingsRestClient,
+} from '../types'
 
-export enum EnumServiceProviderType {
-  serviceProvider = 'service-provider',
-  craftsPeople = 'crafstpeople',
-}
 export interface IServiceProvider {
   readonly address: Partial<{
     readonly city: string | null

@@ -2,8 +2,11 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
-import { EnumCountryCode, EnumResource } from '../types'
-import { EnumServiceProviderType } from './serviceProvider'
+import {
+  EnumCountryCode,
+  EnumResource,
+  EnumServiceProviderType,
+} from '../types'
 
 const client = restClient()
 
@@ -50,7 +53,7 @@ describe('lookupIds()', () => {
       name: 'Foobar Property-manager',
       parent: serviceProviderParent.id,
       phoneNumber: '+493434343343',
-      type: EnumServiceProviderType.craftsPeople,
+      type: EnumServiceProviderType.craftspeople,
     })
 
     const result = await client.lookupIds(APP_ID, {

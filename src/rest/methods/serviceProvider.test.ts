@@ -1,8 +1,7 @@
 // tslint:disable:no-expression-statement
 import generateId from 'nanoid'
 import restClient from '..'
-import { EnumCountryCode } from '../types'
-import { EnumServiceProviderType } from './serviceProvider'
+import { EnumCountryCode, EnumServiceProviderType } from '../types'
 
 const client = restClient()
 
@@ -17,7 +16,7 @@ const testData = {
   email: 'foo@bar.de',
   name: 'Foobar Property-manager',
   phoneNumber: '+493434343343',
-  type: EnumServiceProviderType.craftsPeople,
+  type: EnumServiceProviderType.craftspeople,
 }
 
 describe('serviceProviderCreate()', () => {

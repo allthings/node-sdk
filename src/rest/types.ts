@@ -117,6 +117,11 @@ export enum EnumTimezone {
   UTC = 'UTC',
 }
 
+export enum EnumServiceProviderType {
+  serviceProvider = 'service-provider',
+  craftspeople = 'craftspeople',
+}
+
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
   {
     readonly _embedded: { readonly items: ReadonlyArray<Entity> }
