@@ -21,7 +21,7 @@ export type MethodAgentCreate = (
   data: PartialUser & {
     readonly email: string
     readonly locale: EnumLocale
-    readonly serviceProviderId?: string
+    readonly externalAgentCompany?: string
   },
 ) => UserResult
 
@@ -33,7 +33,7 @@ export async function agentCreate(
   data: PartialUser & {
     readonly email: string
     readonly locale: EnumLocale
-    readonly serviceProviderId?: string
+    readonly externalAgentCompany?: string
   },
 ): UserResult {
   const user = await client.userCreate(appId, username, {

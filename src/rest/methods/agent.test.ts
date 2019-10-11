@@ -2,7 +2,12 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
-import { EnumLocale, EnumTimezone } from '../types'
+import {
+  EnumCountryCode,
+  EnumLocale,
+  EnumServiceProviderType,
+  EnumTimezone,
+} from '../types'
 import {
   EnumUserPermissionObjectType,
   EnumUserPermissionRole,
@@ -18,12 +23,66 @@ const testData = {
 }
 
 describe('agentCreate()', () => {
-  it.only('should be able to create a new agent', async () => {
+  it('should be able to create a new agent', async () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
-      serviceProviderId: '343434434',
+    }
+
+    const agent = await client.agentCreate(
+      APP_ID,
+      APP_PROPERTY_MANAGER_ID,
+      generateId(),
+      data,
+    )
+
+    const result = await client.userGetById(agent.id)
+
+    expect(result.email).toEqual(data.email)
+    expect(result.externalId).toEqual(data.externalId)
+    expect(result.roles).toEqual([])
+    expect(result.type).toEqual(EnumUserType.customer)
+
+    const {
+      _embedded: { items: managerAgents },
+    } = await client.get(
+      `/v1/property-managers/${APP_PROPERTY_MANAGER_ID}/users?limit=-1`,
+    )
+
+    const ourManagerAgent = managerAgents.find(
+      (item: any) => item.id === agent.id,
+    )
+
+    expect(ourManagerAgent).toBeTruthy()
+    expect(ourManagerAgent.email).toEqual(agent.email)
+    expect(ourManagerAgent.externalId).toEqual(agent.externalId)
+    expect(ourManagerAgent.roles).toEqual(agent.roles)
+    expect(ourManagerAgent.type).toEqual(agent.type)
+  })
+  it('should be able to create a new agent with a externalAgentCompany associated', async () => {
+    const externalAgentCompanyData = {
+      address: {
+        city: 'Freiburg',
+        country: EnumCountryCode.DE,
+        houseNumber: '1337a',
+        postalCode: '79112',
+        street: 'street',
+      },
+      email: 'foo@bar.de',
+      name: 'Foobar Property-manager',
+      phoneNumber: '+493434343343',
+      type: EnumServiceProviderType.craftspeople,
+    }
+
+    const payload = { ...externalAgentCompanyData, externalId: generateId() }
+    const externalAgentCompany = await client.serviceProviderCreate(payload)
+
+    const data = {
+      ...testData,
+      email: generateId() + '@foobar.test',
+      externalAgentCompany: externalAgentCompany.id,
+      externalId: generateId(),
     }
 
     const agent = await client.agentCreate(
