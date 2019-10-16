@@ -12,6 +12,7 @@ const testData = {
   name: 'Foobar Unit',
   objectType: EnumUnitObjectType.flat,
   readOnly: true,
+  size: 20.0,
   type: EnumUnitType.rented,
 }
 

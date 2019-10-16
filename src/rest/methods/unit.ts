@@ -83,11 +83,12 @@ export interface IUnit {
   readonly id: string
   readonly name: string
   readonly objectType: EnumUnitObjectType
+  readonly readOnly: boolean
+  readonly size: number | null
   readonly stats: {
     readonly tenantCount: number | null
     readonly invitationCount: number | null
   }
-  readonly readOnly: boolean
   readonly type: EnumUnitType
 }
 
