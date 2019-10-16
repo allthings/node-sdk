@@ -2,7 +2,7 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
-import { EnumUnitType } from './unit'
+import { EnumUnitObjectType, EnumUnitType } from './unit'
 
 let sharedGroupId: string // tslint:disable-line no-let
 
@@ -10,6 +10,7 @@ const client = restClient()
 
 const testData = {
   name: 'Foobar Unit',
+  objectType: EnumUnitObjectType.flat,
   readOnly: true,
   type: EnumUnitType.rented,
 }

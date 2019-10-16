@@ -1,5 +1,78 @@
 import { EntityResultList, IAllthingsRestClient } from '../types'
 
+export enum EnumUnitObjectType {
+  adjoiningRoom = 'adjoining-room',
+  advertisingSpace = 'advertising-space',
+  aerial = 'aerial',
+  apartmentBuilding = 'apartment-building',
+  atm = 'atm',
+  atmRoom = 'atm-room',
+  attic = 'attic',
+  atticFlat = 'attic-flat',
+  bank = 'bank',
+  basment = 'basment',
+  bikeShed = 'bike-shed',
+  buildingLaw = 'building-law',
+  cafeteria = 'cafeteria',
+  caretakerRoom = 'caretaker-room',
+  carport = 'carport',
+  cellar = 'cellar',
+  commercialProperty = 'commercial-property',
+  commonRoom = 'common-room',
+  deliveryZone = 'delivery-zone',
+  diverse = 'diverse',
+  doubleParkingSpace = 'double-parking-space',
+  engineeringRoom = 'engineering-room',
+  entertainment = 'entertainment',
+  environment = 'environment',
+  estate = 'estate',
+  fillingStation = 'filling-station',
+  fitnessCenter = 'fitness-center',
+  flat = 'flat',
+  freeZone = 'free-zone',
+  garage = 'garage',
+  garden = 'garden',
+  gardenFlat = 'garden-flat',
+  heatingFacilities = 'heating-facilities',
+  hotel = 'hotel',
+  incidentalRentalExpenses = 'incidental-rental-expenses',
+  industry = 'industry',
+  kiosk = 'kiosk',
+  kitchen = 'kitchen',
+  loft = 'loft',
+  machine = 'machine',
+  maisonette = 'maisonette',
+  medicalPractice = 'medical-practice',
+  mopedShed = 'moped-shed',
+  motorcycleParkingSpace = 'motorcycle-parking-space',
+  office = 'office',
+  oneFamilyHouse = 'one-family-house',
+  parkingBox = 'parking-box',
+  parkingGarage = 'parking-garage',
+  parkingSpace = 'parking-space',
+  parkingSpaces = 'parking-spaces',
+  penthouse = 'penthouse',
+  productionPlant = 'production-plant',
+  pub = 'pub',
+  publicArea = 'public-area',
+  restaurant = 'restaurant',
+  retirementHome = 'retirement-home',
+  salesFloor = 'sales-floor',
+  school = 'school',
+  shelter = 'shelter',
+  storage = 'storage',
+  store = 'store',
+  storeroom = 'storeroom',
+  studio = 'studio',
+  terrace = 'terrace',
+  toilets = 'toilets',
+  utilityRoom = 'utility-room',
+  variableParkingSpace = 'variable-parking-space',
+  variableRoom = 'variable-room',
+  visitorParkingSpace = 'visitor-parking-space',
+  workshop = 'workshop',
+}
+
 export enum EnumUnitType {
   rented = 'rented',
   owned = 'owned',
@@ -9,12 +82,13 @@ export interface IUnit {
   readonly externalId: string | null
   readonly id: string
   readonly name: string
+  readonly objectType: EnumUnitObjectType
   readonly stats: {
     readonly tenantCount: number | null
     readonly invitationCount: number | null
   }
-  readonly type: EnumUnitType
   readonly readOnly: boolean
+  readonly type: EnumUnitType
 }
 
 export type PartialUnit = Partial<IUnit>
