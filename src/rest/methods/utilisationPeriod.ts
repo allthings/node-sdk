@@ -1,6 +1,15 @@
 import { IAllthingsRestClient } from '../types'
-import { remapRegistationCodeResult } from './registrationCode'
+import {
+  IRegistrationCodeTenant,
+  remapRegistationCodeResult,
+} from './registrationCode'
 import { IUser, remapEmbeddedUser } from './user'
+
+export enum EUtilisationPeriodType {
+  tenant = 'tenant',
+  ownership = 'ownership',
+  vacant = 'vacant',
+}
 
 export interface IUtilisationPeriod {
   readonly _embedded: {
@@ -18,6 +27,7 @@ export interface IUtilisationPeriod {
     readonly invitationCount: number | null
   }
   readonly tenantIds: ReadonlyArray<string>
+  readonly type: EUtilisationPeriodType
   readonly userCount: number | null
   readonly users: ReadonlyArray<IUser>
   readonly readOnly: boolean
@@ -35,6 +45,7 @@ export interface IUtilisationPeriodInvite {
   readonly externalId: string
   readonly organizations: ReadonlyArray<string> // array of mongoId
   readonly teams: ReadonlyArray<string> // array of mongoId
+  readonly tenant: IRegistrationCodeTenant
   readonly resendAttempts: ReadonlyArray<string> // array of dates
   readonly usedAt: string | null
 }
@@ -54,6 +65,8 @@ export type MethodUtilisationPeriodCreate = (
   unitId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
+    readonly endDate?: string
+    readonly type?: EUtilisationPeriodType
   },
 ) => UtilisationPeriodResult
 
@@ -62,6 +75,8 @@ export async function utilisationPeriodCreate(
   unitId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
+    readonly endDate?: string
+    readonly type?: EUtilisationPeriodType
   },
 ): UtilisationPeriodResult {
   const { tenantIDs: tenantIds, _embedded, ...result } = await client.post(
@@ -172,15 +187,17 @@ export async function utilisationPeriodCheckOutUser(
 export type MethodUtilisationPeriodAddRegistrationCode = (
   utilisationPeriodId: string,
   code: string,
+  tenant?: IRegistrationCodeTenant,
 ) => Promise<IUtilisationPeriodInvite>
 
 export async function utilisationPeriodAddRegistrationCode(
   client: IAllthingsRestClient,
   utilisationPeriodId: string,
   code: string,
+  tenant?: IRegistrationCodeTenant,
 ): Promise<IUtilisationPeriodInvite> {
   return client.post(
     `/v1/utilisation-periods/${utilisationPeriodId}/registration-codes`,
-    { code },
+    { code, tenant },
   )
 }

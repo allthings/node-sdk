@@ -5,8 +5,10 @@ import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
 import { EnumLocale, EnumTimezone } from '../types'
 import { EnumUnitType } from './unit'
 import { remapEmbeddedUser } from './user'
+import { EUtilisationPeriodType } from './utilisationPeriod'
 
 let sharedUnitId: string // tslint:disable-line no-let
+let sharedUtilisationPeriodId: string // tslint:disable-line no-let
 
 const client = restClient()
 
@@ -36,10 +38,13 @@ describe('utilisationPeriodCreate()', () => {
       externalId: generateId(),
       readOnly: true,
       startDate: '2050-01-01',
+      type: EUtilisationPeriodType.tenant,
     }
     const result = await client.utilisationPeriodCreate(sharedUnitId, data)
 
     expect(result.startDate).toEqual(data.startDate)
+    expect(result.endDate).toEqual(data.endDate)
+    expect(result.type).toEqual(data.type)
     expect(result.externalId).toEqual(data.externalId)
   })
 })
@@ -173,7 +178,7 @@ describe('utilisationPeriodCheckInUser()', () => {
 })
 
 describe('utilisationPeriodAddRegistrationCode()', () => {
-  it('should be able to add registration code by utilisation period ID', async () => {
+  beforeAll(async () => {
     const initialData = {
       endDate: '2050-01-03',
       externalId: generateId(),
@@ -188,12 +193,34 @@ describe('utilisationPeriodAddRegistrationCode()', () => {
     expect(utilisationPeriod.externalId).toEqual(initialData.externalId)
     expect(utilisationPeriod.id).toBeDefined()
 
+    sharedUtilisationPeriodId = utilisationPeriod.id // tslint:disable-line no-expression-statement
+  })
+
+  it('should be able to add registration code by utilisation period ID', async () => {
     const registrationCode = Date.now().toString()
     const result = await client.utilisationPeriodAddRegistrationCode(
-      utilisationPeriod.id,
+      sharedUtilisationPeriodId,
       registrationCode,
     )
 
     expect(result.code).toEqual(registrationCode)
+  })
+
+  it('should be able to add registration code by utilisation period ID with tenant', async () => {
+    const registrationCode = Date.now().toString()
+    const tenant = {
+      email: 'tenant@allthings.me',
+      name: 'Teo Tenant',
+      phone: '0123456789',
+    }
+
+    const result = await client.utilisationPeriodAddRegistrationCode(
+      sharedUtilisationPeriodId,
+      registrationCode,
+      tenant,
+    )
+
+    expect(result.code).toEqual(registrationCode)
+    expect(result.tenant).toEqual(tenant)
   })
 })

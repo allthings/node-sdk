@@ -1,14 +1,16 @@
 import { IAllthingsRestClient } from '../types'
 
+export interface IRegistrationCodeTenant {
+  readonly email?: string
+  readonly phone?: string
+  readonly name?: string
+}
+
 export interface IRegistrationCodeOptions {
   readonly expiresAt?: string | null
   readonly externalId?: string
   readonly permanent?: boolean
-  readonly tenant?: {
-    readonly email?: string
-    readonly phone?: string
-    readonly name?: string
-  }
+  readonly tenant?: IRegistrationCodeTenant
   readonly readOnly?: boolean
 }
 
