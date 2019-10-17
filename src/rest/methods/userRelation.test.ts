@@ -2,7 +2,7 @@
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
 import { createUserAndClient } from '../../../test/helpers'
-import { EnumTimezone } from '../types'
+import { EnumResource, EnumTimezone } from '../types'
 import { EnumUserRelationType } from './userRelation'
 const apiRestClient = restClient()
 const testRole1 = 'facility manager'
@@ -21,7 +21,8 @@ describe('userRelationCreate()', () => {
     })
 
     const userRelation = await apiRestClient.userRelationCreate(user.id, {
-      properties: [property1.id, property2.id],
+      ids: [property1.id, property2.id],
+      level: EnumResource.property,
       type: EnumUserRelationType.isResponsible,
     })
 
@@ -44,13 +45,15 @@ describe('userRelationCreate()', () => {
     })
 
     await apiRestClient.userRelationCreate(user.id, {
-      properties: [property1.id],
+      ids: [property1.id],
+      level: EnumResource.property,
       role: testRole1,
       type: EnumUserRelationType.isResponsible,
     })
 
     const userRelation = await apiRestClient.userRelationCreate(user.id, {
-      properties: [property2.id],
+      ids: [property2.id],
+      level: EnumResource.property,
       role: testRole2,
       type: EnumUserRelationType.isResponsible,
     })
@@ -79,13 +82,15 @@ describe('userRelationCreate()', () => {
       timezone: EnumTimezone.EuropeBerlin,
     })
     await apiRestClient.userRelationCreate(user.id, {
-      properties: [property1.id, property2.id],
+      ids: [property1.id, property2.id],
+      level: EnumResource.property,
       role: testRole1,
       type: EnumUserRelationType.isResponsible,
     })
 
     const userRelation = await apiRestClient.userRelationDelete(user.id, {
-      properties: [property1.id],
+      ids: [property1.id],
+      level: EnumResource.property,
       role: testRole1,
       type: EnumUserRelationType.isResponsible,
     })

@@ -60,6 +60,7 @@ describe('agentCreate()', () => {
     expect(ourManagerAgent.roles).toEqual(agent.roles)
     expect(ourManagerAgent.type).toEqual(agent.type)
   })
+
   it('should be able to create a new agent with a externalAgentCompany associated', async () => {
     const externalAgentCompanyData = {
       address: {
@@ -71,6 +72,7 @@ describe('agentCreate()', () => {
       },
       email: 'foo@bar.de',
       name: 'Foobar Property-manager',
+      parent: APP_PROPERTY_MANAGER_ID,
       phoneNumber: '+493434343343',
       type: EnumServiceProviderType.craftspeople,
     }
@@ -81,7 +83,6 @@ describe('agentCreate()', () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
-      externalAgentCompany: externalAgentCompany.id,
       externalId: generateId(),
     }
 
@@ -90,6 +91,7 @@ describe('agentCreate()', () => {
       APP_PROPERTY_MANAGER_ID,
       generateId(),
       data,
+      externalAgentCompany.id,
     )
 
     const result = await client.userGetById(agent.id)

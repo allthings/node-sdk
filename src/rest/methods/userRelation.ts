@@ -1,4 +1,4 @@
-import { IAllthingsRestClient } from '../types'
+import { EnumResource, IAllthingsRestClient } from '../types'
 
 export interface IUserRelation {
   readonly id: string
@@ -8,6 +8,7 @@ export interface IUserRelation {
     readonly id: string
     readonly role?: string
     readonly properties: ReadonlyArray<string>
+    readonly groups: ReadonlyArray<string>
   }>
 }
 
@@ -20,18 +21,20 @@ export enum EnumUserRelationType {
 export type MethodUserRelationCreate = (
   userId: string,
   data: {
-    readonly properties: ReadonlyArray<string>
+    readonly ids: ReadonlyArray<string>
     readonly role?: string
     readonly type: EnumUserRelationType
+    readonly level: EnumResource
   },
 ) => UserRelationResult
 
 export type MethodUserRelationDelete = (
   userId: string,
   data: {
-    readonly properties: ReadonlyArray<string>
+    readonly ids: ReadonlyArray<string>
     readonly role?: string
     readonly type: EnumUserRelationType
+    readonly level: EnumResource
   },
 ) => UserRelationResult
 
@@ -40,13 +43,15 @@ export async function userRelationCreate(
   client: IAllthingsRestClient,
   userId: string,
   data: {
-    readonly properties: ReadonlyArray<string>
+    readonly ids: ReadonlyArray<string>
     readonly role?: string
     readonly type: EnumUserRelationType
+    readonly level: EnumResource
   },
 ): UserRelationResult {
   return client.post(`/v1/users/${userId}/user-relations/${data.type}`, {
-    properties: data.properties,
+    ids: data.ids,
+    level: data.level,
     role: data.role,
   })
 }
@@ -56,13 +61,15 @@ export async function userRelationDelete(
   client: IAllthingsRestClient,
   userId: string,
   data: {
-    readonly properties: ReadonlyArray<string>
+    readonly ids: ReadonlyArray<string>
     readonly role?: string
     readonly type: EnumUserRelationType
+    readonly level: EnumResource
   },
 ): UserRelationResult {
   return client.delete(`/v1/users/${userId}/user-relations/${data.type}`, {
-    properties: data.properties,
+    ids: data.ids,
+    level: data.level,
     role: data.role,
   })
 }
