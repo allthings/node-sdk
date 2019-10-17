@@ -43,6 +43,7 @@ import {
   serviceProviderUpdateById,
 } from './methods/serviceProvider'
 import {
+  EnumUnitObjectType,
   EnumUnitType,
   getUnits,
   unitCreate,
@@ -181,6 +182,7 @@ const API_METHODS: ReadonlyArray<any> = [
 export {
   EnumCommunicationPreferenceChannel,
   EnumUserPermissionRole,
+  EnumUnitObjectType,
   EnumUnitType,
   EnumUserPermissionObjectType,
   EnumUserRelationType,

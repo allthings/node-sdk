@@ -2,7 +2,7 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
-import { EnumUnitType } from './unit'
+import { EnumUnitObjectType, EnumUnitType } from './unit'
 
 let sharedGroupId: string // tslint:disable-line no-let
 
@@ -30,11 +30,18 @@ describe('unitCreate()', () => {
   })
 
   it('should be able to create a new unit', async () => {
-    const data = { ...testData, externalId: generateId() }
+    const data = {
+      ...testData,
+      externalId: generateId(),
+      objectType: EnumUnitObjectType.flat,
+      size: 20.0,
+    }
     const result = await client.unitCreate(sharedGroupId, data)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
+    expect(result.objectType).toEqual(data.objectType)
+    expect(result.size).toEqual(data.size)
   })
 })
 
@@ -56,9 +63,13 @@ describe('unitUpdateById()', () => {
 
     expect(unit.name).toEqual(initialData.name)
     expect(unit.externalId).toEqual(initialData.externalId)
+    expect(unit.objectType).toBe(null)
+    expect(unit.size).toBe(null)
 
     const updateData = {
       externalId: generateId(),
+      objectType: EnumUnitObjectType.garage,
+      size: 32.5,
       type: EnumUnitType.owned,
     }
 
@@ -66,6 +77,8 @@ describe('unitUpdateById()', () => {
 
     expect(result.type).toEqual(updateData.type)
     expect(result.externalId).toEqual(updateData.externalId)
+    expect(result.objectType).toEqual(updateData.objectType)
+    expect(result.size).toEqual(updateData.size)
   })
 })
 
