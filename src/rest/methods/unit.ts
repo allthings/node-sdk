@@ -79,15 +79,15 @@ export enum EnumUnitType {
 }
 
 export interface IUnit {
-  readonly externalId: string | null
+  readonly externalId?: string
   readonly id: string
   readonly name: string
-  readonly objectType: EnumUnitObjectType
-  readonly readOnly: boolean
-  readonly size: number | null
-  readonly stats: {
-    readonly tenantCount: number | null
-    readonly invitationCount: number | null
+  readonly objectType?: EnumUnitObjectType
+  readonly readOnly?: boolean
+  readonly size?: number
+  readonly stats?: {
+    readonly invitationCount?: number
+    readonly tenantCount?: number
   }
   readonly type: EnumUnitType
 }
