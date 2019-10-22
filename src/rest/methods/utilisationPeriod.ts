@@ -188,6 +188,7 @@ export type MethodUtilisationPeriodAddRegistrationCode = (
   utilisationPeriodId: string,
   code: string,
   tenant?: IRegistrationCodeTenant,
+  permanent?: boolean,
 ) => Promise<IUtilisationPeriodInvite>
 
 export async function utilisationPeriodAddRegistrationCode(
@@ -195,9 +196,10 @@ export async function utilisationPeriodAddRegistrationCode(
   utilisationPeriodId: string,
   code: string,
   tenant?: IRegistrationCodeTenant,
+  permanent = false,
 ): Promise<IUtilisationPeriodInvite> {
   return client.post(
     `/v1/utilisation-periods/${utilisationPeriodId}/registration-codes`,
-    { code, tenant },
+    { code, permanent, tenant },
   )
 }
