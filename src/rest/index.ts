@@ -72,6 +72,7 @@ import {
   userRelationDelete,
 } from './methods/userRelation'
 import {
+  EnumUtilisationPeriodType,
   utilisationPeriodAddRegistrationCode,
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
@@ -186,6 +187,7 @@ export {
   EnumUnitType,
   EnumUserPermissionObjectType,
   EnumUserRelationType,
+  EnumUtilisationPeriodType,
 }
 
 /*

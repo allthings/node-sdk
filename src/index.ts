@@ -6,6 +6,7 @@ export {
   EnumUnitType,
   EnumUserPermissionObjectType,
   EnumUserRelationType,
+  EnumUtilisationPeriodType,
 } from './rest'
 export {
   EnumCountryCode,

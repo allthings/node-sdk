@@ -5,7 +5,7 @@ import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
 import { EnumLocale, EnumTimezone } from '../types'
 import { EnumUnitType } from './unit'
 import { remapEmbeddedUser } from './user'
-import { EUtilisationPeriodType } from './utilisationPeriod'
+import { EnumUtilisationPeriodType } from './utilisationPeriod'
 
 let sharedUnitId: string // tslint:disable-line no-let
 let sharedUtilisationPeriodId: string // tslint:disable-line no-let
@@ -38,7 +38,7 @@ describe('utilisationPeriodCreate()', () => {
       externalId: generateId(),
       readOnly: true,
       startDate: '2050-01-01',
-      type: EUtilisationPeriodType.tenant,
+      type: EnumUtilisationPeriodType.tenant,
     }
     const result = await client.utilisationPeriodCreate(sharedUnitId, data)
 

@@ -5,7 +5,7 @@ import {
 } from './registrationCode'
 import { IUser, remapEmbeddedUser } from './user'
 
-export enum EUtilisationPeriodType {
+export enum EnumUtilisationPeriodType {
   tenant = 'tenant',
   ownership = 'ownership',
   vacant = 'vacant',
@@ -27,7 +27,7 @@ export interface IUtilisationPeriod {
     readonly invitationCount: number | null
   }
   readonly tenantIds: ReadonlyArray<string>
-  readonly type: EUtilisationPeriodType
+  readonly type: EnumUtilisationPeriodType
   readonly userCount: number | null
   readonly users: ReadonlyArray<IUser>
   readonly readOnly: boolean
@@ -66,7 +66,7 @@ export type MethodUtilisationPeriodCreate = (
   data: PartialUtilisationPeriod & {
     readonly startDate: string
     readonly endDate?: string
-    readonly type?: EUtilisationPeriodType
+    readonly type?: EnumUtilisationPeriodType
   },
 ) => UtilisationPeriodResult
 
@@ -76,7 +76,7 @@ export async function utilisationPeriodCreate(
   data: PartialUtilisationPeriod & {
     readonly startDate: string
     readonly endDate?: string
-    readonly type?: EUtilisationPeriodType
+    readonly type?: EnumUtilisationPeriodType
   },
 ): UtilisationPeriodResult {
   const { tenantIDs: tenantIds, _embedded, ...result } = await client.post(
