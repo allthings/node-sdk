@@ -23,6 +23,8 @@ describe('userRelationCreate()', () => {
     const userRelation = await apiRestClient.userRelationCreate(user.id, {
       ids: [property1.id, property2.id],
       level: EnumResource.property,
+      readOnly: true,
+      role: 'my-role',
       type: EnumUserRelationType.isResponsible,
     })
 
