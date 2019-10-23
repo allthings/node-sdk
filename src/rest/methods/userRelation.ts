@@ -46,7 +46,7 @@ export async function userRelationCreate(
   userId: string,
   data: {
     readonly ids: ReadonlyArray<string>
-    readonly readOnly?: boolean
+    readonly readOnly: boolean
     readonly role?: string
     readonly type: EnumUserRelationType
     readonly level: EnumResource
@@ -55,8 +55,8 @@ export async function userRelationCreate(
   return client.post(`/v1/users/${userId}/user-relations/${data.type}`, {
     ids: data.ids,
     level: data.level,
+    readOnly: data.readOnly,
     role: data.role,
-    ...(data.readOnly ? { readOnly: data.readOnly } : {}),
   })
 }
 
