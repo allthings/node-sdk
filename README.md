@@ -418,6 +418,7 @@ export interface IAllthingsRestClient {
 }
 ```
 
+
 ## Release management & versioning
 
 The Allthings SDK makes use of [semantic-release](https://github.com/semantic-release/semantic-release) which automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package. This repository is configured to `squash-merge` ([see here](https://github.blog/2016-04-01-squash-your-commits/)).
