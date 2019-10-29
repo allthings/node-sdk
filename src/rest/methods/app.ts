@@ -8,6 +8,8 @@ export interface IApp {
 
 export type PartialApp = Partial<IApp>
 
+export type AppResult = Promise<IApp>
+
 export type CreateAppResult = Promise<IApp>
 
 export type MethodAppCreate = (
@@ -32,4 +34,17 @@ export async function appCreate(
     ...data,
     siteUrl: data.siteUrl.replace('_', ''),
   })
+}
+
+/*
+  Get an app by its ID
+*/
+
+export type MethodAppGetById = (appId: string) => AppResult
+
+export async function appGetById(
+  client: IAllthingsRestClient,
+  appId: string,
+): AppResult {
+  return client.get(`/v1/apps/${appId}`)
 }

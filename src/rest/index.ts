@@ -4,7 +4,7 @@ import { pseudoRandomString } from '../utils/random'
 import httpDelete from './delete'
 import httpGet from './get'
 import { agentCreate, agentCreatePermissions } from './methods/agent'
-import { appCreate } from './methods/app'
+import { appCreate, appGetById } from './methods/app'
 import {
   bucketAddFile,
   bucketCreate,
@@ -61,6 +61,7 @@ import {
   userCreatePermission,
   userCreatePermissionBatch,
   userDeletePermission,
+  userGetByEmail,
   userGetById,
   userGetPermissions,
   userGetUtilisationPeriods,
@@ -97,6 +98,8 @@ import createTokenStore from '../oauth/createTokenStore'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
 import { requestToken as performRefreshTokenGrant } from '../oauth/refreshTokenGrant'
 import requestAndSaveToStore from '../oauth/requestAndSaveToStore'
+import { conversationCreateMessage } from './methods/conversation'
+import { ticketCreate, ticketGetById } from './methods/ticket'
 
 const API_METHODS: ReadonlyArray<any> = [
   // Agent
@@ -105,6 +108,7 @@ const API_METHODS: ReadonlyArray<any> = [
 
   // App
   appCreate,
+  appGetById,
 
   // Bucket
   bucketCreate,
@@ -112,6 +116,9 @@ const API_METHODS: ReadonlyArray<any> = [
   bucketRemoveFile,
   bucketRemoveFilesInPath,
   bucketGet,
+
+  // Conversation
+  conversationCreateMessage,
 
   // File
   fileCreate,
@@ -148,6 +155,10 @@ const API_METHODS: ReadonlyArray<any> = [
   registrationCodeDelete,
   registrationCodeGetById,
 
+  // Ticket
+  ticketCreate,
+  ticketGetById,
+
   // Unit
   unitCreate,
   unitGetById,
@@ -164,6 +175,7 @@ const API_METHODS: ReadonlyArray<any> = [
   userDeletePermission,
   userCheckInToUtilisationPeriod,
   userGetUtilisationPeriods,
+  userGetByEmail,
   getCurrentUser,
   getUsers,
 

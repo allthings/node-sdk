@@ -341,3 +341,25 @@ describe('userGetUtilisationPeriods()', () => {
     })
   })
 })
+
+describe('userGetByEmail()', () => {
+  it('should be able to search users by email address', async () => {
+    const user1 = await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      locale: EnumLocale.de_DE,
+    })
+
+    await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      locale: EnumLocale.de_DE,
+    })
+
+    const users = await client.userGetByEmail(user1.email)
+
+    expect(users._embedded.items).toHaveLength(1)
+
+    users._embedded.items.forEach(user => {
+      expect(user.email).toEqual(user1.email)
+    })
+  })
+})
