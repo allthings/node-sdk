@@ -206,7 +206,7 @@ describe('utilisationPeriodAddRegistrationCode()', () => {
     expect(result.code).toEqual(registrationCode)
   })
 
-  it('should be able to add registration code by utilisation period ID with tenant', async () => {
+  it('should be able to add registration code by utilisation period ID with tenant and permanent', async () => {
     const registrationCode = Date.now().toString()
     const tenant = {
       email: 'tenant@allthings.me',
@@ -218,9 +218,11 @@ describe('utilisationPeriodAddRegistrationCode()', () => {
       sharedUtilisationPeriodId,
       registrationCode,
       tenant,
+      true,
     )
 
     expect(result.code).toEqual(registrationCode)
     expect(result.tenant).toEqual(tenant)
+    expect(result.permanent).toBe(true)
   })
 })
