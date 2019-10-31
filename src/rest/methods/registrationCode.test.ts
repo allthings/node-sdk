@@ -58,6 +58,7 @@ describe('registrationCodeCreate()', async () => {
       {
         expiresAt: null,
         externalId: testExternalId,
+        instantTenantInviteActive: false,
         permanent: false,
         readOnly: true,
         tenant,
@@ -68,6 +69,7 @@ describe('registrationCodeCreate()', async () => {
     expect(result.code).toEqual(code)
     expect(result.expiresAt).toEqual(null)
     expect(result.permanent).toBe(false)
+    expect(result.instantTenantInviteActive).toBe(false)
     expect(result.externalId).toEqual(testExternalId)
     expect(result.utilisationPeriods).toContainEqual(
       sharedUtilisationPeriodIds[0],

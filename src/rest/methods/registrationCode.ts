@@ -12,6 +12,7 @@ export interface IRegistrationCodeOptions {
   readonly permanent?: boolean
   readonly tenant?: IRegistrationCodeTenant
   readonly readOnly?: boolean
+  readonly instantTenantInviteActive?: boolean
 }
 
 export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
