@@ -1,8 +1,8 @@
 // tslint:disable:no-expression-statement
-
+import { readFileSync } from 'fs'
 import generateId from 'nanoid'
+import { uploadFiles } from '../../utils/upload'
 import restClient from '../index'
-import { uploadFiles } from './ticket'
 
 const client = restClient()
 
@@ -11,6 +11,10 @@ const fileCreateSpy = jest.spyOn(client, 'fileCreate')
 const userId = '5a9d5ce40ecb3300492bf186'
 const utilisationPeriodId = '5a9d65cd0ecb330045742be3'
 const categoryId = '5728504906128762098b456e'
+
+afterEach(() => {
+  jest.clearAllMocks()
+})
 
 describe('ticketGetById()', () => {
   it('should be able to get a ticket by ID', async () => {
@@ -32,7 +36,19 @@ describe('ticketCreate()', () => {
     const { description, title } = await client.ticketCreate(
       userId,
       utilisationPeriodId,
-      { category: categoryId, description: 'description', title: 'title' },
+      {
+        category: categoryId,
+        description: 'description',
+        files: [
+          {
+            content: readFileSync(
+              __dirname + '/../../../test/fixtures/1x1.png',
+            ),
+            filename: '2x2.png',
+          },
+        ],
+        title: 'title',
+      },
     )
 
     expect(description).toEqual('description')
@@ -68,7 +84,6 @@ describe('uploadFiles()', () => {
 
     expect(fileCreateSpy).toBeCalledTimes(3)
     expect(result).toEqual(ids)
-    jest.clearAllMocks()
   })
 
   it('should return successful uploads if one fails', async () => {
@@ -109,6 +124,5 @@ describe('uploadFiles()', () => {
     expect(fileCreateSpy).toBeCalledTimes(3)
     expect(result).toEqual(ids)
     expect(result.length).toBe(2)
-    jest.clearAllMocks()
   })
 })

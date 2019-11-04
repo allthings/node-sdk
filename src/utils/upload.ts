@@ -25,3 +25,17 @@ export const upload = async (
 
   return responses
 }
+
+export async function uploadFiles(
+  files: ReadonlyArray<{
+    readonly content: Buffer
+    readonly filename: string
+  }>,
+  client: IAllthingsRestClient,
+): Promise<ReadonlyArray<string>> {
+  const result = await upload(files, client)
+
+  return result
+    .filter((item): item is IFile => !(item instanceof Error))
+    .map(item => item.id)
+}

@@ -1,4 +1,4 @@
-import { upload } from '../../utils/upload'
+import { uploadFiles } from '../../utils/upload'
 import { IAllthingsRestClient } from '../types'
 
 export interface IConversation {
@@ -7,7 +7,7 @@ export interface IConversation {
 }
 
 export interface IMessage {
-  readonly content: { readonly content: string }
+  readonly content: { readonly content?: string; readonly description?: string }
   readonly createdAt: string
   readonly id: string
   readonly internal: boolean
@@ -66,7 +66,7 @@ export async function conversationCreateMessage(
       ? {
           content: {
             description: messageData.body,
-            files: await upload(messageData.attachments, client),
+            files: await uploadFiles(messageData.attachments, client),
           },
           internal: false,
           type: 'file',

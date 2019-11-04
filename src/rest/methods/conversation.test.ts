@@ -1,6 +1,6 @@
 // tslint:disable:no-expression-statement
 
-// import generateId from 'nanoid'
+import { readFileSync } from 'fs'
 import restClient from '..'
 
 const client = restClient()
@@ -25,6 +25,23 @@ describe('conversationCreateMessage()', () => {
     })
 
     expect(result.content.content).toEqual(content)
+    expect(result._embedded.createdBy.id).toEqual(USER_ID)
+  })
+
+  it('should be able to add a message to a conversation with attachments', async () => {
+    const content = 'some message'
+    const result = await client.conversationCreateMessage(CONVERSATION_ID, {
+      attachments: [
+        {
+          content: readFileSync(__dirname + '/../../../test/fixtures/1x1.png'),
+          filename: '2x2.png',
+        },
+      ],
+      body: content,
+      userId: USER_ID,
+    })
+
+    expect(result.content.description).toEqual(content)
     expect(result._embedded.createdBy.id).toEqual(USER_ID)
   })
 })

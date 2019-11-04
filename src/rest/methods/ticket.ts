@@ -1,4 +1,4 @@
-import { upload } from '../../utils/upload'
+import { uploadFiles } from '../../utils/upload'
 import { IAllthingsRestClient } from '../types'
 import { IMessage } from './conversation'
 import { IFile } from './file'
@@ -216,18 +216,4 @@ export async function ticketCreate(
     files: payload.files ? await uploadFiles(payload.files, client) : [],
     utilisationPeriod: utilisationPeriodId,
   })
-}
-
-export async function uploadFiles(
-  files: ReadonlyArray<{
-    readonly content: Buffer
-    readonly filename: string
-  }>,
-  client: IAllthingsRestClient,
-): Promise<ReadonlyArray<string>> {
-  const result = await upload(files, client)
-
-  return result
-    .filter((item): item is IFile => !(item instanceof Error))
-    .map(item => item.id)
 }
