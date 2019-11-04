@@ -98,7 +98,10 @@ import createTokenStore from '../oauth/createTokenStore'
 import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
 import { requestToken as performRefreshTokenGrant } from '../oauth/refreshTokenGrant'
 import requestAndSaveToStore from '../oauth/requestAndSaveToStore'
-import { conversationCreateMessage } from './methods/conversation'
+import {
+  conversationCreateMessage,
+  conversationGetById,
+} from './methods/conversation'
 import { ticketCreate, ticketGetById } from './methods/ticket'
 
 const API_METHODS: ReadonlyArray<any> = [
@@ -118,6 +121,7 @@ const API_METHODS: ReadonlyArray<any> = [
   bucketGet,
 
   // Conversation
+  conversationGetById,
   conversationCreateMessage,
 
   // File

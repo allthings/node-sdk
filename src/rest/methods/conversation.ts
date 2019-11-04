@@ -1,8 +1,9 @@
 import { upload } from '../../utils/upload'
-import { EntityResultList, IAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface IConversation {
-  readonly id?: string
+  readonly id: string
+  readonly createdAt: string
 }
 
 export interface IMessage {
@@ -12,6 +13,8 @@ export interface IMessage {
   readonly internal: boolean
   readonly read: boolean
   readonly type: string
+  readonly _embedded?: any
+  readonly _links?: any
 }
 
 export interface IMessagePayload {
@@ -24,7 +27,6 @@ export interface IMessagePayload {
 }
 
 export type ConversationResult = Promise<IConversation>
-export type ConversationResultList = EntityResultList<IConversation>
 
 export type ConversationCreateMessageResult = Promise<IMessage>
 
@@ -32,11 +34,15 @@ export type ConversationCreateMessageResult = Promise<IMessage>
   Get a conversation by its ID
 */
 
+export type MethodConversationGetById = (
+  conversationId: string,
+) => ConversationResult
+
 export async function conversationGetById(
   client: IAllthingsRestClient,
-  unitId: string,
+  conversationId: string,
 ): ConversationResult {
-  return client.get(`/v1/conversations/${unitId}`)
+  return client.get(`/v1/conversations/${conversationId}`)
 }
 
 /*

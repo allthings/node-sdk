@@ -13,7 +13,10 @@ import {
   MethodBucketRemoveFile,
   MethodBucketRemoveFilesInPath,
 } from './methods/bucket'
-import { MethodConversationCreateMessage } from './methods/conversation'
+import {
+  MethodConversationCreateMessage,
+  MethodConversationGetById,
+} from './methods/conversation'
 import { MethodFileCreate, MethodFileDelete } from './methods/file'
 import {
   MethodGetGroups,
@@ -227,6 +230,11 @@ export interface IAllthingsRestClient {
   readonly bucketGet: MethodBucketGet
 
   // Conversation
+
+  /**
+   * Gets a conversation by id
+   */
+  readonly conversationGetById: MethodConversationGetById
 
   /**
    * Creates a message on a conversation

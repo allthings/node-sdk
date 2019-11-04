@@ -213,7 +213,21 @@ export async function ticketCreate(
 ): TicketResult {
   return client.post(`/v1/users/${userId}/tickets`, {
     ...payload,
-    files: payload.files ? await upload(payload.files, client) : [],
+    files: payload.files ? await uploadFiles(payload.files, client) : [],
     utilisationPeriod: utilisationPeriodId,
   })
+}
+
+export async function uploadFiles(
+  files: ReadonlyArray<{
+    readonly content: Buffer
+    readonly filename: string
+  }>,
+  client: IAllthingsRestClient,
+): Promise<ReadonlyArray<string>> {
+  const result = await upload(files, client)
+
+  return result
+    .filter((item): item is IFile => !(item instanceof Error))
+    .map(item => item.id)
 }

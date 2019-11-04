@@ -1,4 +1,5 @@
 import { IAllthingsRestClient } from '..'
+import { IFile } from '../rest/methods/file'
 
 export const upload = async (
   attachments: ReadonlyArray<{
@@ -6,17 +7,21 @@ export const upload = async (
     readonly filename: string
   }>,
   apiClient: IAllthingsRestClient,
-): Promise<ReadonlyArray<string>> => {
+): Promise<ReadonlyArray<IFile | Error>> => {
   const responses = await Promise.all(
-    attachments.map(attachment =>
-      apiClient.fileCreate({
-        file: attachment.content,
-        name: attachment.filename || 'attachment',
-      }),
-    ),
+    attachments.map(async attachment => {
+      try {
+        const result = await apiClient.fileCreate({
+          file: attachment.content,
+          name: attachment.filename,
+        })
+
+        return result
+      } catch (error) {
+        return error
+      }
+    }),
   )
 
-  const fileIds: ReadonlyArray<string> = responses.map(response => response.id)
-
-  return fileIds
+  return responses
 }
