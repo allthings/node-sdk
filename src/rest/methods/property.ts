@@ -7,6 +7,7 @@ export interface IProperty {
   readonly name: string
   readonly timezone: string
   readonly readOnly: boolean
+  readonly _embedded: any
 }
 
 export type PartialProperty = Partial<IProperty>
