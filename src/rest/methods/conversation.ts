@@ -1,4 +1,4 @@
-import { uploadFiles } from '../../utils/upload'
+import { createManyFilesWithoutErroring } from '../../utils/upload'
 import { IAllthingsRestClient } from '../types'
 
 export interface IConversation {
@@ -7,7 +7,11 @@ export interface IConversation {
 }
 
 export interface IMessage {
-  readonly content: { readonly content?: string; readonly description?: string }
+  readonly content: {
+    readonly content?: string
+    readonly description?: string
+    readonly files?: ReadonlyArray<string>
+  }
   readonly createdAt: string
   readonly id: string
   readonly internal: boolean
@@ -66,7 +70,10 @@ export async function conversationCreateMessage(
       ? {
           content: {
             description: messageData.body,
-            files: await uploadFiles(messageData.attachments, client),
+            files: await createManyFilesWithoutErroring(
+              messageData.attachments,
+              client,
+            ),
           },
           internal: false,
           type: 'file',

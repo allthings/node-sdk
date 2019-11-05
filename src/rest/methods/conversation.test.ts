@@ -43,5 +43,9 @@ describe('conversationCreateMessage()', () => {
 
     expect(result.content.description).toEqual(content)
     expect(result._embedded.createdBy.id).toEqual(USER_ID)
+
+    if (result.content.files) {
+      expect(result.content.files.length).toEqual(1)
+    }
   })
 })
