@@ -386,6 +386,8 @@ export type MethodUserGetByEmail = (email: string) => UserResultList
 export async function userGetByEmail(
   client: IAllthingsRestClient,
   email: string,
+  page = 1,
+  limit = 1000,
 ): UserResultList {
-  return client.getUsers(1, 1000, { email })
+  return client.getUsers(page, limit, { email })
 }
