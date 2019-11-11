@@ -33,22 +33,27 @@ export const createManyFiles = async (
 }
 
 /**
- * Create many files without erroring
+ * Create many files sorted
  *
- * Creates many files and returns the id's of only the successfully created files
- * Useful in a case such as creating a ticket where it should not fail to create
- * the ticket and should include successful attachments even if a file creation fails
+ * Creates many files and returns the id's of the successfully created files
+ * and an array of errors of failed creations
  */
-export async function createManyFilesWithoutErroring(
+export async function createManyFilesSorted(
   files: ReadonlyArray<{
     readonly content: Buffer
     readonly filename: string
   }>,
   client: IAllthingsRestClient,
-): Promise<ReadonlyArray<string>> {
+): Promise<{
+  readonly success: ReadonlyArray<string>
+  readonly error: ReadonlyArray<Error>
+}> {
   const result = await createManyFiles(files, client)
 
-  return result
-    .filter((item): item is IFile => !(item instanceof Error))
-    .map(item => item.id)
+  return {
+    error: result.filter((item): item is Error => item instanceof Error),
+    success: result
+      .filter((item): item is IFile => !(item instanceof Error))
+      .map(item => item.id),
+  }
 }

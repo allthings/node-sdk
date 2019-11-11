@@ -1,7 +1,7 @@
 // tslint:disable:no-expression-statement
 import generateId from 'nanoid'
 import restClient from '../rest/index'
-import { createManyFilesWithoutErroring } from './upload'
+import { createManyFilesSorted } from './upload'
 
 const client = restClient()
 
@@ -26,7 +26,7 @@ describe('createManyFilesWithoutErroring()', () => {
         }),
     )
 
-    const result = await createManyFilesWithoutErroring(
+    const result = await createManyFilesSorted(
       [
         { filename: 'file1', content: '' as any },
         { filename: 'file2', content: '' as any },
@@ -36,7 +36,7 @@ describe('createManyFilesWithoutErroring()', () => {
     )
 
     expect(fileCreateSpy).toBeCalledTimes(3)
-    expect(result).toEqual(ids)
+    expect(result.success).toEqual(ids)
   })
 
   it('should return successful uploads if one fails', async () => {
@@ -65,7 +65,7 @@ describe('createManyFilesWithoutErroring()', () => {
         }),
     )
 
-    const result = await createManyFilesWithoutErroring(
+    const result = await createManyFilesSorted(
       [
         { filename: 'file1', content: '' as any },
         { filename: 'file2', content: '' as any },
@@ -75,7 +75,8 @@ describe('createManyFilesWithoutErroring()', () => {
     )
 
     expect(fileCreateSpy).toBeCalledTimes(3)
-    expect(result).toEqual(ids)
-    expect(result.length).toBe(2)
+    expect(result.success).toEqual(ids)
+    expect(result.success.length).toBe(2)
+    expect(result.error.length).toBe(1)
   })
 })

@@ -1,4 +1,4 @@
-import { createManyFilesWithoutErroring } from '../../utils/upload'
+import { createManyFilesSorted } from '../../utils/upload'
 import { IAllthingsRestClient } from '../types'
 
 export interface IConversation {
@@ -70,10 +70,10 @@ export async function conversationCreateMessage(
       ? {
           content: {
             description: messageData.body,
-            files: await createManyFilesWithoutErroring(
+            files: (await createManyFilesSorted(
               messageData.attachments,
               client,
-            ),
+            )).success,
           },
           internal: false,
           type: 'file',

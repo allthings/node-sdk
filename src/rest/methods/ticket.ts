@@ -1,4 +1,4 @@
-import { createManyFilesWithoutErroring } from '../../utils/upload'
+import { createManyFilesSorted } from '../../utils/upload'
 import { IAllthingsRestClient } from '../types'
 import { IMessage } from './conversation'
 import { IFile } from './file'
@@ -113,7 +113,7 @@ export async function ticketCreate(
   return client.post(`/v1/users/${userId}/tickets`, {
     ...payload,
     files: payload.files
-      ? await createManyFilesWithoutErroring(payload.files, client)
+      ? (await createManyFilesSorted(payload.files, client)).success
       : [],
     utilisationPeriod: utilisationPeriodId,
   })
