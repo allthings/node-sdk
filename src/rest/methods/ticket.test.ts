@@ -15,6 +15,7 @@ describe('ticketGetById()', () => {
     const { id } = await client.ticketCreate(userId, utilisationPeriodId, {
       category: categoryId,
       description: 'description',
+      inputChannel: 'test',
       title: 'title',
     })
     const result = await client.ticketGetById(id)
@@ -36,6 +37,7 @@ describe('ticketCreate()', () => {
           filename: '2x2.png',
         },
       ],
+      inputChannel: 'test',
       title: 'title',
     })
 

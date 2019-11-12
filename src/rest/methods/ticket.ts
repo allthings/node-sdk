@@ -30,6 +30,7 @@ export interface ITicketCreatePayload {
   }>
   readonly category: string
   readonly description: string
+  readonly inputChannel: string
   readonly title: string
 }
 
