@@ -423,3 +423,4 @@ export interface IAllthingsRestClient {
 
 The Allthings SDK makes use of [semantic-release](https://github.com/semantic-release/semantic-release) which automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package. This repository is configured to `squash-merge` ([see here](https://github.blog/2016-04-01-squash-your-commits/)).
 When you squash merge, GitHub takes the title of the PR for the squash-merge's commit subject. By choosing a proper PR title e.g. `feat: my new feature` your merged PR will trigger a new release. See semantic-releases [docs](https://github.com/semantic-release/semantic-release#how-does-it-work) for available prefixes.
+
