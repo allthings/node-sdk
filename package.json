@@ -128,7 +128,9 @@
     "roots": [
       "src/"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.ts",
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.ts"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },

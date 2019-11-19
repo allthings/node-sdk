@@ -36,6 +36,7 @@ export interface IUser {
   readonly externalId: string | null
   readonly gender: EnumGender
   readonly id: string
+  readonly inviteEmailSent: boolean
   readonly lastLogin: string | null
   readonly locale: EnumLocale
   readonly nativeAppInstallIds: ReadonlyArray<string> | null
@@ -244,10 +245,13 @@ export async function userCreatePermission(
   },
 ): UserPermissionResult {
   const { objectId: objectID, ...rest } = data
-  const { objectID: resultObjectId, ...result } = await client.post(
-    `/v1/users/${userId}/permissions`,
-    { ...rest, objectID },
-  )
+  const {
+    objectID: resultObjectId,
+    ...result
+  } = await client.post(`/v1/users/${userId}/permissions`, {
+    ...rest,
+    objectID,
+  })
 
   return {
     ...result,
