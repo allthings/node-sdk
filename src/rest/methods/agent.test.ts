@@ -23,7 +23,7 @@ const testData = {
 }
 
 describe('agentCreate()', () => {
-  it('should be able to create a new agent', async () => {
+  it('should be able to create a new agent and send an invitation per default', async () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
@@ -35,7 +35,6 @@ describe('agentCreate()', () => {
       APP_PROPERTY_MANAGER_ID,
       generateId(),
       data,
-      true,
     )
 
     const result = await client.userGetById(agent.id)

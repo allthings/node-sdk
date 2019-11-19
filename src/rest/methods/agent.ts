@@ -22,7 +22,7 @@ export type MethodAgentCreate = (
     readonly email: string
     readonly locale: EnumLocale
   },
-  sendInvitation: boolean,
+  sendInvitation?: boolean,
   externalAgentCompany?: string,
 ) => UserResult
 
@@ -35,7 +35,7 @@ export async function agentCreate(
     readonly email: string
     readonly locale: EnumLocale
   },
-  sendInvitation: boolean,
+  sendInvitation?: boolean,
   externalAgentCompany?: string,
 ): UserResult {
   const user = await client.userCreate(appId, username, {
@@ -53,7 +53,8 @@ export async function agentCreate(
   // trigger sending of invitation emails to agents, then return data
   return (
     !(
-      sendInvitation && (await client.post(`/v1/users/${user.id}/invitations`))
+      (sendInvitation !== undefined ? sendInvitation : true) &&
+      (await client.post(`/v1/users/${user.id}/invitations`))
     ) && {
       ...user,
       ...manager,
