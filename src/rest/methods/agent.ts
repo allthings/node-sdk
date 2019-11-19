@@ -53,7 +53,7 @@ export async function agentCreate(
   // trigger sending of invitation emails to agents, then return data
   return (
     !(
-      (sendInvitation !== undefined ? sendInvitation : true) &&
+      (typeof sendInvitation !== 'undefined' ? sendInvitation : true) &&
       (await client.post(`/v1/users/${user.id}/invitations`))
     ) && {
       ...user,
