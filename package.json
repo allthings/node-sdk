@@ -67,7 +67,7 @@
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@types/form-data": "2.2.1",
-    "@types/jest": "24.0.19",
+    "@types/jest": "24.0.23",
     "@types/nanoid": "2.1.0",
     "@types/node": "10.17.5",
     "@types/query-string": "6.2.0",
