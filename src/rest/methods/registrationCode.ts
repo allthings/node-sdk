@@ -1,9 +1,18 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
+
+export interface IRegistrationCodeTenant {
+  readonly email?: string
+  readonly phone?: string
+  readonly name?: string
+}
 
 export interface IRegistrationCodeOptions {
   readonly expiresAt?: string | null
   readonly externalId?: string
   readonly permanent?: boolean
+  readonly tenant?: IRegistrationCodeTenant
+  readonly readOnly?: boolean
+  readonly instantTenantInviteActive?: boolean
 }
 
 export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
@@ -38,7 +47,7 @@ export type MethodRegistrationCodeCreate = (
 ) => RegistrationCodeResult
 
 export async function registrationCodeCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   code: string,
   utilisationPeriods: string | ReadonlyArray<string>,
   options: IRegistrationCodeOptions = { permanent: false },
@@ -52,9 +61,27 @@ export async function registrationCodeCreate(
         typeof utilisationPeriods === 'string'
           ? [utilisationPeriods]
           : utilisationPeriods,
-      ...(externalId && { tenantID: externalId }),
+      ...(externalId ? { tenantID: externalId } : {}),
       ...moreOptions,
     }),
+  )
+}
+
+/*
+  update a registration code by id
+*/
+export type MethodRegistrationCodeUpdateById = (
+  registrationCodeId: string,
+  data: PartialRegistrationCode,
+) => RegistrationCodeResult
+
+export async function registrationCodeUpdateById(
+  client: IAllthingsRestClient,
+  registrationCodeId: string,
+  data: PartialRegistrationCode,
+): RegistrationCodeResult {
+  return remapRegistationCodeResult(
+    await client.patch(`/v1/registration-codes/${registrationCodeId}`, data),
   )
 }
 
@@ -62,12 +89,12 @@ export async function registrationCodeCreate(
   find a registration code by id
 */
 
-export type MethodRegistrationCodeFindById = (
+export type MethodRegistrationCodeGetById = (
   registrationCodeId: string,
 ) => RegistrationCodeResult
 
-export async function registrationCodeFindById(
-  client: InterfaceAllthingsRestClient,
+export async function registrationCodeGetById(
+  client: IAllthingsRestClient,
   registrationCodeId: string,
 ): RegistrationCodeResult {
   return remapRegistationCodeResult(
@@ -83,7 +110,7 @@ export type MethodRegistrationCodeDelete = (
 ) => RegistrationCodeResult
 
 export async function registrationCodeDelete(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   registrationCodeId: string,
 ): Promise<boolean> {
   return (await client.delete(`/v1/invitations/${registrationCodeId}`)) === ''

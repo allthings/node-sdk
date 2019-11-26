@@ -7,9 +7,11 @@ Allthings Node/Javascript SDK
 1.  [Installation & Usage](#installation--usage)
 1.  [Configuration](#configuration)
     1.  [Options](#configuration-options)
-2.  [Authentication](#authentication)
-3.  [API](#api)
-4.  [OAuth Implicit Grant Example](#oauth-implicit-grant-example-example)
+1.  [Authentication](#authentication)
+1.  [API](#api)
+1.  [OAuth Implicit Grant Example](#oauth-implicit-grant-example-example)
+1.  [OAuth Authorization Code Grant Example](#oauth-authorization-code-grant-example)
+1.  [Release management & versioning](#release-management--versioning)
 
 ## Installation & Usage
 
@@ -24,9 +26,9 @@ const client = allthings.restClient({
   accessToken: '043dab7447450772example1214b552838003522',
 })
 
-client.getCurrentUser().then(viewer => 
-  console.log(`Welcome back ${viewer.username}!`)
-)
+client
+  .getCurrentUser()
+  .then(viewer => console.log(`Welcome back ${viewer.username}!`))
 ```
 
 <!--
@@ -37,7 +39,7 @@ const allthings = allthingsSdk({
   accessToken: '043dab7447450772example1214b552838003522',
 })
 
-allthings.query.viewer().then(viewer => 
+allthings.query.viewer().then(viewer =>
   console.log(`Welcome back ${viewer.username}!`)
 )
 ```
@@ -49,15 +51,15 @@ allthings.query.viewer().then(viewer =>
 
 The available configuration options are outlined here:
 
-| Option           | Default | Description                                                                                             |
-| ---------------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| **accessToken**  |         | API Access Token                                                                                        |
-| **clientId**     |         | OAuth 2.0 clientId                                                                                      |
-| **clientSecret** |         | OAuth 2.0 client secret                                                                                 |
-| **username**     |         | Username to use with OAuth 2.0 Password Grant authentication flow                                       |
-| **password**     |         | Password to use with OAuth 2.0 Password Grant authentication flow                                       |
-| **concurrency**  |         | Number of concurrent requests to perform in parallel. Default behavior is burst of 30/s, 1/s thereafter |
-| **apiUrl**  |              | Base API url to use. Defaults to https://api.allthings.me/, respects value of the `ALLTHINGS_REST_API_URL` environment variable  |
+| Option           | Default | Description                                                                                                                     |
+| ---------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **accessToken**  |         | API Access Token                                                                                                                |
+| **clientId**     |         | OAuth 2.0 clientId                                                                                                              |
+| **clientSecret** |         | OAuth 2.0 client secret                                                                                                         |
+| **username**     |         | Username to use with OAuth 2.0 Password Grant authentication flow                                                               |
+| **password**     |         | Password to use with OAuth 2.0 Password Grant authentication flow                                                               |
+| **concurrency**  |         | Number of concurrent requests to perform in parallel. Default behavior is burst of 30/s, 1/s thereafter                         |
+| **apiUrl**       |         | Base API url to use. Defaults to https://api.allthings.me/, respects value of the `ALLTHINGS_REST_API_URL` environment variable |
 
 ## Authentication
 
@@ -79,51 +81,97 @@ const client = allthings.restClient({
   accessToken: '043dab7447450772example1214b552838003522',
 })
 
-client.getCurrentUser().then(viewer => 
-  console.log(`Welcome back ${viewer.username}!`)
-)
+client
+  .getCurrentUser()
+  .then(viewer => console.log(`Welcome back ${viewer.username}!`))
 ```
 
+## OAuth Authorization Code Grant Example
 
+1. Initialize instance of `client`:
 
+```javascript
+const allthings = require('@allthings/sdk')
+
+const client = allthings.restClient({
+  clientId: '5d038ef2441f4de574005c54_example',
+  clientSecret: '40f63f981ff082dbc8d273983ac3852c2e51e90856123156',
+  redirectUri: 'https://example-app.com/callback',
+})
+```
+
+2. Construct a URI to send authorization request to using a `state` which should be unique per request and hard to guess. It can be generated with `client.oauth.generateState()` method:
+
+```javascript
+const state = client.oauth.generateState()
+const authorizationUri = client.oauth.authorizationCode.getUri(state)
+```
+
+3. Direct user's browser to the constructed URI.
+
+4. When user completes authentication process, he is redirected to the `redirectUri` having `code` and `state` query string arguments, e.g.:
+
+```
+https://example-app.com/callback?code=ebc110bee11b2829&state=k1bt3c1d0vnfu7qk
+```
+
+At this point `state` must be validated - if it doesn't match the one generated on step 2, such request is probably malicious and should be aborted.
+
+5. Use the code extracted from query parameters on the previous step to obtain an access token:
+
+```javascript
+await client.oauth.authorizationCode.requestToken(code)
+```
+
+6. Client is ready to make API requests:
+
+```javascript
+const user = await client.getCurrentUser()
+```
 
 ## API
 
 ### Allthings SDK module
 
-* [`restClient()`](#module-export-restClient)
-  * [`client.agentCreate()`](#restclient-client-createagent)
-  * [`client.agentCreatePermissions()`](#restclient-client-createagent)
-  * [`client.appCreate()`](#restclient-client-createagent)
-  * [`client.lookupIds()`](#restclient-client-createagent)
-  * [`client.groupCreate()`](#restclient-client-createagent)
-  * [`client.groupFindById()`](#restclient-client-createagent)
-  * [`client.groupUpdateById()`](#restclient-client-createagent)
-  * [`client.propertyCreate()`](#restclient-client-createagent)
-  * [`client.propertyFindById()`](#restclient-client-createagent)
-  * [`client.propertyUpdateById()`](#restclient-client-createagent)
-  * [`client.registrationCodeCreate()`](#restclient-client-createagent)
-  * [`client.unitCreate()`](#restclient-client-createagent)
-  * [`client.unitFindById()`](#restclient-client-createagent)
-  * [`client.unitUpdateById()`](#restclient-client-createagent)
-  * [`client.userCreate()`](#restclient-client-createagent)
-  * [`client.userFindById()`](#restclient-client-createagent)
-  * [`client.userUpdateById()`](#restclient-client-createagent)
-  * [`client.userCreatePermission()`](#restclient-client-createagent)
-  * [`client.userFindPermissions()`](#restclient-client-createagent)
-  * [`client.userDeletePermission()`](#restclient-client-createagent)
-  * [`client.userGetUtilisationPeriods()`](#restclient-client-createagent)
-  * [`client.userCheckInToUtilisationPeriod()`](#restclient-client-createagent)
-  * [`client.getUsers()`](#restclient-client-createagent)
-  * [`client.getCurrentUser()`](#restclient-client-createagent)
-  * [`client.utilisationPeriodCreate()`](#restclient-client-createagent)
-  * [`client.utilisationPeriodFindById()`](#restclient-client-createagent)
-  * [`client.utilisationPeriodUpdateById()`](#restclient-client-createagent)
-  * [`client.utilisationPeriodCheckInUser()`](#restclient-client-createagent)
-  * [`client.delete()`](#restclient-client-delete)
-  * [`client.get()`](#restclient-client-get)
-  * [`client.post()`](#restclient-client-post)
-  * [`client.patch()`](#restclient-client-patch)
+- [`restClient()`](#module-export-restClient)
+  - [`client.agentCreate()`](#restclient-client-createagent)
+  - [`client.agentCreatePermissions()`](#restclient-client-createagent)
+  - [`client.appCreate()`](#restclient-client-createagent)
+  - [`client.lookupIds()`](#restclient-client-createagent)
+  - [`client.groupCreate()`](#restclient-client-createagent)
+  - [`client.groupGetById()`](#restclient-client-createagent)
+  - [`client.groupUpdateById()`](#restclient-client-createagent)
+  - [`client.getGroups()`](#restclient-client-createagent)
+  - [`client.propertyCreate()`](#restclient-client-createagent)
+  - [`client.propertyGetById()`](#restclient-client-createagent)
+  - [`client.propertyUpdateById()`](#restclient-client-createagent)
+  - [`client.getProperties()`](#restclient-client-createagent)
+  - [`client.registrationCodeCreate()`](#restclient-client-createagent)
+  - [`client.unitCreate()`](#restclient-client-createagent)
+  - [`client.unitGetById()`](#restclient-client-createagent)
+  - [`client.unitUpdateById()`](#restclient-client-createagent)
+  - [`client.getUnits()`](#restclient-client-createagent)
+  - [`client.userCreate()`](#restclient-client-createagent)
+  - [`client.userGetById()`](#restclient-client-createagent)
+  - [`client.userUpdateById()`](#restclient-client-createagent)
+  - [`client.userCreatePermission()`](#restclient-client-createagent)
+  - [`client.userGetPermissions()`](#restclient-client-createagent)
+  - [`client.userDeletePermission()`](#restclient-client-createagent)
+  - [`client.userGetUtilisationPeriods()`](#restclient-client-createagent)
+  - [`client.userCheckInToUtilisationPeriod()`](#restclient-client-createagent)
+  - [`client.getUsers()`](#restclient-client-createagent)
+  - [`client.getCurrentUser()`](#restclient-client-createagent)
+  - [`client.userRelationCreate()`](#restclient-client-createagent)
+  - [`client.userRelationDelete()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodCreate()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodGetById()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodUpdateById()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodCheckInUser()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodAddRegistrationCode()`](#restclient-client-createagent)
+  - [`client.delete()`](#restclient-client-delete)
+  - [`client.get()`](#restclient-client-get)
+  - [`client.post()`](#restclient-client-post)
+  - [`client.patch()`](#restclient-client-patch)
 
 ---
 
@@ -152,12 +200,10 @@ const appId = '575027e58178f56a008b4568'
 const propertyManagerId = '5a818c07ef5f2f00441146a2'
 const username = 'mr.example@allthings.test'
 
-const agent = await client.createAgent(
-  appId,
-  propertyManagerId,
-  username,
-  { email: 'mr.example@allthings.test', locale: 'en_US' }
-)
+const agent = await client.createAgent(appId, propertyManagerId, username, {
+  email: 'mr.example@allthings.test',
+  locale: 'en_US',
+})
 ```
 
 ```typescript
@@ -172,10 +218,9 @@ export type MethodCreateAgent = (
 ) => UserResult
 ```
 
-
 ```typescript
 // Describes the API wrapper's resulting interface
-export interface InterfaceAllthingsRestClient {
+export interface IAllthingsRestClient {
   readonly delete: MethodHttpDelete
   readonly get: MethodHttpGet
   readonly post: MethodHttpPost
@@ -219,12 +264,29 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a group by its ID
    */
-  readonly groupFindById: MethodGroupFindById
+  readonly groupGetById: MethodGroupGetById
 
   /**
    * Update a group by its ID
    */
   readonly groupUpdateById: MethodGroupUpdateById
+
+  // Notification
+
+  /**
+   * Returns a collection of notifications for a given user
+   */
+  readonly notificationsGetByUser: MethodNotificationsGetByUser
+
+  /**
+   * Marks all notifications of a user - until a provided timestamp (or now) - as read
+   */
+  readonly notificationsUpdateReadByUser: MethodNotificationsUpdateReadByUser
+
+  /**
+   * Mark a notification as read
+   */
+  readonly notificationUpdateRead: MethodNotificationUpdateRead
 
   // Notification settings
 
@@ -248,7 +310,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a property by its ID
    */
-  readonly propertyFindById: MethodPropertyFindById
+  readonly propertyGetById: MethodPropertyGetById
 
   /**
    * Update a property by its ID
@@ -272,7 +334,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a unit by its ID
    */
-  readonly unitFindById: MethodUnitFindById
+  readonly unitGetById: MethodUnitGetById
 
   /**
    * Update a unit by its ID
@@ -289,7 +351,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a user by their ID
    */
-  readonly userFindById: MethodUserFindById
+  readonly userGetById: MethodUserGetById
 
   /**
    * Update a user by their ID
@@ -314,7 +376,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a list of user's permissions
    */
-  readonly userFindPermissions: MethodUserFindPermissions
+  readonly userGetPermissions: MethodUserGetPermissions
 
   /**
    * Delete a user a permission/role on an given object of specified type
@@ -332,6 +394,18 @@ export interface InterfaceAllthingsRestClient {
    */
   readonly userCheckInToUtilisationPeriod: MethodUserCheckInToUtilisationPeriod
 
+  // User Relation
+
+  /**
+   * Creates a new user relation
+   */
+  readonly userRelationCreate: MethodUserRelationCreate
+
+  /**
+   * Deletes a new user relation
+   */
+  readonly userRelationDelete: MethodUserRelationDelete
+
   // Utilisation Period
 
   /**
@@ -342,7 +416,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a utilisation period by its ID
    */
-  readonly utilisationPeriodFindById: MethodUtilisationPeriodFindById
+  readonly utilisationPeriodGetById: MethodUtilisationPeriodGetById
 
   /*
    * Update a utilisation period by its ID
@@ -355,3 +429,8 @@ export interface InterfaceAllthingsRestClient {
   readonly utilisationPeriodCheckInUser: MethodUtilisationPeriodCheckInUser
 }
 ```
+
+## Release management & versioning
+
+The Allthings SDK makes use of [semantic-release](https://github.com/semantic-release/semantic-release) which automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package. This repository is configured to `squash-merge` ([see here](https://github.blog/2016-04-01-squash-your-commits/)).
+When you squash merge, GitHub takes the title of the PR for the squash-merge's commit subject. By choosing a proper PR title e.g. `feat: my new feature` your merged PR will trigger a new release. See semantic-releases [docs](https://github.com/semantic-release/semantic-release#how-does-it-work) for available prefixes.

@@ -1,5 +1,4 @@
-import generateId from 'nanoid'
-import { EnumLocale, InterfaceAllthingsRestClient } from '../types'
+import { EnumLocale, IAllthingsRestClient } from '../types'
 import {
   EnumUserPermissionObjectType,
   EnumUserPermissionRole,
@@ -23,10 +22,12 @@ export type MethodAgentCreate = (
     readonly email: string
     readonly locale: EnumLocale
   },
+  sendInvitation?: boolean,
+  externalAgentCompany?: string,
 ) => UserResult
 
 export async function agentCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   appId: string,
   propertyManagerId: string,
   username: string,
@@ -34,8 +35,10 @@ export async function agentCreate(
     readonly email: string
     readonly locale: EnumLocale
   },
+  sendInvitation?: boolean,
+  externalAgentCompany?: string,
 ): UserResult {
-  const user = await client.userCreate(appId, username, generateId(), {
+  const user = await client.userCreate(appId, username, {
     ...data,
     type: EnumUserType.customer,
   })
@@ -43,12 +46,16 @@ export async function agentCreate(
     `/v1/property-managers/${propertyManagerId}/users`,
     {
       userID: user.id,
+      ...(externalAgentCompany && { externalAgentCompany }),
     },
   )
 
   // trigger sending of invitation emails to agents, then return data
   return (
-    !(await client.post(`/v1/users/${user.id}/invitations`)) && {
+    !(
+      (typeof sendInvitation !== 'undefined' ? sendInvitation : true) &&
+      (await client.post(`/v1/users/${user.id}/invitations`))
+    ) && {
       ...user,
       ...manager,
     }
@@ -67,26 +74,28 @@ export type MethodAgentCreatePermissions = (
   objectId: string,
   objectType: EnumUserPermissionObjectType,
   permissions: ReadonlyArray<EnumUserPermissionRole>,
-) => AgentPermissionsResult
+  startDate?: Date,
+  endDate?: Date,
+) => Promise<boolean>
 
 /**
  * Returns a datastore-specific object of redis clients.
  */
 export async function agentCreatePermissions(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   agentId: string,
   objectId: string,
   objectType: EnumUserPermissionObjectType,
   permissions: ReadonlyArray<EnumUserPermissionRole>,
-): AgentPermissionsResult {
-  return Promise.all(
-    permissions.map(async permission =>
-      client.userCreatePermission(agentId, {
-        objectId,
-        objectType,
-        restrictions: [],
-        role: permission,
-      }),
-    ),
-  )
+  startDate?: Date,
+  endDate?: Date,
+): Promise<boolean> {
+  return client.userCreatePermissionBatch(agentId, {
+    endDate,
+    objectId,
+    objectType,
+    restrictions: [],
+    roles: permissions,
+    startDate,
+  })
 }

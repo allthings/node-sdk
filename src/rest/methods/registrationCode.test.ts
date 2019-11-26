@@ -26,20 +26,22 @@ beforeAll(async () => {
     type: EnumUnitType.rented,
   })
 
-  sharedUtilisationPeriodIds = (await Promise.all([
-    client.utilisationPeriodCreate(unit.id, {
-      endDate: '2018-01-02',
-      startDate: '2018-01-01',
-    }),
-    client.utilisationPeriodCreate(unit.id, {
-      endDate: '2018-02-02',
-      startDate: '2018-02-01',
-    }),
-    client.utilisationPeriodCreate(unit.id, {
-      endDate: '2018-03-02',
-      startDate: '2018-03-01',
-    }),
-  ])).map(item => item.id)
+  sharedUtilisationPeriodIds = (
+    await Promise.all([
+      client.utilisationPeriodCreate(unit.id, {
+        endDate: '2018-01-02',
+        startDate: '2018-01-01',
+      }),
+      client.utilisationPeriodCreate(unit.id, {
+        endDate: '2018-02-02',
+        startDate: '2018-02-01',
+      }),
+      client.utilisationPeriodCreate(unit.id, {
+        endDate: '2018-03-02',
+        startDate: '2018-03-01',
+      }),
+    ])
+  ).map(item => item.id)
 })
 
 describe('registrationCodeCreate()', async () => {
@@ -47,13 +49,21 @@ describe('registrationCodeCreate()', async () => {
     const code = generateId()
     const testExternalId = generateId()
 
+    const tenant = {
+      email: 'foo@bar.de',
+      name: 'John Doe',
+      phone: '+14343490343',
+    }
     const result = await client.registrationCodeCreate(
       code,
       sharedUtilisationPeriodIds,
       {
         expiresAt: null,
         externalId: testExternalId,
+        instantTenantInviteActive: false,
         permanent: false,
+        readOnly: true,
+        tenant,
       },
     )
 
@@ -61,6 +71,7 @@ describe('registrationCodeCreate()', async () => {
     expect(result.code).toEqual(code)
     expect(result.expiresAt).toEqual(null)
     expect(result.permanent).toBe(false)
+    expect(result.instantTenantInviteActive).toBe(false)
     expect(result.externalId).toEqual(testExternalId)
     expect(result.utilisationPeriods).toContainEqual(
       sharedUtilisationPeriodIds[0],
@@ -71,6 +82,9 @@ describe('registrationCodeCreate()', async () => {
     expect(result.utilisationPeriods).toContainEqual(
       sharedUtilisationPeriodIds[2],
     )
+    expect(result.tenant.email).toBe(tenant.email)
+    expect(result.tenant.name).toBe(tenant.name)
+    expect(result.tenant.phone).toBe(tenant.phone)
 
     const singleUtilisationPeriod = await client.registrationCodeCreate(
       generateId(),
@@ -99,7 +113,36 @@ describe('registrationCodeCreate()', async () => {
   })
 })
 
-describe('registrationCodeFindById()', async () => {
+describe('registrationCodeUpdateById()', () => {
+  it('should be able to update an existing registration code by id', async () => {
+    const testExternalId = generateId()
+
+    const createdRegistrationCode = await client.registrationCodeCreate(
+      generateId(),
+      sharedUtilisationPeriodIds,
+      {
+        expiresAt: null,
+        externalId: testExternalId,
+        permanent: false,
+      },
+    )
+    const tenant = {
+      email: 'foo2@bar.de',
+      name: 'John Doe',
+      phone: '+14343490343',
+    }
+    const result = await client.registrationCodeUpdateById(
+      createdRegistrationCode.id,
+      { tenant },
+    )
+
+    expect(result.tenant.email).toBe(tenant.email)
+    expect(result.tenant.name).toBe(tenant.name)
+    expect(result.tenant.phone).toBe(tenant.phone)
+  })
+})
+
+describe('registrationCodeGetById()', () => {
   it('should be able to find a registration code by id', async () => {
     const testExternalId = generateId()
 
@@ -113,7 +156,7 @@ describe('registrationCodeFindById()', async () => {
       },
     )
 
-    const foundRegistrationCode = await client.registrationCodeFindById(
+    const foundRegistrationCode = await client.registrationCodeGetById(
       createdRegistrationCode.id,
     )
 
@@ -132,7 +175,7 @@ describe('registrationCodeFindById()', async () => {
   })
 })
 
-describe('registrationCodeDelete()', async () => {
+describe('registrationCodeDelete()', () => {
   it('should delete a registrationCode', async () => {
     const testExternalId = generateId()
 
@@ -146,7 +189,7 @@ describe('registrationCodeDelete()', async () => {
       },
     )
 
-    const foundRegistrationCode = await client.registrationCodeFindById(
+    const foundRegistrationCode = await client.registrationCodeGetById(
       createdRegistrationCode.id,
     )
 
@@ -157,7 +200,7 @@ describe('registrationCodeDelete()', async () => {
       createdRegistrationCode.id,
     )
 
-    const wasRegCodeDeleted = client.registrationCodeFindById(
+    const wasRegCodeDeleted = client.registrationCodeGetById(
       createdRegistrationCode.id,
     )
 

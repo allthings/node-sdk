@@ -1,10 +1,10 @@
 version: '2.1'
 volumes:
-  assets:
-  accounts_public:
+  ? assets
+  ? accounts_public
 services:
   mongodb:
-    image: mongo:3.2
+    image: mongo:3.6
   mongorestore:
     image: allthings/db-data
     volumes:
@@ -14,13 +14,40 @@ services:
   redis:
     image: redis:2.8
   mailhog:
-    image: allthings/mailhog  
+    image: allthings/mailhog
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: not_a_secret
+      POSTGRES_USER: postgres
+  postgres-restore:
+    image: allthings/postgres-restore
+    environment:
+      POSTGRES_PASSWORD: not_a_secret
+      PGPASSWORD: not_a_secret
+      POSTGRES_USER: postgres
+    depends_on:
+      postgres:
+        condition: service_started
+  rope:
+    image: allthings/rope
+    environment:
+      - LOGGING=true
+      - PGHOST=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=not_a_secret
+      - PGPORT=5432
+      - PGDATABASE=role_permission
+    depends_on:
+      postgres-restore:
+        condition: service_started
   php:
     image: allthings/php-prod
     depends_on:
       - mongorestore
       - redis
       - mailhog
+      - rope
     volumes:
       - assets:/srv/www/symfony/web/assets
     environment:
@@ -39,6 +66,12 @@ services:
         condition: service_healthy
     environment:
       - SSL_PASS
+  graphql:
+    image: allthings/graphql
+    environment:
+      - NODE_ENV
+      - PORT=6000
+      - LOGGING=
   nginx:
     image: allthings/nginx
     volumes:
@@ -51,10 +84,14 @@ services:
         condition: service_healthy
       php:
         condition: service_healthy
+      graphql:
+        condition: service_healthy
     extra_hosts:
       - app:127.0.0.1
       - cockpit:127.0.0.1
-  yarntest: 
+      - insights:127.0.0.1
+      - developer-console:127.0.0.1
+  yarntest:
     image: allthings/node
     links:
       - nginx:accounts.dev.allthings.me

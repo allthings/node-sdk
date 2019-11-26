@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export type BucketResult = Promise<IBucket>
 
@@ -12,21 +12,19 @@ export interface IBucket {
 export type MethodBucketGet = (bucketId: string) => BucketResult
 
 export async function bucketGet(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   bucketId: string,
 ): BucketResult {
   return client.get(`/v1/buckets/${bucketId}`)
 }
 
-export type MethodBucketCreate = (
-  data: {
-    readonly channels: ReadonlyArray<string>
-    readonly name: string
-  },
-) => BucketResult
+export type MethodBucketCreate = (data: {
+  readonly channels: ReadonlyArray<string>
+  readonly name: string
+}) => BucketResult
 
 export async function bucketCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   data: {
     readonly channels: ReadonlyArray<string>
     readonly name: string
@@ -43,13 +41,15 @@ export type MethodBucketAddFile = (
   fileId: string,
 ) => Promise<boolean>
 export async function bucketAddFile(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   bucketId: string,
   fileId: string,
 ): Promise<boolean> {
-  return (await client.post(`/v1/buckets/${bucketId}/files`, {
-    id: fileId,
-  })) === ''
+  return (
+    (await client.post(`/v1/buckets/${bucketId}/files`, {
+      id: fileId,
+    })) === ''
+  )
 }
 
 export type MethodBucketRemoveFile = (
@@ -57,7 +57,7 @@ export type MethodBucketRemoveFile = (
   fileId: string,
 ) => Promise<boolean>
 export async function bucketRemoveFile(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   bucketId: string,
   fileId: string,
 ): Promise<boolean> {
@@ -69,7 +69,7 @@ export type MethodBucketRemoveFilesInPath = (
   data: { readonly path: string },
 ) => Promise<boolean>
 export async function bucketRemoveFilesInPath(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   bucketId: string,
   data: { readonly path: string },
 ): Promise<boolean> {

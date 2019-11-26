@@ -2,6 +2,28 @@
 
 ## Rest SDK
 
+### Action Verbs
+
+✅get <br/>
+❌read <br/>
+
+
+✅delete <br/>
+❌remove <br/>
+
+
+✅update <br/>
+❌change <br/>
+❌set <br/>
+
+
+✅create <br/>
+❌generate <br/>
+
+
+✅add <br/>
+❌link<br/>
+
 ### Methods
 
 Method names have the naming convention `resourcenameActionverb()`. We place the resource first to improve developer ergonomics: It's easier to find a method if all you know is the resource-type.

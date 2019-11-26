@@ -1,9 +1,18 @@
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
+import {
+  getRedirectUrl as getAuthorizationUrl,
+  requestToken as requestTokenByCode,
+} from '../oauth/authorizationCodeGrant'
+import createTokenStore from '../oauth/createTokenStore'
+import makeFetchTokenRequester from '../oauth/makeFetchTokenRequester'
+import { requestToken as performRefreshTokenGrant } from '../oauth/refreshTokenGrant'
+import requestAndSaveToStore from '../oauth/requestAndSaveToStore'
 import { partial } from '../utils/functional'
+import { pseudoRandomString } from '../utils/random'
 import httpDelete from './delete'
 import httpGet from './get'
 import { agentCreate, agentCreatePermissions } from './methods/agent'
-import { appCreate } from './methods/app'
+import { appCreate, appGetById } from './methods/app'
 import {
   bucketAddFile,
   bucketCreate,
@@ -11,30 +20,55 @@ import {
   bucketRemoveFile,
   bucketRemoveFilesInPath,
 } from './methods/bucket'
+import {
+  conversationCreateMessage,
+  conversationGetById,
+} from './methods/conversation'
 import { fileCreate, fileDelete } from './methods/file'
-import { groupCreate, groupFindById, groupUpdateById } from './methods/group'
+import {
+  getGroups,
+  groupCreate,
+  groupGetById,
+  groupUpdateById,
+} from './methods/group'
 import { lookupIds } from './methods/idLookup'
+import {
+  notificationsGetByUser,
+  notificationsUpdateReadByUser,
+  notificationUpdateRead,
+} from './methods/notification'
 import {
   notificationSettingsResetByUser,
   notificationSettingsUpdateByUser,
 } from './methods/notificationSettings'
 import {
+  getProperties,
   propertyCreate,
-  propertyFindById,
+  propertyGetById,
   propertyUpdateById,
 } from './methods/property'
 import {
   registrationCodeCreate,
   registrationCodeDelete,
-  registrationCodeFindById,
+  registrationCodeGetById,
+  registrationCodeUpdateById,
 } from './methods/registrationCode'
 import {
+  serviceProviderCreate,
+  serviceProviderGetById,
+  serviceProviderUpdateById,
+} from './methods/serviceProvider'
+import { ticketCreate, ticketGetById } from './methods/ticket'
+import {
+  EnumUnitObjectType,
   EnumUnitType,
+  getUnits,
   unitCreate,
-  unitFindById,
+  unitGetById,
   unitUpdateById,
 } from './methods/unit'
 import {
+  EnumCommunicationPreferenceChannel,
   EnumUserPermissionObjectType,
   EnumUserPermissionRole,
   getCurrentUser,
@@ -42,25 +76,35 @@ import {
   userCheckInToUtilisationPeriod,
   userCreate,
   userCreatePermission,
+  userCreatePermissionBatch,
   userDeletePermission,
-  userFindById,
-  userFindPermissions,
+  userGetByEmail,
+  userGetById,
+  userGetPermissions,
   userGetUtilisationPeriods,
   userUpdateById,
 } from './methods/user'
 import {
+  EnumUserRelationType,
+  userRelationCreate,
+  userRelationDelete,
+} from './methods/userRelation'
+import {
+  EnumUtilisationPeriodType,
+  utilisationPeriodAddRegistrationCode,
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
   utilisationPeriodCreate,
-  utilisationPeriodFindById,
+  utilisationPeriodGetById,
   utilisationPeriodUpdateById,
 } from './methods/utilisationPeriod'
 import httpPatch from './patch'
 import httpPost from './post'
 import httpRequest from './request'
 import {
-  InterfaceAllthingsRestClient,
-  InterfaceAllthingsRestClientOptions,
+  IAllthingsRestClient,
+  IAllthingsRestClientOptions,
+  IClientExposedOAuth,
 } from './types'
 
 const API_METHODS: ReadonlyArray<any> = [
@@ -70,6 +114,7 @@ const API_METHODS: ReadonlyArray<any> = [
 
   // App
   appCreate,
+  appGetById,
 
   // Bucket
   bucketCreate,
@@ -78,8 +123,13 @@ const API_METHODS: ReadonlyArray<any> = [
   bucketRemoveFilesInPath,
   bucketGet,
 
-  // ID Lookup
-  lookupIds,
+  // Conversation
+  conversationGetById,
+  conversationCreateMessage,
+
+  // File
+  fileCreate,
+  fileDelete,
 
   // Notification settings
   notificationSettingsResetByUser,
@@ -87,49 +137,81 @@ const API_METHODS: ReadonlyArray<any> = [
 
   // Group
   groupCreate,
-  groupFindById,
+  groupGetById,
   groupUpdateById,
+  getGroups,
+
+  // ID Lookup
+  lookupIds,
+
+  // Notification
+  notificationsGetByUser,
+  notificationUpdateRead,
+  notificationsUpdateReadByUser,
 
   // Property
   propertyCreate,
-  propertyFindById,
+  propertyGetById,
   propertyUpdateById,
+  getProperties,
+
+  // Service Provider
+  serviceProviderCreate,
+  serviceProviderGetById,
+  serviceProviderUpdateById,
 
   // Registration Code
   registrationCodeCreate,
+  registrationCodeUpdateById,
   registrationCodeDelete,
-  registrationCodeFindById,
+  registrationCodeGetById,
 
-  // File
-  fileCreate,
-  fileDelete,
+  // Ticket
+  ticketCreate,
+  ticketGetById,
 
   // Unit
   unitCreate,
-  unitFindById,
+  unitGetById,
   unitUpdateById,
+  getUnits,
 
   // User
   userCreate,
-  userFindById,
+  userGetById,
   userUpdateById,
   userCreatePermission,
-  userFindPermissions,
+  userCreatePermissionBatch,
+  userGetPermissions,
   userDeletePermission,
   userCheckInToUtilisationPeriod,
   userGetUtilisationPeriods,
+  userGetByEmail,
   getCurrentUser,
   getUsers,
 
+  // User Relations
+  userRelationCreate,
+  userRelationDelete,
+
   // Utilisation Periods
   utilisationPeriodCreate,
-  utilisationPeriodFindById,
+  utilisationPeriodGetById,
   utilisationPeriodUpdateById,
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
+  utilisationPeriodAddRegistrationCode,
 ]
 
-export { EnumUnitType, EnumUserPermissionObjectType, EnumUserPermissionRole }
+export {
+  EnumCommunicationPreferenceChannel,
+  EnumUserPermissionRole,
+  EnumUnitObjectType,
+  EnumUnitType,
+  EnumUserPermissionObjectType,
+  EnumUserRelationType,
+  EnumUtilisationPeriodType,
+}
 
 /*
   The API wrapper
@@ -139,10 +221,10 @@ export { EnumUnitType, EnumUserPermissionObjectType, EnumUserPermissionRole }
 */
 export default function restClient(
   userOptions: Partial<
-    InterfaceAllthingsRestClientOptions
+    IAllthingsRestClientOptions
   > = DEFAULT_API_WRAPPER_OPTIONS,
-): InterfaceAllthingsRestClient {
-  const options: InterfaceAllthingsRestClientOptions = {
+): IAllthingsRestClient {
+  const options: IAllthingsRestClientOptions = {
     ...DEFAULT_API_WRAPPER_OPTIONS,
     ...userOptions,
   }
@@ -155,11 +237,26 @@ export default function restClient(
     throw new Error('OAuth2 URL is undefined.')
   }
 
-  if (!options.clientId && !options.accessToken) {
+  // in browser access token can be obtained from URL during implicit flow
+  if (
+    !options.clientId &&
+    !(options.accessToken || options.tokenStore) &&
+    typeof window === 'undefined'
+  ) {
     throw new Error('Missing required "clientId" or "accessToken" parameter .')
   }
 
-  const request = partial(httpRequest, options)
+  const tokenRequester = makeFetchTokenRequester(
+    `${options.oauthUrl}/oauth/token`,
+  )
+  const tokenStore =
+    options.tokenStore ||
+    createTokenStore({
+      accessToken: options.accessToken,
+      refreshToken: options.refreshToken,
+    })
+
+  const request = partial(httpRequest, tokenStore, tokenRequester, options)
 
   // partially apply the request method to the get/post
   // http request method functions
@@ -168,13 +265,47 @@ export default function restClient(
   const post = partial(httpPost, request)
   const patch = partial(httpPatch, request)
 
-  const client: InterfaceAllthingsRestClient = API_METHODS.reduce(
+  const oauth: IClientExposedOAuth = {
+    authorizationCode: {
+      getUri: (state = options.state || pseudoRandomString()) =>
+        partial(getAuthorizationUrl, {
+          ...options,
+          state,
+        })(),
+      requestToken: (authorizationCode?: string) =>
+        requestAndSaveToStore(
+          partial(requestTokenByCode, tokenRequester, {
+            ...options,
+            authorizationCode: authorizationCode || options.authorizationCode,
+          }),
+          tokenStore,
+        ),
+    },
+    generateState: pseudoRandomString,
+    refreshToken: (refreshToken?: string) =>
+      requestAndSaveToStore(
+        partial(performRefreshTokenGrant, tokenRequester, {
+          ...options,
+          refreshToken: refreshToken || tokenStore.get('refreshToken'),
+        }),
+        tokenStore,
+      ),
+  }
+
+  const client: IAllthingsRestClient = API_METHODS.reduce(
     (methods, method) => ({
       ...methods,
       // tslint:disable-next-line readonly-array
       [method.name]: (...args: any[]) => method(client, ...args),
     }),
-    { delete: del, get, options, patch, post },
+    {
+      delete: del,
+      get,
+      oauth,
+      options,
+      patch,
+      post,
+    },
   )
 
   return client

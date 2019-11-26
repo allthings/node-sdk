@@ -2,7 +2,7 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
-import { EnumUnitType } from './unit'
+import { EnumUnitObjectType, EnumUnitType } from './unit'
 
 let sharedGroupId: string // tslint:disable-line no-let
 
@@ -10,6 +10,7 @@ const client = restClient()
 
 const testData = {
   name: 'Foobar Unit',
+  readOnly: true,
   type: EnumUnitType.rented,
 }
 
@@ -29,19 +30,26 @@ describe('unitCreate()', () => {
   })
 
   it('should be able to create a new unit', async () => {
-    const data = { ...testData, externalId: generateId() }
+    const data = {
+      ...testData,
+      externalId: generateId(),
+      objectType: EnumUnitObjectType.flat,
+      size: 20.0,
+    }
     const result = await client.unitCreate(sharedGroupId, data)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
+    expect(result.objectType).toEqual(data.objectType)
+    expect(result.size).toEqual(data.size)
   })
 })
 
-describe('unitFindById()', () => {
+describe('unitGetById()', () => {
   it('should be able to get a unit by ID', async () => {
     const data = { ...testData, externalId: generateId() }
     const { id } = await client.unitCreate(sharedGroupId, data)
-    const result = await client.unitFindById(id)
+    const result = await client.unitGetById(id)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
@@ -55,9 +63,13 @@ describe('unitUpdateById()', () => {
 
     expect(unit.name).toEqual(initialData.name)
     expect(unit.externalId).toEqual(initialData.externalId)
+    expect(unit.objectType).toBe(null)
+    expect(unit.size).toBe(null)
 
     const updateData = {
       externalId: generateId(),
+      objectType: EnumUnitObjectType.garage,
+      size: 32.5,
       type: EnumUnitType.owned,
     }
 
@@ -65,5 +77,19 @@ describe('unitUpdateById()', () => {
 
     expect(result.type).toEqual(updateData.type)
     expect(result.externalId).toEqual(updateData.externalId)
+    expect(result.objectType).toEqual(updateData.objectType)
+    expect(result.size).toEqual(updateData.size)
+  })
+})
+
+describe('getUnits()', () => {
+  it('should be able to get a list of units', async () => {
+    const limit = 3
+
+    const result = await client.getUnits()
+    expect(result._embedded).toHaveProperty('items')
+
+    const result2 = await client.getUnits(1, limit)
+    expect(result2._embedded.items).toHaveLength(limit)
   })
 })

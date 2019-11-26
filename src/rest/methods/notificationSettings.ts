@@ -1,6 +1,6 @@
 import { remapKeys } from '../../utils/object'
 import { camelCaseToDash, dashCaseToCamel } from '../../utils/string'
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface INotificationSettings {
   readonly adminMessages: EnumNotificationSettingsValue
@@ -39,7 +39,7 @@ export type MethodNotificationSettingsUpdateByUser = (
 ) => NotificationSettingsResult
 
 export async function notificationSettingsUpdateByUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialNotificationSettings,
 ): NotificationSettingsResult {
@@ -56,7 +56,7 @@ export type MethodNotificationSettingsResetByUser = (
 ) => NotificationSettingsResult
 
 export async function notificationSettingsResetByUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
 ): NotificationSettingsResult {
   const result = await client.delete(

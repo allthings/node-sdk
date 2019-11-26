@@ -3,6 +3,7 @@
 describe('Logger', () => {
   it('should log when there is a subscription', async () => {
     const testLogString = 'Test 123'
+    const testLogStringPart1 = 'some more'
 
     jest.resetModules()
     jest.resetAllMocks()
@@ -12,15 +13,15 @@ describe('Logger', () => {
     const makeLogger = require('./logger').default
     const logger = makeLogger('Foobar 1')
 
-    const spy = jest
-      .spyOn(console, 'log')
-      .mockImplementationOnce(
-        (...log) => !!expect(log).toEqual(['Foobar 1:', testLogString]),
-      )
+    const spy = jest.spyOn(console, 'log')
 
-    logger.log(testLogString)
+    logger.log(testLogString, testLogStringPart1)
 
-    expect(spy).toHaveBeenCalled()
+    expect(spy).toHaveBeenCalledWith(
+      'Foobar 1:',
+      testLogString,
+      testLogStringPart1,
+    )
   })
 
   it('should not log when there is no subscription', async () => {

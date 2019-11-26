@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { EntityResultList, IAllthingsRestClient } from '../types'
 
 export interface IProperty {
   readonly externalId: string
@@ -6,11 +6,14 @@ export interface IProperty {
   readonly label: string
   readonly name: string
   readonly timezone: string
+  readonly readOnly: boolean
+  readonly _embedded: any
 }
 
 export type PartialProperty = Partial<IProperty>
 
 export type PropertyResult = Promise<IProperty>
+export type PropertyResultList = EntityResultList<IProperty>
 
 /*
   Create new property
@@ -23,7 +26,7 @@ export type MethodPropertyCreate = (
 ) => PropertyResult
 
 export async function propertyCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   appId: string,
   data: PartialProperty & { readonly name: string; readonly timezone: string },
 ): PropertyResult {
@@ -35,10 +38,10 @@ export async function propertyCreate(
   https://api-doc.allthings.me/#!/Property/get_properties_propertyID
 */
 
-export type MethodPropertyFindById = (propertyId: string) => PropertyResult
+export type MethodPropertyGetById = (propertyId: string) => PropertyResult
 
-export async function propertyFindById(
-  client: InterfaceAllthingsRestClient,
+export async function propertyGetById(
+  client: IAllthingsRestClient,
   propertyId: string,
 ): PropertyResult {
   return client.get(`/v1/properties/${propertyId}`)
@@ -55,9 +58,37 @@ export type MethodPropertyUpdateById = (
 ) => PropertyResult
 
 export async function propertyUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   propertyId: string,
   data: PartialProperty,
 ): PropertyResult {
   return client.patch(`/v1/properties/${propertyId}`, data)
+}
+
+/*
+  Get a list of properties
+*/
+
+export type MethodGetProperties = (
+  page?: number,
+  limit?: number,
+  filter?: Record<string, any>,
+) => PropertyResultList
+
+export async function getProperties(
+  client: IAllthingsRestClient,
+  page = 1,
+  limit = -1,
+  filter = {},
+): PropertyResultList {
+  const {
+    _embedded: { items: properties },
+    total,
+  } = await client.get('/v1/properties', {
+    filter: JSON.stringify(filter),
+    limit,
+    page,
+  })
+
+  return { _embedded: { items: properties }, total }
 }

@@ -1,14 +1,20 @@
 export {
   default as restClient,
+  EnumCommunicationPreferenceChannel,
+  EnumUserPermissionRole,
+  EnumUnitObjectType,
   EnumUnitType,
   EnumUserPermissionObjectType,
-  EnumUserPermissionRole,
+  EnumUserRelationType,
+  EnumUtilisationPeriodType,
 } from './rest'
 export {
   EnumCountryCode,
   EnumLocale,
   EnumResource,
+  EnumServiceProviderType,
   EnumTimezone,
-  InterfaceAllthingsRestClient,
-  InterfaceAllthingsRestClientOptions,
+  IAllthingsRestClient,
+  IAllthingsRestClientOptions,
 } from './rest/types'
+export { default as createTokenStore } from './oauth/createTokenStore'

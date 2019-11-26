@@ -1,4 +1,4 @@
-import { InterfaceAllthingsRestClient } from '../types'
+import { IAllthingsRestClient } from '../types'
 
 export interface IApp {
   readonly id: string
@@ -7,6 +7,8 @@ export interface IApp {
 }
 
 export type PartialApp = Partial<IApp>
+
+export type AppResult = Promise<IApp>
 
 export type CreateAppResult = Promise<IApp>
 
@@ -20,7 +22,7 @@ export type MethodAppCreate = (
 
 // @TODO: this is very much incomplete.
 export async function appCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialApp & {
     readonly name: string
@@ -29,9 +31,20 @@ export async function appCreate(
 ): CreateAppResult {
   return client.post(`/v1/users/${userId}/apps`, {
     availableLocales: { '0': 'de_DE' },
-    contactEmail: 'no-reply@allthings.me',
-    fromEmailAddress: 'no-reply@alltings.me',
     ...data,
     siteUrl: data.siteUrl.replace('_', ''),
   })
+}
+
+/*
+  Get an app by its ID
+*/
+
+export type MethodAppGetById = (appId: string) => AppResult
+
+export async function appGetById(
+  client: IAllthingsRestClient,
+  appId: string,
+): AppResult {
+  return client.get(`/v1/apps/${appId}`)
 }

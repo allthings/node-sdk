@@ -4,13 +4,13 @@ export type GetResult = Promise<any>
 
 export type MethodHttpGet = (
   method: string,
-  query?: { readonly [parameter: string]: string },
+  query?: Record<string, any>,
 ) => GetResult
 
 export default async function get(
   request: MethodHttpRequest,
   method: string,
-  query: { readonly [parameter: string]: string },
+  query: Record<string, any>,
 ): GetResult {
   return request('get', method, { query })
 }

@@ -1,4 +1,4 @@
-import { EnumLocale, InterfaceAllthingsRestClient } from '../types'
+import { EntityResultList, EnumLocale, IAllthingsRestClient } from '../types'
 import {
   UtilisationPeriodResult,
   UtilisationPeriodResults,
@@ -18,7 +18,16 @@ export enum EnumUserType {
   partner = 'partner',
 }
 
+export enum EnumCommunicationPreferenceChannel {
+  push = 'push',
+  email = 'email',
+}
+
 export interface IUser {
+  readonly communicationPreferences: ReadonlyArray<{
+    readonly channels: ReadonlyArray<EnumCommunicationPreferenceChannel>
+    readonly event: string
+  }>
   readonly createdAt: string
   readonly deletionRequestedAt: string | null
   readonly description: string
@@ -27,8 +36,10 @@ export interface IUser {
   readonly externalId: string | null
   readonly gender: EnumGender
   readonly id: string
+  readonly inviteEmailSent: boolean
   readonly lastLogin: string | null
   readonly locale: EnumLocale
+  readonly nativeAppInstallIds: ReadonlyArray<string> | null
   readonly passwordChanged: boolean
   readonly phoneNumber: string | null
   readonly profileImage: string | null
@@ -39,24 +50,35 @@ export interface IUser {
   readonly tenantIds: { readonly [key: string]: string }
   readonly type: EnumUserType | null
   readonly username: string
+  readonly readOnly: boolean
 }
 
 export type PartialUser = Partial<IUser>
 
 export type UserResult = Promise<IUser>
-export type UserResultList = Promise<{
-  readonly _embedded: { readonly items: ReadonlyArray<IUser> }
-  readonly total: number
-}>
+export type UserResultList = EntityResultList<IUser>
 
 export enum EnumUserPermissionRole {
-  admin = 'admin',
-  articleAdmin = 'article-admin',
-  assetAdmin = 'asset-admin',
-  assetContactPerson = 'asset-contact-person',
-  documentAdmin = 'document-admin',
-  externalTicketCollaborator = 'external-ticket-collaborator',
-  pinboardAdmin = 'community-article-admin',
+  appAdmin = 'app-admin',
+  appOwner = 'app-owner',
+  articlesAgent = 'articles-agent',
+  bookableAssetAgent = 'bookable-asset-agent',
+  bookingAgent = 'booking-agent',
+  cockpitManager = 'cockpit-manager',
+  dataConnectorAdmin = 'data-connector-admin',
+  documentAdmin = 'doc-admin',
+  externalAgent = 'external-agent',
+  globalOrgAdmin = 'global-org-admin',
+  globalUserAdmin = 'global-user-admin',
+  orgAdmin = 'org-admin',
+  orgTeamManager = 'org-team-manager',
+  pinboardAgent = 'pinboard-agent',
+  platformOwner = 'platform-owner',
+  qa = 'qa',
+  serviceCenterAgent = 'service-center-agent',
+  serviceCenterManager = 'service-center-manager',
+  setup = 'setup',
+  tenantManager = 'tenant-manager',
 }
 
 export enum EnumUserPermissionObjectType {
@@ -74,6 +96,8 @@ export interface IUserPermission {
   readonly role: string
   readonly objectId: string
   readonly objectType: EnumUserPermissionObjectType
+  readonly startDate?: Date
+  readonly endDate?: Date
 }
 
 export type PartialUserPermission = Partial<IUserPermission>
@@ -98,27 +122,26 @@ export const remapEmbeddedUser = (embedded: {
 export type MethodUserCreate = (
   appId: string,
   username: string,
-  plainPassword: string,
   data: PartialUser & {
     readonly email: string
     readonly locale: EnumLocale
+    readonly plainPassword?: string
   },
 ) => UserResult
 
 export async function userCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   appId: string,
   username: string,
-  plainPassword: string,
   data: PartialUser & {
     readonly email: string
     readonly locale: EnumLocale
+    readonly plainPassword?: string
   },
 ): UserResult {
   return client.post('/v1/users', {
     ...data,
     creationContext: appId,
-    plainPassword,
     username,
   })
 }
@@ -127,17 +150,26 @@ export async function userCreate(
   Get a list of users
 */
 
-export type MethodGetUsers = (page?: number, limit?: number) => UserResultList
+export type MethodGetUsers = (
+  page?: number,
+  limit?: number,
+  filter?: Record<string, any>,
+) => UserResultList
 
 export async function getUsers(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   page = 1,
   limit = -1,
+  filter = {},
 ): UserResultList {
   const {
     _embedded: { items: users },
     total,
-  } = await client.get(`/v1/users?page=${page}&limit=${limit}`)
+  } = await client.get('/v1/users', {
+    filter: JSON.stringify(filter),
+    limit,
+    page,
+  })
 
   return { _embedded: { items: users.map(remapUserResult) }, total }
 }
@@ -148,9 +180,7 @@ export async function getUsers(
 
 export type MethodGetCurrentUser = () => UserResult
 
-export async function getCurrentUser(
-  client: InterfaceAllthingsRestClient,
-): UserResult {
+export async function getCurrentUser(client: IAllthingsRestClient): UserResult {
   return remapUserResult(await client.get('/v1/me'))
 }
 
@@ -158,10 +188,10 @@ export async function getCurrentUser(
   Get a user by their ID
 */
 
-export type MethodUserFindById = (id: string) => UserResult
+export type MethodUserGetById = (id: string) => UserResult
 
-export async function userFindById(
-  client: InterfaceAllthingsRestClient,
+export async function userGetById(
+  client: IAllthingsRestClient,
   userId: string,
 ): UserResult {
   return remapUserResult(await client.get(`/v1/users/${userId}`))
@@ -177,7 +207,7 @@ export type MethodUserUpdateById = (
 ) => UserResult
 
 export async function userUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialUser,
 ): UserResult {
@@ -199,23 +229,30 @@ export type MethodUserCreatePermission = (
     readonly objectType: EnumUserPermissionObjectType
     readonly restrictions: ReadonlyArray<object>
     readonly role: EnumUserPermissionRole
+    readonly startDate?: Date
+    readonly endDate?: Date
   },
 ) => UserPermissionResult
 
 export async function userCreatePermission(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   data: PartialUserPermission & {
     readonly objectId: string
     readonly objectType: EnumUserPermissionObjectType
     readonly restrictions: ReadonlyArray<object>
     readonly role: EnumUserPermissionRole
+    readonly startDate?: Date
+    readonly endDate?: Date
   },
 ): UserPermissionResult {
   const { objectId: objectID, ...rest } = data
   const { objectID: resultObjectId, ...result } = await client.post(
     `/v1/users/${userId}/permissions`,
-    { ...rest, objectID },
+    {
+      ...rest,
+      objectID,
+    },
   )
 
   return {
@@ -225,20 +262,64 @@ export async function userCreatePermission(
 }
 
 /*
+  Create a new permission for a user
+*/
+
+export type MethodUserCreatePermissionBatch = (
+  userId: string,
+  permissions: PartialUserPermission & {
+    readonly objectId: string
+    readonly objectType: EnumUserPermissionObjectType
+    readonly restrictions: ReadonlyArray<object>
+    readonly roles: ReadonlyArray<EnumUserPermissionRole>
+    readonly startDate?: Date
+    readonly endDate?: Date
+  },
+) => Promise<boolean>
+
+export async function userCreatePermissionBatch(
+  client: IAllthingsRestClient,
+  userId: string,
+  permissions: PartialUserPermission & {
+    readonly objectId: string
+    readonly objectType: EnumUserPermissionObjectType
+    readonly restrictions: ReadonlyArray<object>
+    readonly roles: ReadonlyArray<EnumUserPermissionRole>
+    readonly startDate?: Date
+    readonly endDate?: Date
+  },
+): Promise<boolean> {
+  const { objectId, objectType, roles, startDate, endDate } = permissions
+
+  const batch = {
+    batch: roles.map(role => ({
+      endDate: endDate && endDate.toISOString(),
+      objectID: objectId,
+      objectType,
+      restrictions: [],
+      role,
+      startDate: startDate && startDate.toISOString(),
+    })),
+  }
+
+  return !(await client.post(`/v1/users/${userId}/permissions`, batch))
+}
+
+/*
   Get a list of a user's permissions
 */
 
-export type MethodUserFindPermissions = (
+export type MethodUserGetPermissions = (
   userId: string,
 ) => Promise<ReadonlyArray<IUserPermission>>
 
-export async function userFindPermissions(
-  client: InterfaceAllthingsRestClient,
+export async function userGetPermissions(
+  client: IAllthingsRestClient,
   userId: string,
 ): Promise<ReadonlyArray<IUserPermission>> {
   const {
     _embedded: { items: permissions },
-  } = await client.get(`/v1/users/${userId}/permissions?limit=-1`)
+  } = await client.get(`/v1/users/${userId}/roles?limit=-1`)
 
   return permissions.map(({ objectID: objectId, ...result }: any) => ({
     ...result,
@@ -255,7 +336,7 @@ export type MethodUserDeletePermission = (
 ) => Promise<boolean>
 
 export async function userDeletePermission(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   permissionId: string,
 ): Promise<boolean> {
   return !(await client.delete(`/v1/permissions/${permissionId}`))
@@ -266,11 +347,11 @@ export async function userDeletePermission(
 */
 
 export type MethodUserGetUtilisationPeriods = (
-  permissionId: string,
+  userId: string,
 ) => UtilisationPeriodResults
 
 export async function userGetUtilisationPeriods(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
 ): UtilisationPeriodResults {
   const {
@@ -291,13 +372,28 @@ export type MethodUserCheckInToUtilisationPeriod = (
 ) => UtilisationPeriodResults
 
 export async function userCheckInToUtilisationPeriod(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   userId: string,
   utilisationPeriodId: string,
 ): UtilisationPeriodResult {
-  const { email: userEmail } = await client.userFindById(userId)
+  const { email: userEmail } = await client.userGetById(userId)
 
   return client.utilisationPeriodCheckInUser(utilisationPeriodId, {
     email: userEmail,
   })
+}
+
+/*
+  Get a user by email
+ */
+
+export type MethodUserGetByEmail = (email: string) => UserResultList
+
+export async function userGetByEmail(
+  client: IAllthingsRestClient,
+  email: string,
+  page = 1,
+  limit = 1000,
+): UserResultList {
+  return client.getUsers(page, limit, { email })
 }

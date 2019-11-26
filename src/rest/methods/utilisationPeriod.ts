@@ -1,6 +1,15 @@
-import { InterfaceAllthingsRestClient } from '../types'
-import { remapRegistationCodeResult } from './registrationCode'
+import { IAllthingsRestClient } from '../types'
+import {
+  IRegistrationCodeTenant,
+  remapRegistationCodeResult,
+} from './registrationCode'
 import { IUser, remapEmbeddedUser } from './user'
+
+export enum EnumUtilisationPeriodType {
+  tenant = 'tenant',
+  ownership = 'ownership',
+  vacant = 'vacant',
+}
 
 export interface IUtilisationPeriod {
   readonly _embedded: {
@@ -18,8 +27,10 @@ export interface IUtilisationPeriod {
     readonly invitationCount: number | null
   }
   readonly tenantIds: ReadonlyArray<string>
+  readonly type: EnumUtilisationPeriodType
   readonly userCount: number | null
   readonly users: ReadonlyArray<IUser>
+  readonly readOnly: boolean
 }
 
 export interface IUtilisationPeriodInvite {
@@ -34,6 +45,7 @@ export interface IUtilisationPeriodInvite {
   readonly externalId: string
   readonly organizations: ReadonlyArray<string> // array of mongoId
   readonly teams: ReadonlyArray<string> // array of mongoId
+  readonly tenant: IRegistrationCodeTenant
   readonly resendAttempts: ReadonlyArray<string> // array of dates
   readonly usedAt: string | null
 }
@@ -53,14 +65,18 @@ export type MethodUtilisationPeriodCreate = (
   unitId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
+    readonly endDate?: string
+    readonly type?: EnumUtilisationPeriodType
   },
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodCreate(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   unitId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
+    readonly endDate?: string
+    readonly type?: EnumUtilisationPeriodType
   },
 ): UtilisationPeriodResult {
   const { tenantIDs: tenantIds, _embedded, ...result } = await client.post(
@@ -80,12 +96,12 @@ export async function utilisationPeriodCreate(
   Get a Utilisation Period by its ID
 */
 
-export type MethodUtilisationPeriodFindById = (
+export type MethodUtilisationPeriodGetById = (
   id: string,
 ) => UtilisationPeriodResult
 
-export async function utilisationPeriodFindById(
-  client: InterfaceAllthingsRestClient,
+export async function utilisationPeriodGetById(
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
 ): UtilisationPeriodResult {
   const { tenantIDs: tenantIds, _embedded, ...result } = await client.get(
@@ -110,7 +126,7 @@ export type MethodUtilisationPeriodUpdateById = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodUpdateById(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
   data: PartialUtilisationPeriod & {
     readonly startDate: string
@@ -135,7 +151,7 @@ export type MethodUtilisationPeriodCheckInUser = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodCheckInUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
   data: {
     readonly email: string
@@ -144,7 +160,7 @@ export async function utilisationPeriodCheckInUser(
   return (
     (await client.post(`/v1/utilisation-periods/${utilisationPeriodId}/users`, {
       email: data.email,
-    })) && client.utilisationPeriodFindById(utilisationPeriodId)
+    })) && client.utilisationPeriodGetById(utilisationPeriodId)
   )
 }
 
@@ -154,7 +170,7 @@ export type MethodUtilisationPeriodCheckOutUser = (
 ) => UtilisationPeriodResult
 
 export async function utilisationPeriodCheckOutUser(
-  client: InterfaceAllthingsRestClient,
+  client: IAllthingsRestClient,
   utilisationPeriodId: string,
   userId: string,
 ): Promise<boolean> {
@@ -162,5 +178,28 @@ export async function utilisationPeriodCheckOutUser(
     (await client.delete(
       `/v1/utilisation-periods/${utilisationPeriodId}/users/${userId}`,
     )) === ''
+  )
+}
+
+/*
+  Add new registratation code by utilisation period
+*/
+export type MethodUtilisationPeriodAddRegistrationCode = (
+  utilisationPeriodId: string,
+  code: string,
+  tenant?: IRegistrationCodeTenant,
+  permanent?: boolean,
+) => Promise<IUtilisationPeriodInvite>
+
+export async function utilisationPeriodAddRegistrationCode(
+  client: IAllthingsRestClient,
+  utilisationPeriodId: string,
+  code: string,
+  tenant?: IRegistrationCodeTenant,
+  permanent = false,
+): Promise<IUtilisationPeriodInvite> {
+  return client.post(
+    `/v1/utilisation-periods/${utilisationPeriodId}/registration-codes`,
+    { code, permanent, tenant },
   )
 }

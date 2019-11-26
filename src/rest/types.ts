@@ -1,10 +1,11 @@
+import { ITokenStore, TokenRequester } from '../oauth/types'
 import { MethodHttpDelete } from './delete'
 import { MethodHttpGet } from './get'
 import {
   MethodAgentCreate,
   MethodAgentCreatePermissions,
 } from './methods/agent'
-import { MethodAppCreate } from './methods/app'
+import { MethodAppCreate, MethodAppGetById } from './methods/app'
 import {
   MethodBucketAddFile,
   MethodBucketCreate,
@@ -12,30 +13,49 @@ import {
   MethodBucketRemoveFile,
   MethodBucketRemoveFilesInPath,
 } from './methods/bucket'
+import {
+  MethodConversationCreateMessage,
+  MethodConversationGetById,
+} from './methods/conversation'
 import { MethodFileCreate, MethodFileDelete } from './methods/file'
 import {
+  MethodGetGroups,
   MethodGroupCreate,
-  MethodGroupFindById,
+  MethodGroupGetById,
   MethodGroupUpdateById,
 } from './methods/group'
 import { MethodLookupIds } from './methods/idLookup'
+import {
+  MethodNotificationsGetByUser,
+  MethodNotificationsUpdateReadByUser,
+  MethodNotificationUpdateRead,
+} from './methods/notification'
 import {
   MethodNotificationSettingsResetByUser,
   MethodNotificationSettingsUpdateByUser,
 } from './methods/notificationSettings'
 import {
+  MethodGetProperties,
   MethodPropertyCreate,
-  MethodPropertyFindById,
+  MethodPropertyGetById,
   MethodPropertyUpdateById,
 } from './methods/property'
 import {
   MethodRegistrationCodeCreate,
   MethodRegistrationCodeDelete,
-  MethodRegistrationCodeFindById,
+  MethodRegistrationCodeGetById,
+  MethodRegistrationCodeUpdateById,
 } from './methods/registrationCode'
 import {
+  MethodServiceProviderCreate,
+  MethodServiceProviderGetById,
+  MethodServiceProviderUpdateById,
+} from './methods/serviceProvider'
+import { MethodTicketCreate, MethodTicketGetById } from './methods/ticket'
+import {
+  MethodGetUnits,
   MethodUnitCreate,
-  MethodUnitFindById,
+  MethodUnitGetById,
   MethodUnitUpdateById,
 } from './methods/unit'
 import {
@@ -44,17 +64,24 @@ import {
   MethodUserCheckInToUtilisationPeriod,
   MethodUserCreate,
   MethodUserCreatePermission,
+  MethodUserCreatePermissionBatch,
   MethodUserDeletePermission,
-  MethodUserFindById,
-  MethodUserFindPermissions,
+  MethodUserGetByEmail,
+  MethodUserGetById,
+  MethodUserGetPermissions,
   MethodUserGetUtilisationPeriods,
   MethodUserUpdateById,
 } from './methods/user'
 import {
+  MethodUserRelationCreate,
+  MethodUserRelationDelete,
+} from './methods/userRelation'
+import {
+  MethodUtilisationPeriodAddRegistrationCode,
   MethodUtilisationPeriodCheckInUser,
   MethodUtilisationPeriodCheckOutUser,
   MethodUtilisationPeriodCreate,
-  MethodUtilisationPeriodFindById,
+  MethodUtilisationPeriodGetById,
   MethodUtilisationPeriodUpdateById,
 } from './methods/utilisationPeriod'
 import { MethodHttpPatch } from './patch'
@@ -62,12 +89,13 @@ import { MethodHttpPost } from './post'
 
 // Describes the possible resources which exist in the API
 export enum EnumResource {
-  property = 'property',
   group = 'group',
+  property = 'property',
+  serviceProvider = 'propertyManager',
   registrationCode = 'registrationCode',
   unit = 'unit',
-  utilisationPeriod = 'utilisationPeriod',
   user = 'user',
+  utilisationPeriod = 'utilisationPeriod',
 }
 
 export enum EnumCountryCode {
@@ -99,30 +127,62 @@ export enum EnumTimezone {
   UTC = 'UTC',
 }
 
+export enum EnumServiceProviderType {
+  serviceProvider = 'service-provider',
+  craftspeople = 'craftspeople',
+}
+
+export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
+  {
+    readonly _embedded: { readonly items: ReadonlyArray<Entity> }
+    readonly total: number
+  } & ExtensionInterface
+>
+
 // Describes the options with which to construct a new API wrapper instance
-export interface InterfaceAllthingsRestClientOptions {
+export interface IAllthingsRestClientOptions {
   readonly apiUrl: string
+  readonly authorizationCode?: string
   readonly accessToken?: string
   readonly clientId?: string
   readonly clientSecret?: string
   readonly oauthUrl: string
   readonly password?: string
   readonly redirectUri?: string
+  readonly refreshToken?: string | undefined
   readonly requestBackOffInterval: number
   readonly requestMaxRetries: number
   readonly scope?: string
   readonly state?: string
+  readonly tokenStore?: ITokenStore
   readonly username?: string
+  readonly implicit?: boolean
+  // tslint:disable-next-line no-mixed-interface
+  readonly authorizationRedirect?: (url: string) => any
+}
+
+export interface IClientExposedOAuth {
+  readonly authorizationCode: {
+    readonly getUri: (state?: string) => string
+    readonly requestToken: (
+      authorizationCode?: string,
+    ) => ReturnType<TokenRequester>
+  }
+  // tslint:disable-next-line no-mixed-interface
+  readonly refreshToken: (refreshToken?: string) => ReturnType<TokenRequester>
+  readonly generateState: () => string
 }
 
 // Describes the REST API wrapper's resulting interface
-export interface InterfaceAllthingsRestClient {
-  readonly options: Required<InterfaceAllthingsRestClientOptions>
+export interface IAllthingsRestClient {
+  readonly options: Required<IAllthingsRestClientOptions>
 
   readonly delete: MethodHttpDelete
   readonly get: MethodHttpGet
   readonly post: MethodHttpPost
   readonly patch: MethodHttpPatch
+
+  readonly oauth: IClientExposedOAuth
 
   // Agent
 
@@ -144,6 +204,11 @@ export interface InterfaceAllthingsRestClient {
    * Create a new App.
    */
   readonly appCreate: MethodAppCreate
+
+  /**
+   * Get an app by it's id
+   */
+  readonly appGetById: MethodAppGetById
 
   // Bucket
 
@@ -168,6 +233,30 @@ export interface InterfaceAllthingsRestClient {
    */
   readonly bucketGet: MethodBucketGet
 
+  // Conversation
+
+  /**
+   * Gets a conversation by id
+   */
+  readonly conversationGetById: MethodConversationGetById
+
+  /**
+   * Creates a message on a conversation
+   */
+  readonly conversationCreateMessage: MethodConversationCreateMessage
+
+  // File
+
+  /**
+   * Creates a file
+   */
+  readonly fileCreate: MethodFileCreate
+
+  /**
+   * Deletes a file by it's ID
+   */
+  readonly fileDelete: MethodFileDelete
+
   // ID Lookup
 
   /**
@@ -185,7 +274,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a group by its ID
    */
-  readonly groupFindById: MethodGroupFindById
+  readonly groupGetById: MethodGroupGetById
 
   /**
    * Update a group by its ID
@@ -193,6 +282,28 @@ export interface InterfaceAllthingsRestClient {
   readonly groupUpdateById: MethodGroupUpdateById
 
   // Notification settings
+
+  /**
+   * Get a list of units
+   */
+  readonly getUnits: MethodGetUnits
+
+  // Notification
+
+  /**
+   * Returns a collection of notifications for a given user
+   */
+  readonly notificationsGetByUser: MethodNotificationsGetByUser
+
+  /**
+   * Marks all notifications of a user - until a provided timestamp (or now) - as read
+   */
+  readonly notificationsUpdateReadByUser: MethodNotificationsUpdateReadByUser
+
+  /**
+   * Mark a notification as read
+   */
+  readonly notificationUpdateRead: MethodNotificationUpdateRead
 
   /**
    * Set all notification settings to default
@@ -214,12 +325,34 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a property by its ID
    */
-  readonly propertyFindById: MethodPropertyFindById
+  readonly propertyGetById: MethodPropertyGetById
 
   /**
    * Update a property by its ID
    */
   readonly propertyUpdateById: MethodPropertyUpdateById
+
+  /**
+   * Get a list of properties
+   */
+  readonly getProperties: MethodGetProperties
+
+  // Service providers
+
+  /**
+   * Create a new service provider
+   */
+  readonly serviceProviderCreate: MethodServiceProviderCreate
+
+  /**
+   * Get a service provider by its ID
+   */
+  readonly serviceProviderGetById: MethodServiceProviderGetById
+
+  /**
+   * Update a service provider by its ID
+   */
+  readonly serviceProviderUpdateById: MethodServiceProviderUpdateById
 
   // Registration Code
 
@@ -229,26 +362,31 @@ export interface InterfaceAllthingsRestClient {
   readonly registrationCodeCreate: MethodRegistrationCodeCreate
 
   /**
+   * Update a registration code
+   */
+  readonly registrationCodeUpdateById: MethodRegistrationCodeUpdateById
+
+  /**
    * Find a registration code by it
    */
-  readonly registrationCodeFindById: MethodRegistrationCodeFindById
+  readonly registrationCodeGetById: MethodRegistrationCodeGetById
 
   /**
    * Delete a registration code by it
    */
   readonly registrationCodeDelete: MethodRegistrationCodeDelete
 
-  // File
+  // ticket
 
   /**
-   * Creates a file
+   * Create a ticket
    */
-  readonly fileCreate: MethodFileCreate
+  readonly ticketCreate: MethodTicketCreate
 
   /**
-   * Deletes a file by it's ID
+   * Get a ticket by its ID
    */
-  readonly fileDelete: MethodFileDelete
+  readonly ticketGetById: MethodTicketGetById
 
   // Unit
 
@@ -260,12 +398,17 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a unit by its ID
    */
-  readonly unitFindById: MethodUnitFindById
+  readonly unitGetById: MethodUnitGetById
 
   /**
    * Update a unit by its ID
    */
   readonly unitUpdateById: MethodUnitUpdateById
+
+  /**
+   * Get a list of groups
+   */
+  readonly getGroups: MethodGetGroups
 
   // User
 
@@ -277,7 +420,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a user by their ID
    */
-  readonly userFindById: MethodUserFindById
+  readonly userGetById: MethodUserGetById
 
   /**
    * Update a user by their ID
@@ -300,9 +443,14 @@ export interface InterfaceAllthingsRestClient {
   readonly userCreatePermission: MethodUserCreatePermission
 
   /**
+   * Give a user multiple permission/role on an given object of specified type
+   */
+  readonly userCreatePermissionBatch: MethodUserCreatePermissionBatch
+
+  /**
    * Get a list of user's permissions
    */
-  readonly userFindPermissions: MethodUserFindPermissions
+  readonly userGetPermissions: MethodUserGetPermissions
 
   /**
    * Delete a user a permission/role on an given object of specified type
@@ -320,6 +468,23 @@ export interface InterfaceAllthingsRestClient {
    */
   readonly userCheckInToUtilisationPeriod: MethodUserCheckInToUtilisationPeriod
 
+  /**
+   * Finds users by an email address
+   */
+  readonly userGetByEmail: MethodUserGetByEmail
+
+  // User Relation
+
+  /**
+   * Creates a new user relation
+   */
+  readonly userRelationCreate: MethodUserRelationCreate
+
+  /**
+   * Deletes a new user relation
+   */
+  readonly userRelationDelete: MethodUserRelationDelete
+
   // Utilisation Period
 
   /**
@@ -330,7 +495,7 @@ export interface InterfaceAllthingsRestClient {
   /**
    * Get a utilisation period by its ID
    */
-  readonly utilisationPeriodFindById: MethodUtilisationPeriodFindById
+  readonly utilisationPeriodGetById: MethodUtilisationPeriodGetById
 
   /*
    * Update a utilisation period by its ID
@@ -347,4 +512,9 @@ export interface InterfaceAllthingsRestClient {
    * and userId
    */
   readonly utilisationPeriodCheckOutUser: MethodUtilisationPeriodCheckOutUser
+
+  /**
+   * Add new registratation code by utilisation period
+   */
+  readonly utilisationPeriodAddRegistrationCode: MethodUtilisationPeriodAddRegistrationCode
 }

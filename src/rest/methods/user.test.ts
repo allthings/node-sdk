@@ -12,6 +12,7 @@ const client = restClient()
 const testData = {
   description: 'Foobar User',
   locale: EnumLocale.en_US,
+  readOnly: true,
 }
 
 describe('getUsers()', () => {
@@ -24,11 +25,10 @@ describe('getUsers()', () => {
           ...testData,
           email: generateId() + '@foobar.test',
           externalId: generateId(),
+          plainPassword: generateId(),
         }),
         limit,
-      ).map(data =>
-        client.userCreate(APP_ID, generateId(), generateId(), data),
-      ),
+      ).map(data => client.userCreate(APP_ID, generateId(), data)),
     )
 
     const result = await client.getUsers()
@@ -36,6 +36,75 @@ describe('getUsers()', () => {
 
     const result2 = await client.getUsers(1, limit)
     expect(result2._embedded.items).toHaveLength(limit)
+  })
+
+  it('should be able find many users by their email address', async () => {
+    const user1 = await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      locale: EnumLocale.de_DE,
+    })
+
+    const user2 = await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      locale: EnumLocale.de_DE,
+    })
+
+    const users = await client.getUsers(undefined, undefined, {
+      email: [user1.email, user2.email],
+    })
+
+    expect(users._embedded.items).toHaveLength(2)
+
+    users._embedded.items.forEach(user => {
+      expect([user1.email, user2.email]).toContain(user.email)
+    })
+  })
+
+  it('should be able find many users by their email address even when non canonicalized', async () => {
+    const email1 = 'NoNCanONicaLizedEmail@eMail.Test'
+    const email2 = 'canonicalized@email.test'
+
+    const user1 = await client.userCreate(APP_ID, generateId(), {
+      email: email1,
+      locale: EnumLocale.de_DE,
+    })
+
+    const user2 = await client.userCreate(APP_ID, generateId(), {
+      email: email2,
+      locale: EnumLocale.de_DE,
+    })
+
+    const users = await client.getUsers(undefined, undefined, {
+      email: [email1, email2],
+    })
+
+    expect(users._embedded.items).toHaveLength(2)
+
+    users._embedded.items.forEach(user => {
+      expect([user1.email, user2.email]).toContain(user.email)
+    })
+  })
+
+  it('should find users with multiple search filters', async () => {
+    const user1 = await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      externalId: '123',
+      locale: EnumLocale.de_DE,
+    })
+
+    const user2 = await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      externalId: '321',
+      locale: EnumLocale.de_DE,
+    })
+
+    const users = await client.getUsers(undefined, undefined, {
+      email: [user1.email, user2.email],
+      externalId: ['123'],
+    })
+
+    expect(users._embedded.items).toHaveLength(1)
+    expect(users._embedded.items[0].id).toBe(user1.id)
   })
 })
 
@@ -54,33 +123,25 @@ describe('userCreate()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const result = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      data,
-    )
+    const result = await client.userCreate(APP_ID, generateId(), data)
 
     expect(result.email).toEqual(data.email)
     expect(result.externalId).toEqual(data.externalId)
   })
 })
 
-describe('userFindById()', () => {
+describe('userGetById()', () => {
   it('should be able to get a user by their ID', async () => {
     const data = {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const { id } = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      data,
-    )
-    const result = await client.userFindById(id)
+    const { id } = await client.userCreate(APP_ID, generateId(), data)
+    const result = await client.userGetById(id)
 
     expect(result.email).toEqual(data.email)
     expect(result.externalId).toEqual(data.externalId)
@@ -93,13 +154,9 @@ describe('userUpdateById()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     expect(user.email).toEqual(initialData.email)
     expect(user.externalId).toEqual(initialData.externalId)
@@ -124,13 +181,9 @@ describe('userCreatePermission()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     expect(user.email).toEqual(initialData.email)
     expect(user.externalId).toEqual(initialData.externalId)
@@ -139,7 +192,7 @@ describe('userCreatePermission()', () => {
       objectId: APP_ID,
       objectType: EnumUserPermissionObjectType.app,
       restrictions: [],
-      role: EnumUserPermissionRole.admin,
+      role: EnumUserPermissionRole.appAdmin,
     }
 
     const result = await client.userCreatePermission(user.id, permissionData)
@@ -149,34 +202,31 @@ describe('userCreatePermission()', () => {
   })
 })
 
-describe('userFindPermissions()', () => {
+describe('userGetPermissions()', () => {
   it('should be able to list permissions of a user', async () => {
     const initialData = {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
 
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     const permissionData = {
       objectId: APP_ID,
       objectType: EnumUserPermissionObjectType.app,
       restrictions: [],
-      role: EnumUserPermissionRole.admin,
+      role: EnumUserPermissionRole.appAdmin,
     }
 
     await client.userCreatePermission(user.id, permissionData)
 
-    const result = await client.userFindPermissions(user.id)
+    const [result] = await client.userGetPermissions(user.id)
 
-    expect(result).toHaveLength(1)
-    expect(result[0].objectType).toEqual(permissionData.objectType)
+    expect(result).toBeTruthy()
+    expect(result.objectType).toEqual(permissionData.objectType)
+    expect(result.role).toEqual(EnumUserPermissionRole.appAdmin)
   })
 })
 
@@ -186,20 +236,16 @@ describe('userDeletePermission()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      plainPassword: generateId(),
     }
 
-    const user = await client.userCreate(
-      APP_ID,
-      generateId(),
-      generateId(),
-      initialData,
-    )
+    const user = await client.userCreate(APP_ID, generateId(), initialData)
 
     const permissionData = {
       objectId: APP_ID,
       objectType: EnumUserPermissionObjectType.app,
       restrictions: [],
-      role: EnumUserPermissionRole.admin,
+      role: EnumUserPermissionRole.appAdmin,
     }
 
     const permission = await client.userCreatePermission(
@@ -208,13 +254,13 @@ describe('userDeletePermission()', () => {
     )
 
     // permission should exist
-    expect(await client.userFindPermissions(user.id)).toHaveLength(1)
+    expect(await client.userGetPermissions(user.id)).toBeTruthy()
 
     // delete the permission
     expect(await client.userDeletePermission(permission.id)).toBe(true)
 
     // permission should no longer exist
-    expect(await client.userFindPermissions(user.id)).toHaveLength(0)
+    expect(await client.userGetPermissions(user.id)).toHaveLength(0)
   })
 })
 
@@ -253,9 +299,10 @@ describe('userGetUtilisationPeriods()', () => {
 
     const userEmail = generateId() + '@test.com'
 
-    const user = await client.userCreate(APP_ID, generateId(), generateId(), {
+    const user = await client.userCreate(APP_ID, generateId(), {
       email: userEmail,
       locale: EnumLocale.de_DE,
+      plainPassword: generateId(),
     })
 
     await client.userCheckInToUtilisationPeriod(user.id, utilisationPeriod.id)
@@ -265,5 +312,54 @@ describe('userGetUtilisationPeriods()', () => {
     )
 
     expect(usersUtilisationPeriod.id).toEqual(utilisationPeriod.id)
+  })
+
+  describe('userCreatePermission()', () => {
+    it('should be able to add rope permissions to a user', async () => {
+      const initialData = {
+        ...testData,
+        email: generateId() + '@foobar.test',
+        externalId: generateId(),
+      }
+      const user = await client.userCreate(APP_ID, generateId(), initialData)
+
+      expect(user.email).toEqual(initialData.email)
+      expect(user.externalId).toEqual(initialData.externalId)
+
+      const permissionData = {
+        objectId: APP_ID,
+        objectType: EnumUserPermissionObjectType.app,
+        restrictions: [],
+        role: EnumUserPermissionRole.serviceCenterAgent,
+      }
+
+      const result = await client.userCreatePermission(user.id, permissionData)
+
+      expect(result.role).toEqual(permissionData.role)
+      expect(result.objectType).toEqual(permissionData.objectType)
+      expect(result.role).toEqual(EnumUserPermissionRole.serviceCenterAgent)
+    })
+  })
+})
+
+describe('userGetByEmail()', () => {
+  it('should be able to search users by email address', async () => {
+    const user1 = await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      locale: EnumLocale.de_DE,
+    })
+
+    await client.userCreate(APP_ID, generateId(), {
+      email: `${generateId()}@email.test`,
+      locale: EnumLocale.de_DE,
+    })
+
+    const users = await client.userGetByEmail(user1.email)
+
+    expect(users._embedded.items).toHaveLength(1)
+
+    users._embedded.items.forEach(user => {
+      expect(user.email).toEqual(user1.email)
+    })
   })
 })

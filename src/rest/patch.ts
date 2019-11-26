@@ -4,13 +4,13 @@ export type PatchResult = Promise<any>
 
 export type MethodHttpPatch = (
   method: string,
-  body?: { readonly [key: string]: any },
+  body?: Record<string, any>,
 ) => PatchResult
 
 export default async function patch(
   request: MethodHttpRequest,
   method: string,
-  body: { readonly [key: string]: any },
+  body: Record<string, any>,
 ): PatchResult {
   return request('patch', method, { body })
 }

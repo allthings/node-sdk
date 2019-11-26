@@ -14,6 +14,7 @@ const testPropertyData = {
 const testData = {
   name: 'Foobar Group',
   propertyManagerId: APP_PROPERTY_MANAGER_ID,
+  readOnly: true,
 }
 
 const testAddressData = {
@@ -36,13 +37,13 @@ describe('groupCreate()', () => {
   })
 })
 
-describe('groupFindById()', () => {
+describe('groupGetById()', () => {
   it('should be able to get a group by ID', async () => {
     const property = await client.propertyCreate(APP_ID, testPropertyData)
 
     const data = { ...testData, externalId: generateId() }
     const { id } = await client.groupCreate(property.id, data)
-    const result = await client.groupFindById(id)
+    const result = await client.groupGetById(id)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
@@ -71,5 +72,17 @@ describe('groupUpdateById()', () => {
     expect(result.address.country).toEqual(EnumCountryCode.DE)
     expect(result.description).toEqual(updateData.description)
     expect(result.externalId).toEqual(updateData.externalId)
+  })
+})
+
+describe('getGroups()', () => {
+  it('should be able to get a list of groups', async () => {
+    const limit = 3
+
+    const result = await client.getGroups()
+    expect(result._embedded).toHaveProperty('items')
+
+    const result2 = await client.getGroups(1, limit)
+    expect(result2._embedded.items).toHaveLength(limit)
   })
 })

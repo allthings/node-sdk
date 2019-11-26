@@ -7,6 +7,13 @@ const client = restClient()
 
 const testData = {
   name: 'Foobar Property',
+  readOnly: true,
+  timezone: 'Europe/Berlin',
+}
+
+const testDataUmlauts = {
+  name: 'Pröpärty',
+  readOnly: true,
   timezone: 'Europe/Berlin',
 }
 
@@ -20,11 +27,11 @@ describe('propertyCreate()', () => {
   })
 })
 
-describe('propertyFindById()', () => {
+describe('propertyGetById()', () => {
   it('should be able to get a property by ID', async () => {
     const data = { ...testData, externalId: generateId() }
     const { id } = await client.propertyCreate(APP_ID, data)
-    const result = await client.propertyFindById(id)
+    const result = await client.propertyGetById(id)
 
     expect(result.name).toEqual(data.name)
     expect(result.externalId).toEqual(data.externalId)
@@ -47,5 +54,29 @@ describe('propertyUpdateById()', () => {
 
     expect(result.name).toEqual(updateData.name)
     expect(result.externalId).toEqual(updateData.externalId)
+  })
+})
+
+describe('getProperties()', () => {
+  it('should be able to get a list of properties', async () => {
+    const limit = 3
+
+    const result = await client.getProperties()
+    expect(result._embedded).toHaveProperty('items')
+
+    const result2 = await client.getProperties(1, limit)
+    expect(result2._embedded.items).toHaveLength(limit)
+  })
+
+  it('should be able to get a property with umlauts', async () => {
+    await client.propertyCreate(APP_ID, {
+      ...testDataUmlauts,
+      externalId: generateId(),
+    })
+
+    const result = await client.getProperties(undefined, undefined, {
+      name: testDataUmlauts.name,
+    })
+    expect(result._embedded.items[0].name).toEqual(testDataUmlauts.name)
   })
 })
