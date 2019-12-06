@@ -176,6 +176,7 @@
     "set-value": ">=2.0.1",
     "lodash": ">=4.17.12",
     "lodash.template": ">=4.5.0",
-    "https-proxy-agent": ">=3.0.0"
+    "https-proxy-agent": ">=3.0.0",
+    "serialize-javascript": ">=2.1.1"
   }
 }
