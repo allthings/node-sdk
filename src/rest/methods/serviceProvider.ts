@@ -12,7 +12,6 @@ export interface IServiceProvider {
     readonly latitude: number | null
     readonly longitude: number | null
     readonly postalCode: string | null
-    readonly readOnly?: boolean
     readonly street: string | null
     readonly type: string | null
   }>
@@ -22,6 +21,7 @@ export interface IServiceProvider {
   readonly name: string
   readonly parent: string
   readonly phoneNumber: string | null
+  readonly readOnly?: boolean
   readonly type: EnumServiceProviderType
   readonly website: string | null
 }
