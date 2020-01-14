@@ -15,11 +15,15 @@ export interface IGroup {
     readonly street: string | null
     readonly type: string | null
   }>
+  readonly billingPeriodEndDate: string
+  readonly billingPeriodStartDate: string
   readonly description: string | null
   readonly externalId: string | null
   readonly id: string
-  readonly propertyManagerId: string
   readonly name: string
+  readonly propertyManagerId: string
+  readonly propertyOwner: string
+  readonly readOnly: boolean
   readonly stats: {
     readonly tenantCount: number | null
     readonly invitationCount: number | null
@@ -27,7 +31,6 @@ export interface IGroup {
     readonly unitCount: number | null
     readonly inhabitedUnits: number | null
   }
-  readonly readOnly: boolean
 }
 
 export type PartialGroup = Partial<IGroup>

@@ -12,8 +12,11 @@ const testPropertyData = {
 }
 
 const testData = {
+  billingPeriodEndDate: '2050-01-01',
+  billingPeriodStartDate: '2020-01-01',
   name: 'Foobar Group',
   propertyManagerId: APP_PROPERTY_MANAGER_ID,
+  propertyOwner: 'Owner',
   readOnly: true,
 }
 

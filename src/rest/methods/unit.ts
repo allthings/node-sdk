@@ -79,10 +79,13 @@ export enum EnumUnitType {
 }
 
 export interface IUnit {
+  readonly billingPeriodEndDate: string
+  readonly billingPeriodStartDate: string
   readonly externalId?: string
   readonly id: string
   readonly name: string
   readonly objectType?: EnumUnitObjectType
+  readonly propertyOwner: string
   readonly readOnly?: boolean
   readonly size?: number
   readonly stats?: {
