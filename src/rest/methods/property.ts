@@ -1,13 +1,16 @@
 import { EntityResultList, IAllthingsRestClient } from '../types'
 
 export interface IProperty {
+  readonly _embedded: any
+  readonly billingPeriodEndDate: string
+  readonly billingPeriodStartDate: string
   readonly externalId: string
   readonly id: string
   readonly label: string
   readonly name: string
-  readonly timezone: string
+  readonly propertyOwner: string
   readonly readOnly: boolean
-  readonly _embedded: any
+  readonly timezone: string
 }
 
 export type PartialProperty = Partial<IProperty>
