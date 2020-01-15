@@ -77,7 +77,6 @@
     "jest": "24.9.0",
     "lint-staged": "9.5.0",
     "nanoid": "2.1.9",
-    "nyc": "14.1.1",
     "prettier": "1.19.1",
     "rimraf": "3.0.0",
     "rollup": "1.29.0",
