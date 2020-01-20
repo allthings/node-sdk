@@ -28,6 +28,7 @@ export interface IMessagePayload {
   }>
   readonly body: string
   readonly createdBy: { readonly type: string; readonly value: string }
+  readonly inputChannel?: string
 }
 
 export type ConversationResult = Promise<IConversation>
@@ -75,6 +76,7 @@ export async function conversationCreateMessage(
             ).success,
           },
           createdBy: messageData.createdBy,
+          inputChannel: messageData.inputChannel,
           internal: false,
           type: 'file',
         }
@@ -83,6 +85,7 @@ export async function conversationCreateMessage(
             content: messageData.body,
           },
           createdBy: messageData.createdBy,
+          inputChannel: messageData.inputChannel,
           type: 'text',
         }
 
