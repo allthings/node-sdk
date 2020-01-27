@@ -106,12 +106,10 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "yarn prettier",
-      "yarn lint",
-      "git add"
+      "yarn lint"
     ],
     "*.{json}": [
-      "yarn prettier",
-      "git add"
+      "yarn prettier"
     ]
   },
   "jest": {
