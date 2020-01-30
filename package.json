@@ -86,7 +86,7 @@
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-replace": "2.2.0",
     "rollup-plugin-terser": "5.2.0",
-    "semantic-release": "16.0.3",
+    "semantic-release": "15.14.0",
     "ts-jest": "25.0.0",
     "tslint": "5.20.1",
     "typescript": "3.7.5"
@@ -159,7 +159,7 @@
     }
   },
   "release": {
-    "branches": ["master"],
+    "branch": "master",
     "repositoryUrl": "https://github.com/allthings/node-sdk.git"
   },
   "resolutions": {
