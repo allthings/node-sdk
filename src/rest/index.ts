@@ -95,6 +95,7 @@ import {
   utilisationPeriodCheckInUser,
   utilisationPeriodCheckOutUser,
   utilisationPeriodCreate,
+  utilisationPeriodDelete,
   utilisationPeriodGetById,
   utilisationPeriodUpdateById,
 } from './methods/utilisationPeriod'
@@ -196,6 +197,7 @@ const API_METHODS: ReadonlyArray<any> = [
 
   // Utilisation Periods
   utilisationPeriodCreate,
+  utilisationPeriodDelete,
   utilisationPeriodGetById,
   utilisationPeriodUpdateById,
   utilisationPeriodCheckInUser,

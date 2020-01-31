@@ -164,6 +164,7 @@ const user = await client.getCurrentUser()
   - [`client.userRelationCreate()`](#restclient-client-createagent)
   - [`client.userRelationDelete()`](#restclient-client-createagent)
   - [`client.utilisationPeriodCreate()`](#restclient-client-createagent)
+  - [`client.utilisationPeriodDelete()`](#restclient-client-createagent)
   - [`client.utilisationPeriodGetById()`](#restclient-client-createagent)
   - [`client.utilisationPeriodUpdateById()`](#restclient-client-createagent)
   - [`client.utilisationPeriodCheckInUser()`](#restclient-client-createagent)
@@ -413,6 +414,10 @@ export interface IAllthingsRestClient {
    */
   readonly utilisationPeriodCreate: MethodUtilisationPeriodCreate
 
+  /**
+   * Deletes a utilisation period by its id
+   */
+  readonly utilisationPeriodDelete: MethodUtilisationPeriodDelete
   /**
    * Get a utilisation period by its ID
    */

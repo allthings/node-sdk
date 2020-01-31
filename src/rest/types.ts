@@ -81,6 +81,7 @@ import {
   MethodUtilisationPeriodCheckInUser,
   MethodUtilisationPeriodCheckOutUser,
   MethodUtilisationPeriodCreate,
+  MethodUtilisationPeriodDelete,
   MethodUtilisationPeriodGetById,
   MethodUtilisationPeriodUpdateById,
 } from './methods/utilisationPeriod'
@@ -491,6 +492,11 @@ export interface IAllthingsRestClient {
    * Create a new utilisation period within a Unit
    */
   readonly utilisationPeriodCreate: MethodUtilisationPeriodCreate
+
+  /**
+   * Delete a utilisation period by its ID
+   */
+  readonly utilisationPeriodDelete: MethodUtilisationPeriodDelete
 
   /**
    * Get a utilisation period by its ID
