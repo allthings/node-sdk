@@ -226,21 +226,27 @@ describe('utilisationPeriodAddRegistrationCode()', () => {
     expect(result.permanent).toBe(true)
   })
   describe('utilisationPeriodDelete()', () => {
-    it('should be able to delete an utilsation period by its id', async() => {
+    it('should be able to delete an utilsation period by its id', async () => {
       const utilisationPeriod = await client.utilisationPeriodCreate(
         sharedUnitId,
         {
           endDate: '2051-01-03',
           externalId: generateId(),
           startDate: '2051-01-03',
-        }
+        },
       )
 
-      const resultBeforeDeletion = await client.utilisationPeriodGetById(utilisationPeriod.id)
+      const resultBeforeDeletion = await client.utilisationPeriodGetById(
+        utilisationPeriod.id,
+      )
       expect(resultBeforeDeletion.id).toEqual(utilisationPeriod.id)
 
-      const deletedResult = await client.utilisationPeriodDelete(utilisationPeriod.id)
-      const resultAfterDeletion = client.utilisationPeriodGetById(utilisationPeriod.id)
+      const deletedResult = await client.utilisationPeriodDelete(
+        utilisationPeriod.id,
+      )
+      const resultAfterDeletion = client.utilisationPeriodGetById(
+        utilisationPeriod.id,
+      )
 
       expect(deletedResult).toBeTruthy()
       await expect(resultAfterDeletion).rejects.toThrow('404')

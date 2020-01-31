@@ -156,7 +156,9 @@ export async function utilisationPeriodDelete(
   client: IAllthingsRestClient,
   utilisationPeriodId: string,
 ): Promise<boolean> {
-  return !(await client.delete(`/v1/utilisation-periods/${utilisationPeriodId}/soft`))
+  return !(await client.delete(
+    `/v1/utilisation-periods/${utilisationPeriodId}/soft`,
+  ))
 }
 
 export type MethodUtilisationPeriodCheckInUser = (
