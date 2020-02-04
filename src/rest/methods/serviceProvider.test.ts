@@ -16,6 +16,7 @@ const testData = {
   email: 'foo@bar.de',
   name: 'Foobar Property-manager',
   phoneNumber: '+493434343343',
+  readOnly: true,
   type: EnumServiceProviderType.craftspeople,
 }
 

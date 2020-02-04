@@ -21,6 +21,7 @@ export interface IServiceProvider {
   readonly name: string
   readonly parent: string
   readonly phoneNumber: string | null
+  readonly readOnly?: boolean
   readonly type: EnumServiceProviderType
   readonly website: string | null
 }
