@@ -14,6 +14,7 @@ export {
   EnumResource,
   EnumServiceProviderType,
   EnumTimezone,
+  EnumCommunicationMethodType,
   IAllthingsRestClient,
   IAllthingsRestClientOptions,
 } from './rest/types'

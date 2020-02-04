@@ -136,6 +136,10 @@ export enum EnumServiceProviderType {
   craftspeople = 'craftspeople',
 }
 
+export enum EnumCommunicationMethodType {
+  email = 'email',
+}
+
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
   {
     readonly _embedded: { readonly items: ReadonlyArray<Entity> }

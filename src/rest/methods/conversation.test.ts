@@ -2,14 +2,9 @@
 
 import { readFileSync } from 'fs'
 import restClient from '..'
+import { COMMUNICATION_METHOD, CONVERSATION_ID } from '../../../test/constants'
 
 const client = restClient()
-
-const CONVERSATION_ID = '5aa7cd7bd4959e004112e136'
-const CREATED_BY = {
-  type: 'email',
-  value: 'pr-coreyplatt@allthings.me',
-}
 
 describe('conversationGetById()', () => {
   it('should be able to get a conversation by ID', async () => {
@@ -24,15 +19,15 @@ describe('conversationCreateMessage()', () => {
     const content = 'some message'
     const result = await client.conversationCreateMessage(CONVERSATION_ID, {
       body: content,
-      createdBy: CREATED_BY,
+      createdBy: {
+        type: COMMUNICATION_METHOD.type,
+        value: COMMUNICATION_METHOD.value,
+      },
     })
 
     expect(result.content.content).toEqual(content)
-    expect(result._embedded.createdByCommunicationMethod.value).toEqual(
-      CREATED_BY.value,
-    )
-    expect(result._embedded.createdByCommunicationMethod.type).toEqual(
-      CREATED_BY.type,
+    expect(result._embedded.createdByCommunicationMethod).toMatchObject(
+      COMMUNICATION_METHOD,
     )
   })
 
@@ -46,11 +41,16 @@ describe('conversationCreateMessage()', () => {
         },
       ],
       body: content,
-      createdBy: CREATED_BY,
+      createdBy: {
+        type: COMMUNICATION_METHOD.type,
+        value: COMMUNICATION_METHOD.value,
+      },
     })
 
     expect(result.content.description).toEqual(content)
-    // expect(result._embedded.createdBy.id).toEqual(USER_ID)
+    expect(result._embedded.createdByCommunicationMethod).toMatchObject(
+      COMMUNICATION_METHOD,
+    )
 
     if (result.content.files) {
       expect(result.content.files.length).toEqual(1)
