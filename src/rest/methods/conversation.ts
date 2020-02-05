@@ -11,10 +11,10 @@ export interface IMessage {
     readonly content?: string
     readonly description?: string
     readonly files?: ReadonlyArray<string>
-    readonly inputChannel?: string
   }
   readonly createdAt: string
   readonly id: string
+  readonly inputChannel?: string
   readonly internal: boolean
   readonly read: boolean
   readonly type: string

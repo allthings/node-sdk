@@ -31,7 +31,7 @@ describe('conversationCreateMessage()', () => {
     })
 
     expect(result.content.content).toEqual(content)
-    expect(result.content.inputChannel).toEqual(INPUT_CHANNEL)
+    expect(result.inputChannel).toEqual(INPUT_CHANNEL)
     expect(result._embedded.createdByCommunicationMethod).toMatchObject(
       COMMUNICATION_METHOD,
     )
@@ -55,7 +55,7 @@ describe('conversationCreateMessage()', () => {
     })
 
     expect(result.content.description).toEqual(content)
-    expect(result.content.inputChannel).toEqual(INPUT_CHANNEL)
+    expect(result.inputChannel).toEqual(INPUT_CHANNEL)
     expect(result._embedded.createdByCommunicationMethod).toMatchObject(
       COMMUNICATION_METHOD,
     )
