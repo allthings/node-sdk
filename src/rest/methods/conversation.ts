@@ -11,6 +11,7 @@ export interface IMessage {
     readonly content?: string
     readonly description?: string
     readonly files?: ReadonlyArray<string>
+    readonly inputChannel?: string
   }
   readonly createdAt: string
   readonly id: string
@@ -31,6 +32,7 @@ export interface IMessagePayload {
     readonly type: EnumCommunicationMethodType
     readonly value: string
   }
+  readonly inputChannel?: string
 }
 
 export type ConversationResult = Promise<IConversation>
@@ -78,6 +80,7 @@ export async function conversationCreateMessage(
             ).success,
           },
           createdBy: messageData.createdBy,
+          inputChannel: messageData.inputChannel,
           internal: false,
           type: 'file',
         }
@@ -86,6 +89,7 @@ export async function conversationCreateMessage(
             content: messageData.body,
           },
           createdBy: messageData.createdBy,
+          inputChannel: messageData.inputChannel,
           type: 'text',
         }
 
