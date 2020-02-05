@@ -2,7 +2,11 @@
 
 import { readFileSync } from 'fs'
 import restClient from '..'
-import { COMMUNICATION_METHOD, CONVERSATION_ID } from '../../../test/constants'
+import {
+  COMMUNICATION_METHOD,
+  CONVERSATION_ID,
+  INPUT_CHANNEL,
+} from '../../../test/constants'
 
 const client = restClient()
 
@@ -23,9 +27,11 @@ describe('conversationCreateMessage()', () => {
         type: COMMUNICATION_METHOD.type,
         value: COMMUNICATION_METHOD.value,
       },
+      inputChannel: INPUT_CHANNEL,
     })
 
     expect(result.content.content).toEqual(content)
+    expect(result.content.inputChannel).toEqual(INPUT_CHANNEL)
     expect(result._embedded.createdByCommunicationMethod).toMatchObject(
       COMMUNICATION_METHOD,
     )
@@ -45,9 +51,11 @@ describe('conversationCreateMessage()', () => {
         type: COMMUNICATION_METHOD.type,
         value: COMMUNICATION_METHOD.value,
       },
+      inputChannel: INPUT_CHANNEL,
     })
 
     expect(result.content.description).toEqual(content)
+    expect(result.content.inputChannel).toEqual(INPUT_CHANNEL)
     expect(result._embedded.createdByCommunicationMethod).toMatchObject(
       COMMUNICATION_METHOD,
     )
