@@ -1,5 +1,9 @@
 import { createManyFilesSorted } from '../../utils/upload'
-import { EnumCommunicationMethodType, IAllthingsRestClient } from '../types'
+import {
+  EnumCommunicationMethodType,
+  EnumInputChannel,
+  IAllthingsRestClient,
+} from '../types'
 
 export interface IConversation {
   readonly id: string
@@ -14,7 +18,7 @@ export interface IMessage {
   }
   readonly createdAt: string
   readonly id: string
-  readonly inputChannel?: string
+  readonly inputChannel?: EnumInputChannel
   readonly internal: boolean
   readonly read: boolean
   readonly type: string

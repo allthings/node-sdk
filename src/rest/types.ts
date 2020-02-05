@@ -140,6 +140,15 @@ export enum EnumCommunicationMethodType {
   email = 'email',
 }
 
+export enum EnumInputChannel {
+  APP = 'app',
+  COCKPIT = 'cockpit',
+  CRAFTSMEN = 'craftsmen',
+  EMAIL = 'email',
+  PHONE = 'phone',
+  WHATS_APP = 'whats_app',
+}
+
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
   {
     readonly _embedded: { readonly items: ReadonlyArray<Entity> }
