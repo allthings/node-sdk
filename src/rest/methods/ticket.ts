@@ -29,6 +29,11 @@ export interface ITicketCreatePayload {
     readonly filename: string
   }>
   readonly category: string
+  readonly channel?: string
+  readonly createdByCommunicationMethod?: {
+    readonly type: string
+    readonly value: string
+  }
   readonly description: string
   readonly inputChannel: string
   readonly title: string
@@ -96,16 +101,16 @@ export async function ticketGetById(
 }
 
 /*
-  Create a ticket
+  Create a ticket on a user
  */
 
-export type MethodTicketCreate = (
+export type MethodTicketCreateOnUser = (
   userId: string,
   utilisationPeriodId: string,
   payload: ITicketCreatePayload,
 ) => TicketResult
 
-export async function ticketCreate(
+export async function ticketCreateOnUser(
   client: IAllthingsRestClient,
   userId: string,
   utilisationPeriodId: string,
@@ -117,5 +122,30 @@ export async function ticketCreate(
       ? (await createManyFilesSorted(payload.files, client)).success
       : [],
     utilisationPeriod: utilisationPeriodId,
+  })
+}
+
+/*
+  Create a ticket on a service provider
+
+  Allows for a ticket to be created on a service provider where a user might not
+  exist (Anonymous tickets)
+ */
+
+export type MethodTicketCreateOnServiceProvider = (
+  serviceProviderId: string,
+  payload: ITicketCreatePayload,
+) => TicketResult
+
+export async function ticketCreateOnServiceProvider(
+  client: IAllthingsRestClient,
+  serviceProviderId: string,
+  payload: ITicketCreatePayload,
+): TicketResult {
+  return client.post(`/v1/property-managers/${serviceProviderId}/tickets`, {
+    ...payload,
+    files: payload.files
+      ? (await createManyFilesSorted(payload.files, client)).success
+      : [],
   })
 }

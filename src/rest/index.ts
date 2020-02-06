@@ -58,7 +58,11 @@ import {
   serviceProviderGetById,
   serviceProviderUpdateById,
 } from './methods/serviceProvider'
-import { ticketCreate, ticketGetById } from './methods/ticket'
+import {
+  ticketCreateOnServiceProvider,
+  ticketCreateOnUser,
+  ticketGetById,
+} from './methods/ticket'
 import {
   EnumUnitObjectType,
   EnumUnitType,
@@ -167,7 +171,8 @@ const API_METHODS: ReadonlyArray<any> = [
   registrationCodeGetById,
 
   // Ticket
-  ticketCreate,
+  ticketCreateOnUser,
+  ticketCreateOnServiceProvider,
   ticketGetById,
 
   // Unit

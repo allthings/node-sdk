@@ -51,7 +51,11 @@ import {
   MethodServiceProviderGetById,
   MethodServiceProviderUpdateById,
 } from './methods/serviceProvider'
-import { MethodTicketCreate, MethodTicketGetById } from './methods/ticket'
+import {
+  MethodTicketCreateOnServiceProvider,
+  MethodTicketCreateOnUser,
+  MethodTicketGetById,
+} from './methods/ticket'
 import {
   MethodGetUnits,
   MethodUnitCreate,
@@ -130,6 +134,19 @@ export enum EnumTimezone {
 export enum EnumServiceProviderType {
   serviceProvider = 'service-provider',
   craftspeople = 'craftspeople',
+}
+
+export enum EnumCommunicationMethodType {
+  email = 'email',
+}
+
+export enum EnumInputChannel {
+  APP = 'app',
+  COCKPIT = 'cockpit',
+  CRAFTSMEN = 'craftsmen',
+  EMAIL = 'email',
+  PHONE = 'phone',
+  WHATS_APP = 'whats_app',
 }
 
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
@@ -381,7 +398,12 @@ export interface IAllthingsRestClient {
   /**
    * Create a ticket
    */
-  readonly ticketCreate: MethodTicketCreate
+  readonly ticketCreateOnUser: MethodTicketCreateOnUser
+
+  /**
+   * Create an anonymous ticket
+   */
+  readonly ticketCreateOnServiceProvider: MethodTicketCreateOnServiceProvider
 
   /**
    * Get a ticket by its ID
