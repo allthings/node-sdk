@@ -78,7 +78,7 @@
     "lint-staged": "10.0.7",
     "nanoid": "2.1.11",
     "prettier": "1.19.1",
-    "rimraf": "3.0.1",
+    "rimraf": "3.0.2",
     "rollup": "1.31.0",
     "rollup-plugin-commonjs": "10.1.0",
     "rollup-plugin-hashbang": "2.2.2",
