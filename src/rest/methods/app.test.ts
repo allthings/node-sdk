@@ -1,15 +1,15 @@
 // tslint:disable:no-expression-statement
-import generateId from 'nanoid'
 import restClient from '..'
 import { APP_ID, USER_ID } from '../../../test/constants'
+import { pseudoRandomString } from '../../utils/random'
 
 const client = restClient()
 
 describe('appCreate()', () => {
   it('should create a new App', async () => {
     const result = await client.appCreate(USER_ID, {
-      name: generateId(),
-      siteUrl: generateId(),
+      name: pseudoRandomString(32),
+      siteUrl: `https://${pseudoRandomString(32)}.info`,
     })
 
     expect(result).toBeTruthy()

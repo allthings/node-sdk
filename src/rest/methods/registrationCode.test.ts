@@ -2,6 +2,7 @@
 import generateId from 'nanoid'
 import restClient from '..'
 import { APP_PROPERTY_MANAGER_ID, USER_ID } from '../../../test/constants'
+import { pseudoRandomString } from '../../utils/random'
 import { EnumTimezone } from '../types'
 import { EnumUnitType } from './unit'
 
@@ -10,8 +11,11 @@ let sharedUtilisationPeriodIds: ReadonlyArray<string> // tslint:disable-line no-
 const client = restClient()
 
 beforeAll(async () => {
-  const name = `Registration Code ${generateId()}`
-  const app = await client.appCreate(USER_ID, { name, siteUrl: generateId() })
+  const name = `Registration Code ${pseudoRandomString()}`
+  const app = await client.appCreate(USER_ID, {
+    name,
+    siteUrl: `https://${pseudoRandomString(32)}.info`,
+  })
 
   const property = await client.propertyCreate(app.id, {
     name,
@@ -44,7 +48,7 @@ beforeAll(async () => {
   ).map(item => item.id)
 })
 
-describe('registrationCodeCreate()', async () => {
+describe('registrationCodeCreate()', () => {
   it('should be able to create a new registration code', async () => {
     const code = generateId()
     const testExternalId = generateId()

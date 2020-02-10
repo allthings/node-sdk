@@ -5,6 +5,7 @@ import * as authenticationCodeGrant from '../oauth/authorizationCodeGrant'
 import createTokenStore from '../oauth/createTokenStore'
 import * as makeFetchTokenRequesterModule from '../oauth/makeFetchTokenRequester'
 import * as passwordGrant from '../oauth/passwordGrant'
+import { pseudoRandomString } from '../utils/random'
 
 const redirectUri = 'allthings://redirect'
 
@@ -99,7 +100,10 @@ describe('Rest API Client', () => {
     })
 
     await expect(
-      client.appCreate('foobar', { name: 'foobar', siteUrl: 'foobar.test' }),
+      client.appCreate('foobar', {
+        name: 'foobar',
+        siteUrl: `https://${pseudoRandomString(32)}.info`,
+      }),
     ).rejects.toThrow('Unable to get OAuth2 access token')
   })
 
