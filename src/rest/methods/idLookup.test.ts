@@ -34,6 +34,7 @@ describe('lookupIds()', () => {
       foobar: null,
     })
   })
+
   it('should be able to lookup up service-providers with parent', async () => {
     const serviceProviderParent = await client.serviceProviderCreate({
       externalId: generateId(),
@@ -64,6 +65,31 @@ describe('lookupIds()', () => {
 
     expect(result).toEqual({
       [serviceProvider.externalId]: serviceProvider.id,
+    })
+  })
+
+  it('should be able to either lookup just a user or explicitly a tenant or an agent', async () => {
+    expect(await client.lookupIds(APP_ID, {
+      externalIds: ['fooAgent'],
+      resource: EnumResource.user,
+      userType: 'agent'
+    })).toEqual({
+      fooAgent: null,
+    })
+
+    expect(await client.lookupIds(APP_ID, {
+      externalIds: ['fooTenant'],
+      resource: EnumResource.user,
+      userType: 'tenant'
+    })).toEqual({
+      fooTenant: null,
+    })
+
+    expect(await client.lookupIds(APP_ID, {
+      externalIds: ['fooUser'],
+      resource: EnumResource.user,
+    })).toEqual({
+      fooUser: null,
     })
   })
 })

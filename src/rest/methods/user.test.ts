@@ -61,8 +61,8 @@ describe('getUsers()', () => {
   })
 
   it('should be able find many users by their email address even when non canonicalized', async () => {
-    const email1 = 'NoNCanONicaLizedEmail@eMail.Test'
-    const email2 = 'canonicalized@email.test'
+    const email1 = `NoNCanONicaLizedEmail${generateId()}@eMail.Test`
+    const email2 = `canonicalized${generateId()}@email.test`
 
     const user1 = await client.userCreate(APP_ID, generateId(), {
       email: email1,

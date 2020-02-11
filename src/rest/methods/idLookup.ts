@@ -10,6 +10,7 @@ export type MethodLookupIds = (
     readonly resource: EnumResource
     readonly externalIds: string | ReadonlyArray<string>
     readonly parentId?: string
+    readonly userType?: string
   },
 ) => LookupIdResult
 
@@ -21,6 +22,7 @@ export async function lookupIds(
     readonly resource: EnumResource
     readonly externalIds: string | ReadonlyArray<string>
     readonly parentId?: string
+    readonly userType?: string
   },
 ): LookupIdResult {
   return client.post(`/v1/id-lookup/${appId}/${data.resource}`, {
@@ -29,5 +31,6 @@ export async function lookupIds(
         ? [data.externalIds]
         : data.externalIds,
     ...(data.parentId ? { parentId: data.parentId } : {}),
+    ...(data.userType ? { userType: data.userType } : {}),
   })
 }
