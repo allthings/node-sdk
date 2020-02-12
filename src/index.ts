@@ -11,6 +11,7 @@ export {
 export {
   EnumCountryCode,
   EnumLocale,
+  EnumLookupUserType,
   EnumResource,
   EnumServiceProviderType,
   EnumTimezone,
