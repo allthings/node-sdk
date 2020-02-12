@@ -150,7 +150,7 @@ export enum EnumInputChannel {
   WHATS_APP = 'whats_app',
 }
 
-export enum EnumUserType {
+export enum EnumLookupUserType {
   agent = 'agent',
   tenant = 'tenant',
 }
