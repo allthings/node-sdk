@@ -145,6 +145,22 @@ export async function utilisationPeriodUpdateById(
   }
 }
 
+/*
+  Delete a Utilisation Period by its ID
+*/
+export type MethodUtilisationPeriodDelete = (
+  utilisationPeriodId: string,
+) => Promise<boolean>
+
+export async function utilisationPeriodDelete(
+  client: IAllthingsRestClient,
+  utilisationPeriodId: string,
+): Promise<boolean> {
+  return !(await client.delete(
+    `/v1/utilisation-periods/${utilisationPeriodId}/soft`,
+  ))
+}
+
 export type MethodUtilisationPeriodCheckInUser = (
   utilisationPeriodId: string,
   data: { readonly email: string },
