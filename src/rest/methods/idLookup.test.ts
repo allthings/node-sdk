@@ -6,6 +6,7 @@ import {
   EnumCountryCode,
   EnumResource,
   EnumServiceProviderType,
+  EnumUserType,
 } from '../types'
 
 const client = restClient()
@@ -72,7 +73,7 @@ describe('lookupIds()', () => {
     expect(await client.lookupIds(APP_ID, {
       externalIds: ['fooAgent'],
       resource: EnumResource.user,
-      userType: 'agent'
+      userType: EnumUserType.agent
     })).toEqual({
       fooAgent: null,
     })
@@ -80,7 +81,7 @@ describe('lookupIds()', () => {
     expect(await client.lookupIds(APP_ID, {
       externalIds: ['fooTenant'],
       resource: EnumResource.user,
-      userType: 'tenant'
+      userType: EnumUserType.tenant
     })).toEqual({
       fooTenant: null,
     })

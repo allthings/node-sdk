@@ -149,6 +149,11 @@ export enum EnumInputChannel {
   WHATS_APP = 'whats_app',
 }
 
+export enum EnumUserType {
+  agent = 'agent',
+  tenant = 'tenant',
+}
+
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
   {
     readonly _embedded: { readonly items: ReadonlyArray<Entity> }

@@ -1,4 +1,4 @@
-import { EnumResource, IAllthingsRestClient } from '../types'
+import { EnumResource, EnumUserType, IAllthingsRestClient } from '../types'
 
 export type LookupIdResult = Promise<{
   readonly [externalId: string]: string | null
@@ -10,7 +10,7 @@ export type MethodLookupIds = (
     readonly resource: EnumResource
     readonly externalIds: string | ReadonlyArray<string>
     readonly parentId?: string
-    readonly userType?: string
+    readonly userType?: EnumUserType
   },
 ) => LookupIdResult
 
@@ -22,7 +22,7 @@ export async function lookupIds(
     readonly resource: EnumResource
     readonly externalIds: string | ReadonlyArray<string>
     readonly parentId?: string
-    readonly userType?: string
+    readonly userType?: EnumUserType
   },
 ): LookupIdResult {
   return client.post(`/v1/id-lookup/${appId}/${data.resource}`, {
