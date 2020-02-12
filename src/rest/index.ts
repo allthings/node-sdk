@@ -105,6 +105,7 @@ import {
 } from './methods/utilisationPeriod'
 import httpPatch from './patch'
 import httpPost from './post'
+import httpPut from './put'
 import httpRequest from './request'
 import {
   IAllthingsRestClient,
@@ -271,6 +272,7 @@ export default function restClient(
   const get = partial(httpGet, request)
   const post = partial(httpPost, request)
   const patch = partial(httpPatch, request)
+  const put = partial(httpPut, request)
 
   const oauth: IClientExposedOAuth = {
     authorizationCode: {
@@ -312,6 +314,7 @@ export default function restClient(
       options,
       patch,
       post,
+      put,
     },
   )
 

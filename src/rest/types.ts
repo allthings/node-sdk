@@ -91,6 +91,7 @@ import {
 } from './methods/utilisationPeriod'
 import { MethodHttpPatch } from './patch'
 import { MethodHttpPost } from './post'
+import { MethodHttpPut } from './put'
 
 // Describes the possible resources which exist in the API
 export enum EnumResource {
@@ -204,6 +205,7 @@ export interface IAllthingsRestClient {
   readonly get: MethodHttpGet
   readonly post: MethodHttpPost
   readonly patch: MethodHttpPatch
+  readonly put: MethodHttpPut
 
   readonly oauth: IClientExposedOAuth
 
