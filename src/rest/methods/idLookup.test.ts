@@ -4,9 +4,9 @@ import restClient from '..'
 import { APP_ID } from '../../../test/constants'
 import {
   EnumCountryCode,
+  EnumLookupUserType,
   EnumResource,
   EnumServiceProviderType,
-  EnumUserType,
 } from '../types'
 
 const client = restClient()
@@ -73,7 +73,7 @@ describe('lookupIds()', () => {
     expect(await client.lookupIds(APP_ID, {
       externalIds: ['fooAgent'],
       resource: EnumResource.user,
-      userType: EnumUserType.agent
+      userType: EnumLookupUserType.agent
     })).toEqual({
       fooAgent: null,
     })
@@ -81,7 +81,7 @@ describe('lookupIds()', () => {
     expect(await client.lookupIds(APP_ID, {
       externalIds: ['fooTenant'],
       resource: EnumResource.user,
-      userType: EnumUserType.tenant
+      userType: EnumLookupUserType.tenant
     })).toEqual({
       fooTenant: null,
     })
