@@ -65,6 +65,7 @@ import {
 import {
   MethodGetCurrentUser,
   MethodGetUsers,
+  MethodUserChangePassword,
   MethodUserCheckInToUtilisationPeriod,
   MethodUserCreate,
   MethodUserCreatePermission,
@@ -466,6 +467,11 @@ export interface IAllthingsRestClient {
    * Get the current user from active session
    */
   readonly getCurrentUser: MethodGetCurrentUser
+
+  /**
+   * Change a user's password
+   */
+  readonly userChangePassword: MethodUserChangePassword
 
   /**
    * Give a user a permission/role on an given object of specified type

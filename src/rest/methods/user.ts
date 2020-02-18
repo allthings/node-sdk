@@ -397,3 +397,25 @@ export async function userGetByEmail(
 ): UserResultList {
   return client.getUsers(page, limit, { email })
 }
+
+/*
+  Change a user's password
+*/
+
+export type MethodUserChangePassword = (
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+) => Promise<boolean>
+
+export async function userChangePassword(
+  client: IAllthingsRestClient,
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<boolean> {
+  return !(await client.put(`/v1/users/${userId}/password`, {
+    currentPassword,
+    plainPassword: newPassword,
+  }))
+}

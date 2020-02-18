@@ -154,6 +154,7 @@ const user = await client.getCurrentUser()
   - [`client.userCreate()`](#restclient-client-createagent)
   - [`client.userGetById()`](#restclient-client-createagent)
   - [`client.userUpdateById()`](#restclient-client-createagent)
+  - [`client.userChangePassword()`](#restclient-client-createagent)
   - [`client.userCreatePermission()`](#restclient-client-createagent)
   - [`client.userGetPermissions()`](#restclient-client-createagent)
   - [`client.userDeletePermission()`](#restclient-client-createagent)
@@ -368,6 +369,11 @@ export interface IAllthingsRestClient {
    * Get the current user from active session
    */
   readonly getCurrentUser: MethodGetCurrentUser
+
+  /**
+   * Change a user's password
+   */
+  readonly userChangePassword: MethodUserChangePassword
 
   /**
    * Give a user a permission/role on an given object of specified type

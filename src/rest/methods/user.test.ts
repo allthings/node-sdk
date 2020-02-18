@@ -363,3 +363,37 @@ describe('userGetByEmail()', () => {
     })
   })
 })
+
+describe('userChangePassword()', () => {
+  it("should be able to change a user's password", async () => {
+    const password = 'foobar-password'
+    const user = await client.getCurrentUser()
+
+    const resultChangePassword = await client.userChangePassword(
+      user.id,
+      process.env.ALLTHINGS_OAUTH_PASSWORD as string,
+      password,
+    )
+
+    const resultChangePasswordAgain = await client.userChangePassword(
+      user.id,
+      password,
+      process.env.ALLTHINGS_OAUTH_PASSWORD as string,
+    )
+
+    expect(resultChangePassword).toBe(true)
+    expect(resultChangePasswordAgain).toBe(true)
+  })
+
+  it('should throw when the current password is wrong', async () => {
+    const user = await client.getCurrentUser()
+
+    expect(
+      client.userChangePassword(
+        user.id,
+        'not-current-password',
+        'foobar-password',
+      ),
+    ).rejects.toThrow()
+  })
+})
