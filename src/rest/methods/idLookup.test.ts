@@ -40,6 +40,7 @@ describe('lookupIds()', () => {
     const serviceProviderParent = await client.serviceProviderCreate({
       externalId: generateId(),
       name: 'Parent',
+      type: EnumServiceProviderType.propertyManager,
     })
 
     const serviceProvider = await client.serviceProviderCreate({
