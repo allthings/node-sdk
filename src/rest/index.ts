@@ -93,6 +93,7 @@ import {
   EnumUserRelationType,
   userRelationCreate,
   userRelationDelete,
+  userRelationsGetByUser
 } from './methods/userRelation'
 import {
   EnumUtilisationPeriodType,
@@ -202,6 +203,7 @@ const API_METHODS: ReadonlyArray<any> = [
   // User Relations
   userRelationCreate,
   userRelationDelete,
+  userRelationsGetByUser,
 
   // Utilisation Periods
   utilisationPeriodCreate,

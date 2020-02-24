@@ -1,4 +1,4 @@
-import { EnumResource, IAllthingsRestClient } from '../types'
+import { EntityResultList, EnumResource, IAllthingsRestClient } from '../types'
 
 export interface IUserRelation {
   readonly id: string
@@ -14,6 +14,8 @@ export interface IUserRelation {
 }
 
 export type UserRelationResult = Promise<IUserRelation>
+
+export type UserRelationResultList = EntityResultList<IUserRelation>
 
 export enum EnumUserRelationType {
   isResponsible = 'is-responsible',
@@ -39,6 +41,10 @@ export type MethodUserRelationDelete = (
     readonly level: EnumResource
   },
 ) => UserRelationResult
+
+export type MethodUserRelationsGetByUser = (
+  userId: string,
+) => UserRelationResultList
 
 // https://api-doc.allthings.me/#/User/Relations/post_users__userId__user_relations__type_
 export async function userRelationCreate(
@@ -76,4 +82,12 @@ export async function userRelationDelete(
     level: data.level,
     role: data.role,
   })
+}
+
+// https://api-doc.allthings.me/#/User/Relations/get_users__userId__user_relations
+export async function userRelationsGetByUser(
+  client: IAllthingsRestClient,
+  userId: string,
+): UserRelationResultList {
+  return client.get(`/v1/users/${userId}/user-relations`)
 }
