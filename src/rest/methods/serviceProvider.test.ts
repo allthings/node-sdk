@@ -17,7 +17,7 @@ const testData = {
   name: 'Foobar Property-manager',
   phoneNumber: '+493434343343',
   readOnly: true,
-  type: EnumServiceProviderType.craftspeople,
+  type: EnumServiceProviderType.propertyManager,
 }
 
 describe('serviceProviderCreate()', () => {
@@ -47,10 +47,12 @@ describe('propertyUpdateById()', () => {
     const serviceProviderParent = await client.serviceProviderCreate({
       externalId: generateId(),
       name: 'Parent',
+      type: EnumServiceProviderType.propertyManager,
     })
     const serviceProvider = await client.serviceProviderCreate({
       ...data,
       parent: serviceProviderParent.id,
+      type: EnumServiceProviderType.craftspeople,
     })
 
     expect(serviceProvider.name).toEqual(data.name)
@@ -59,6 +61,8 @@ describe('propertyUpdateById()', () => {
     const updateData = {
       externalId: generateId(),
       name: 'Bio craftspeople',
+      parent: serviceProviderParent.id,
+      type: EnumServiceProviderType.craftspeople,
     }
     const result = await client.serviceProviderUpdateById(
       serviceProvider.id,

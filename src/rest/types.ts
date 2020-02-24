@@ -136,7 +136,7 @@ export enum EnumTimezone {
 }
 
 export enum EnumServiceProviderType {
-  serviceProvider = 'service-provider',
+  propertyManager = 'property-manager',
   craftspeople = 'craftspeople',
 }
 
