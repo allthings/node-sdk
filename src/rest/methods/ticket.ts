@@ -71,6 +71,7 @@ export interface ITicket {
   readonly description: string
   readonly files: ReadonlyArray<string>
   readonly id: string
+  readonly token?: string
   readonly incrementID: string
   readonly labels: ReadonlyArray<string>
   readonly lastStatusUpdate: string
