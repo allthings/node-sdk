@@ -71,7 +71,7 @@
     "@types/nanoid": "2.1.0",
     "@types/node": "10.17.17",
     "@types/query-string": "6.2.0",
-    "coveralls": "3.0.9",
+    "coveralls": "3.0.11",
     "form-data": "3.0.0",
     "husky": "4.2.3",
     "jest": "25.2.3",
