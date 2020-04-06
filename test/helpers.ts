@@ -1,4 +1,4 @@
-import generateId from 'nanoid'
+import { nanoid as generateId } from 'nanoid'
 import restClient, { EnumUnitType } from '../src/rest'
 import { IUser } from '../src/rest/methods/user'
 import { IUtilisationPeriod } from '../src/rest/methods/utilisationPeriod'
