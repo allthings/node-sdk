@@ -1,5 +1,5 @@
 // tslint:disable:no-expression-statement
-import generateId from 'nanoid'
+import { nanoid as generateId } from 'nanoid'
 import restClient from '..'
 import { APP_ID } from '../../../test/constants'
 import {
@@ -71,26 +71,32 @@ describe('lookupIds()', () => {
   })
 
   it('should be able to either lookup just a user or explicitly a tenant or an agent', async () => {
-    expect(await client.lookupIds(APP_ID, {
-      externalIds: ['fooAgent'],
-      resource: EnumResource.user,
-      userType: EnumLookupUserType.agent
-    })).toEqual({
+    expect(
+      await client.lookupIds(APP_ID, {
+        externalIds: ['fooAgent'],
+        resource: EnumResource.user,
+        userType: EnumLookupUserType.agent,
+      }),
+    ).toEqual({
       fooAgent: null,
     })
 
-    expect(await client.lookupIds(APP_ID, {
-      externalIds: ['fooTenant'],
-      resource: EnumResource.user,
-      userType: EnumLookupUserType.tenant
-    })).toEqual({
+    expect(
+      await client.lookupIds(APP_ID, {
+        externalIds: ['fooTenant'],
+        resource: EnumResource.user,
+        userType: EnumLookupUserType.tenant,
+      }),
+    ).toEqual({
       fooTenant: null,
     })
 
-    expect(await client.lookupIds(APP_ID, {
-      externalIds: ['fooUser'],
-      resource: EnumResource.user,
-    })).toEqual({
+    expect(
+      await client.lookupIds(APP_ID, {
+        externalIds: ['fooUser'],
+        resource: EnumResource.user,
+      }),
+    ).toEqual({
       fooUser: null,
     })
   })

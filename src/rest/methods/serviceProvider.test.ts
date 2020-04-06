@@ -1,5 +1,5 @@
 // tslint:disable:no-expression-statement
-import generateId from 'nanoid'
+import { nanoid as generateId } from 'nanoid'
 import restClient from '..'
 import { EnumCountryCode, EnumServiceProviderType } from '../types'
 

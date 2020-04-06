@@ -1,5 +1,5 @@
 // tslint:disable:no-expression-statement
-import generateId from 'nanoid'
+import { nanoid as generateId } from 'nanoid'
 import restClient from '..'
 import { APP_ID, APP_PROPERTY_MANAGER_ID } from '../../../test/constants'
 import { EnumLocale, EnumTimezone } from '../types'
