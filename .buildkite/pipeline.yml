@@ -36,16 +36,6 @@ steps:
 
   - wait
 
-  - name: release-dry-run
-    <<: *common
-    command: >
-      bin/artifacts-download.sh &&
-      git remote set-url origin https://github.com/allthings/node-sdk.git && 
-      git checkout master &&
-      git pull &&
-      bin/docker-node.sh yarn semantic-release --dry-run
-    branches: !master
-
   - name: release
     <<: *common
     command: >

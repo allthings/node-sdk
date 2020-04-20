@@ -1,3 +1,4 @@
 {
-  "extends": ["@allthings"]
+  "extends": ["@allthings"],
+  "ignoreDeps": ["@semantic-release/npm"]
 }
