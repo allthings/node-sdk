@@ -160,6 +160,7 @@ export function makeApiRequest(
   httpMethod: HttpVerb,
   apiMethod: string,
   payload?: IRequestOptions,
+  returnRawResultObject?: boolean,
 ): (previousResult: any, iteration: number) => Promise<Response> {
   return async (previousResult, retryCount) => {
     if (retryCount > 0) {
@@ -279,7 +280,12 @@ export function makeApiRequest(
                 },
           )
 
-          return result
+          return result instanceof Error && returnRawResultObject
+            ? {
+                body: result,
+                status: response.status,
+              }
+            : result
         }))
       )
     } catch (error) {
@@ -317,6 +323,7 @@ export default async function request(
       httpMethod,
       apiMethod,
       payload,
+      returnRawResultObject,
     ),
   )
 
