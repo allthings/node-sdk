@@ -214,4 +214,30 @@ describe('Request', () => {
     expect(response.status).toEqual(200)
     expect(response.body).toEqual({ foo: 'bar' })
   })
+
+  it('should return raw result object when parameter set and api returns an error', async () => {
+    mockFetch.mockResolvedValueOnce({
+      clone: () => ({ text: () => '' }),
+      headers: new Map([['content-type', 'application/json']]),
+      ok: false,
+      status: 400,
+      statusText: 'Bad request',
+      text: () => '{"foo":"bar"}',
+    })
+
+    const response = await request(
+      mockTokenStore,
+      fakeOauthTokenFetcher,
+      DEFAULT_API_WRAPPER_OPTIONS,
+      'get',
+      '',
+      undefined,
+      true,
+    )
+
+    expect(response).toHaveProperty('status')
+    expect(response).toHaveProperty('body')
+    expect(response.status).toEqual(400)
+    expect(response.body).toEqual('400 Bad request\n\n{"foo":"bar"}')
+  })
 })

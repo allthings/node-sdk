@@ -282,7 +282,7 @@ export function makeApiRequest(
 
           return result instanceof Error && returnRawResultObject
             ? {
-                body: result,
+                body: result.message,
                 status: response.status,
               }
             : result
