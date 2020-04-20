@@ -5,12 +5,14 @@ export type PostResult = Promise<any>
 export type MethodHttpPost = (
   method: string,
   body?: Record<string, any>,
+  detailedResponseFormat?: boolean,
 ) => PostResult
 
 export default async function post(
   request: MethodHttpRequest,
   method: string,
   body: Record<string, any>,
+  detailedResponseFormat?: boolean,
 ): PostResult {
-  return request('post', method, { body })
+  return request('post', method, { body }, detailedResponseFormat)
 }

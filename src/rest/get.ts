@@ -5,12 +5,14 @@ export type GetResult = Promise<any>
 export type MethodHttpGet = (
   method: string,
   query?: Record<string, any>,
+  detailedResponseFormat?: boolean,
 ) => GetResult
 
 export default async function get(
   request: MethodHttpRequest,
   method: string,
   query: Record<string, any>,
+  detailedResponseFormat?: boolean,
 ): GetResult {
-  return request('get', method, { query })
+  return request('get', method, { query }, detailedResponseFormat)
 }
