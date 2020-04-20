@@ -5,7 +5,7 @@ export type PostResult = Promise<any>
 export type MethodHttpPost = (
   method: string,
   body?: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ) => PostResult
 
 export default async function post(
