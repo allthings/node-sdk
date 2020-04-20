@@ -176,7 +176,7 @@
     "https-proxy-agent": ">=3.0.0",
     "serialize-javascript": ">=2.1.1",
     "bin-links": ">=1.1.6",
-    "@semantic-release/npm": "5.3.5",
+    "@semantic-release/npm": "5.0.5",
     "kind-of": ">=6.0.3",
     "acorn": ">=5.7.4 <6.0.0 || >=6.4.1 <7.0.0 || >=7.1.1",
     "minimist": ">=1.2.3"
