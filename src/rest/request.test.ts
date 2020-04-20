@@ -5,7 +5,7 @@ import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import createTokenStore from '../oauth/createTokenStore'
 import maybeUpdateToken from '../oauth/maybeUpdateToken'
 import { until } from '../utils/functional'
-import { makeApiRequest } from './request'
+import request, { makeApiRequest } from './request'
 
 beforeEach(() => {
   jest.resetModules()
@@ -188,5 +188,30 @@ describe('Request', () => {
         mode: 'cors',
       },
     )
+  })
+
+  it('should return raw result object when parameter set', async () => {
+    mockFetch.mockResolvedValueOnce({
+      clone: () => ({ text: () => '' }),
+      headers: new Map([['content-type', 'application/json']]),
+      json: () => ({ foo: 'bar' }),
+      ok: true,
+      status: 200,
+    })
+
+    const response = await request(
+      mockTokenStore,
+      fakeOauthTokenFetcher,
+      DEFAULT_API_WRAPPER_OPTIONS,
+      'get',
+      '',
+      undefined,
+      true,
+    )
+
+    expect(response).toHaveProperty('status')
+    expect(response).toHaveProperty('body')
+    expect(response.status).toEqual(200)
+    expect(response.body).toEqual({ foo: 'bar' })
   })
 })
