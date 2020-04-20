@@ -12,7 +12,7 @@ export default async function put(
   request: MethodHttpRequest,
   method: string,
   body: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ): PutResult {
-  return request('put', method, { body }, detailedResponseFormat)
+  return request('put', method, { body }, returnRawResultObject)
 }

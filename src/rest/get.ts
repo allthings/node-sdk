@@ -12,7 +12,7 @@ export default async function get(
   request: MethodHttpRequest,
   method: string,
   query: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ): GetResult {
-  return request('get', method, { query }, detailedResponseFormat)
+  return request('get', method, { query }, returnRawResultObject)
 }

@@ -45,7 +45,7 @@ export type MethodHttpRequest = (
   httpMethod: string,
   apiMethod: string,
   payload?: IRequestOptions,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ) => RequestResult
 
 const RETRYABLE_STATUS_CODES: ReadonlyArray<number> = [
@@ -300,7 +300,7 @@ export default async function request(
   httpMethod: HttpVerb,
   apiMethod: string,
   payload?: IRequestOptions,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ): RequestResult {
   /*
     Make the API request. If the response was a 503, we retry the request
@@ -327,5 +327,5 @@ export default async function request(
     throw result
   }
 
-  return detailedResponseFormat ? result : result.body
+  return returnRawResultObject ? result : result.body
 }

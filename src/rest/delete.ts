@@ -12,7 +12,7 @@ export default async function del(
   request: MethodHttpRequest,
   method: string,
   body: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ): DeleteResult {
-  return request('delete', method, { body }, detailedResponseFormat)
+  return request('delete', method, { body }, returnRawResultObject)
 }

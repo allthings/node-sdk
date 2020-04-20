@@ -12,7 +12,7 @@ export default async function post(
   request: MethodHttpRequest,
   method: string,
   body: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ): PostResult {
-  return request('post', method, { body }, detailedResponseFormat)
+  return request('post', method, { body }, returnRawResultObject)
 }

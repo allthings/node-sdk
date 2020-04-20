@@ -12,7 +12,7 @@ export default async function patch(
   request: MethodHttpRequest,
   method: string,
   body: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ): PatchResult {
-  return request('patch', method, { body }, detailedResponseFormat)
+  return request('patch', method, { body }, returnRawResultObject)
 }
