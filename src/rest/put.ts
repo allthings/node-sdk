@@ -5,7 +5,7 @@ export type PutResult = Promise<any>
 export type MethodHttpPut = (
   method: string,
   body?: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ) => PutResult
 
 export default async function put(

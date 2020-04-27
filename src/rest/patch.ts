@@ -5,7 +5,7 @@ export type PatchResult = Promise<any>
 export type MethodHttpPatch = (
   method: string,
   body?: Record<string, any>,
-  detailedResponseFormat?: boolean,
+  returnRawResultObject?: boolean,
 ) => PatchResult
 
 export default async function patch(
