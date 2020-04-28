@@ -186,7 +186,7 @@ describe('agentCreatePermissions()', () => {
     expect(agentPermissions).toBeTruthy()
     expect(agentPermissions).toHaveLength(4)
     // expect each role to equal the ones we added
-    agentPermissions.map((permission) => {
+    agentPermissions.map(permission => {
       expect(
         [
           EnumUserPermissionRole.bookingAgent,
@@ -197,7 +197,7 @@ describe('agentCreatePermissions()', () => {
       )
     })
     // expect appAdmin + pinboardAgent permissions to be timeboxed
-    agentPermissions.map((permission) => {
+    agentPermissions.map(permission => {
       if (
         [
           EnumUserPermissionRole.appAdmin,
