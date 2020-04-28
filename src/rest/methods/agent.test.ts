@@ -186,7 +186,7 @@ describe('agentCreatePermissions()', () => {
     expect(agentPermissions).toBeTruthy()
     expect(agentPermissions).toHaveLength(4)
     // expect each role to equal the ones we added
-    agentPermissions.map(permission => {
+    agentPermissions.map((permission) => {
       expect(
         [
           EnumUserPermissionRole.bookingAgent,
@@ -197,7 +197,7 @@ describe('agentCreatePermissions()', () => {
       )
     })
     // expect appAdmin + pinboardAgent permissions to be timeboxed
-    agentPermissions.map(permission => {
+    agentPermissions.map((permission) => {
       if (
         [
           EnumUserPermissionRole.appAdmin,
@@ -206,8 +206,8 @@ describe('agentCreatePermissions()', () => {
       ) {
         expect(permission.startDate).toBeDefined()
         expect(permission.endDate).toBeDefined()
-        expect(permission.startDate).toEqual('2019-01-01T00:00:00+0000')
-        expect(permission.endDate).toEqual('2050-01-02T23:59:59+0000')
+        expect(permission.startDate).toEqual('2019-01-01T00:00:00.000+0000')
+        expect(permission.endDate).toEqual('2050-01-02T23:59:59.000+0000')
       }
     })
   })
