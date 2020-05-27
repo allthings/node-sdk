@@ -6,7 +6,7 @@ import {
 export const APP_ID = '575027e58178f56a008b4568'
 export const APP_CHANNEL = 'App-575027e58178f56a008b4568'
 export const APP_PROPERTY_MANAGER_ID = '5a818c07ef5f2f00441146a2'
-export const CATEGORY_ID = '5728504906128762098b456e'
+export const CATEGORY_ID = '5eb9a4ff2a4433163d0e540a'
 export const COMMUNICATION_METHOD = {
   id: '5dd7ca6bfbdbb4af89be9c37',
   type: EnumCommunicationMethodType.email,
