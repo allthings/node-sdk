@@ -5,6 +5,7 @@ export interface IApp {
   readonly name: string
   readonly siteUrl: string
   readonly emailToTicketEnabled: boolean
+  readonly emailToTicketForwardingEnabled: boolean
 }
 
 export type PartialApp = Partial<IApp>
