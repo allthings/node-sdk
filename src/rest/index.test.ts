@@ -258,7 +258,8 @@ describe('Rest API Client', () => {
       'EnumUtilisationPeriodType',
     ].forEach((exportedEnumName) => {
       it(exportedEnumName, () => {
-        expect(exportedEnumName in indexModule).toBeTruthy()
+        expect(exportedEnumName in indexModule).toBe(true)
+        expect((indexModule as any)[exportedEnumName]).toBeTruthy()
       })
     }))
 })
