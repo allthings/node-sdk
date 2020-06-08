@@ -1,5 +1,5 @@
 // tslint:disable:no-expression-statement
-import restClient from '.'
+import restClient, * as indexModule from '.'
 import { DEFAULT_API_WRAPPER_OPTIONS } from '../constants'
 import * as authenticationCodeGrant from '../oauth/authorizationCodeGrant'
 import createTokenStore from '../oauth/createTokenStore'
@@ -246,4 +246,19 @@ describe('Rest API Client', () => {
       expect(state1).not.toEqual(state2)
     })
   })
+
+  describe('exports enums', () =>
+    [
+      'EnumCommunicationPreferenceChannel',
+      'EnumUserPermissionRole',
+      'EnumUnitObjectType',
+      'EnumUnitType',
+      'EnumUserPermissionObjectType',
+      'EnumUserRelationType',
+      'EnumUtilisationPeriodType',
+    ].forEach((exportedEnumName) => {
+      it(exportedEnumName, () => {
+        expect(exportedEnumName in indexModule).toBeTruthy()
+      })
+    }))
 })
