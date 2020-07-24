@@ -231,8 +231,9 @@ export function makeApiRequest(
             authorization: `Bearer ${oauthTokenStore.get('accessToken')}`,
             ...(!hasForm ? { 'content-type': 'application/json' } : {}),
 
-            // don't use unsafe header "user-agent" in browser
-            ...(typeof window === 'undefined' && { 'user-agent': USER_AGENT }),
+            // don't use unsafe header "user-agent" in browser / worker
+            ...(typeof window === 'undefined' &&
+              typeof document === 'undefined' && { 'user-agent': USER_AGENT }),
 
             // user overrides
             ...(payload && payload.headers ? payload.headers : {}),
