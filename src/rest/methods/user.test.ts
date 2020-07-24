@@ -28,7 +28,7 @@ describe('getUsers()', () => {
           plainPassword: generateId(),
         }),
         limit,
-      ).map(data => client.userCreate(APP_ID, generateId(), data)),
+      ).map((data) => client.userCreate(APP_ID, generateId(), data)),
     )
 
     const result = await client.getUsers()
@@ -55,7 +55,7 @@ describe('getUsers()', () => {
 
     expect(users._embedded.items).toHaveLength(2)
 
-    users._embedded.items.forEach(user => {
+    users._embedded.items.forEach((user) => {
       expect([user1.email, user2.email]).toContain(user.email)
     })
   })
@@ -80,7 +80,7 @@ describe('getUsers()', () => {
 
     expect(users._embedded.items).toHaveLength(2)
 
-    users._embedded.items.forEach(user => {
+    users._embedded.items.forEach((user) => {
       expect([user1.email, user2.email]).toContain(user.email)
     })
   })
@@ -358,7 +358,7 @@ describe('userGetByEmail()', () => {
 
     expect(users._embedded.items).toHaveLength(1)
 
-    users._embedded.items.forEach(user => {
+    users._embedded.items.forEach((user) => {
       expect(user.email).toEqual(user1.email)
     })
   })
@@ -366,7 +366,8 @@ describe('userGetByEmail()', () => {
 
 describe('userChangePassword()', () => {
   it("should be able to change a user's password", async () => {
-    const password = 'foobar-password'
+    // Password must be 32 characters or more for Allthings users!
+    const password = 'foobar-password-long-enough-to-make-the-api-happy'
     const user = await client.getCurrentUser()
 
     const resultChangePassword = await client.userChangePassword(
