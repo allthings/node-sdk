@@ -111,6 +111,7 @@ describe('utilisationPeriodCheckInUser()', () => {
     const userEmail = generateId() + '@test.com'
 
     const user = await client.userCreate(APP_ID, generateId(), {
+      company: APP_PROPERTY_MANAGER_ID,
       email: userEmail,
       locale: EnumLocale.de_DE,
       plainPassword: generateId(),
@@ -152,6 +153,7 @@ describe('utilisationPeriodCheckInUser()', () => {
       const userEmail = generateId() + '@test.com'
 
       const user = await client.userCreate(APP_ID, generateId(), {
+        company: APP_PROPERTY_MANAGER_ID,
         email: userEmail,
         locale: EnumLocale.de_DE,
         plainPassword: generateId(),

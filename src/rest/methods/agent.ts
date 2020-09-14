@@ -22,7 +22,6 @@ export type MethodAgentCreate = (
     readonly email: string
     readonly locale: EnumLocale
   },
-  sendInvitation?: boolean,
   externalAgentCompany?: string,
 ) => UserResult
 
@@ -35,31 +34,25 @@ export async function agentCreate(
     readonly email: string
     readonly locale: EnumLocale
   },
-  sendInvitation?: boolean,
   externalAgentCompany?: string,
 ): UserResult {
   const user = await client.userCreate(appId, username, {
     ...data,
-    type: EnumUserType.customer,
+    company: propertyManagerId,
+    type: EnumUserType.agent,
   })
-  const manager = await client.post(
-    `/v1/property-managers/${propertyManagerId}/users`,
-    {
-      userID: user.id,
-      ...(externalAgentCompany && { externalAgentCompany }),
-    },
-  )
 
-  // trigger sending of invitation emails to agents, then return data
-  return (
-    !(
-      (typeof sendInvitation !== 'undefined' ? sendInvitation : true) &&
-      (await client.post(`/v1/users/${user.id}/invitations`))
-    ) && {
-      ...user,
-      ...manager,
-    }
-  )
+  const manager = externalAgentCompany
+    ? await client.post(`/v1/property-managers/${propertyManagerId}/users`, {
+        externalAgentCompany,
+        userID: user.id,
+      })
+    : undefined
+
+  return {
+    ...user,
+    ...(manager && { manager }),
+  }
 }
 
 /*

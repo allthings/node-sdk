@@ -48,6 +48,7 @@ import {
   propertyUpdateById,
 } from './methods/property'
 import {
+  getRegistrationCodes,
   registrationCodeCreate,
   registrationCodeDelete,
   registrationCodeGetById,
@@ -75,6 +76,7 @@ import {
   EnumCommunicationPreferenceChannel,
   EnumUserPermissionObjectType,
   EnumUserPermissionRole,
+  EnumUserType,
   getCurrentUser,
   getUsers,
   userChangePassword,
@@ -93,7 +95,7 @@ import {
   EnumUserRelationType,
   userRelationCreate,
   userRelationDelete,
-  userRelationsGetByUser
+  userRelationsGetByUser,
 } from './methods/userRelation'
 import {
   EnumUtilisationPeriodType,
@@ -169,6 +171,7 @@ const API_METHODS: ReadonlyArray<any> = [
   serviceProviderUpdateById,
 
   // Registration Code
+  getRegistrationCodes,
   registrationCodeCreate,
   registrationCodeUpdateById,
   registrationCodeDelete,
@@ -222,6 +225,7 @@ export {
   EnumUnitType,
   EnumUserPermissionObjectType,
   EnumUserRelationType,
+  EnumUserType,
   EnumUtilisationPeriodType,
 }
 

@@ -16,6 +16,10 @@ export enum EnumUserType {
   demoContent = 'demo_content',
   demoPublic = 'demo_public',
   partner = 'partner',
+  agent = 'agent',
+  tenant = 'tenant',
+  externalAgent = 'external-agent',
+  serviceUser = 'service-user',
 }
 
 export enum EnumCommunicationPreferenceChannel {
@@ -29,6 +33,7 @@ export interface IUser {
     readonly event: string
   }>
   readonly createdAt: string
+  readonly company: string
   readonly deletionRequestedAt: string | null
   readonly description: string
   readonly email: string
@@ -51,6 +56,8 @@ export interface IUser {
   readonly type: EnumUserType | null
   readonly username: string
   readonly readOnly: boolean
+  readonly code: string | null
+  readonly sendInvitation: boolean
 }
 
 export type PartialUser = Partial<IUser>
@@ -292,7 +299,7 @@ export async function userCreatePermissionBatch(
   const { objectId, objectType, roles, startDate, endDate } = permissions
 
   const batch = {
-    batch: roles.map(role => ({
+    batch: roles.map((role) => ({
       endDate: endDate && endDate.toISOString(),
       objectID: objectId,
       objectType,
@@ -376,11 +383,11 @@ export async function userCheckInToUtilisationPeriod(
   userId: string,
   utilisationPeriodId: string,
 ): UtilisationPeriodResult {
-  const { email: userEmail } = await client.userGetById(userId)
-
-  return client.utilisationPeriodCheckInUser(utilisationPeriodId, {
-    email: userEmail,
-  })
+  return (
+    (await client.post(`/v1/utilisation-periods/${utilisationPeriodId}/users`, {
+      user: userId,
+    })) && client.utilisationPeriodGetById(utilisationPeriodId)
+  )
 }
 
 /*

@@ -41,6 +41,7 @@ import {
   MethodPropertyUpdateById,
 } from './methods/property'
 import {
+  MethodGetRegistrationCodes,
   MethodRegistrationCodeCreate,
   MethodRegistrationCodeDelete,
   MethodRegistrationCodeGetById,
@@ -80,7 +81,7 @@ import {
 import {
   MethodUserRelationCreate,
   MethodUserRelationDelete,
-  MethodUserRelationsGetByUser
+  MethodUserRelationsGetByUser,
 } from './methods/userRelation'
 import {
   MethodUtilisationPeriodAddRegistrationCode,
@@ -156,6 +157,8 @@ export enum EnumInputChannel {
 export enum EnumLookupUserType {
   agent = 'agent',
   tenant = 'tenant',
+  externalAgent = 'external-agent',
+  serviceUser = 'service-user',
 }
 
 export type EntityResultList<Entity, ExtensionInterface = {}> = Promise<
@@ -402,6 +405,11 @@ export interface IAllthingsRestClient {
    * Delete a registration code by it
    */
   readonly registrationCodeDelete: MethodRegistrationCodeDelete
+
+  /**
+   * Get a list of registration codes
+   */
+  readonly getRegistrationCodes: MethodGetRegistrationCodes
 
   // ticket
 

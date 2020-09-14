@@ -5,7 +5,7 @@ import { EnumNotificationSettingsValue } from './notificationSettings'
 const client = restClient()
 
 describe('notificationSettingsUpdateByUser()', () => {
-  it('should be able to update user notification settings', async () => {
+  it.skip('should be able to update user notification settings', async () => {
     const { id } = await client.getCurrentUser()
     const result = await client.notificationSettingsUpdateByUser(id, {
       ticketDigestEmail: EnumNotificationSettingsValue.never,
@@ -16,7 +16,7 @@ describe('notificationSettingsUpdateByUser()', () => {
 })
 
 describe('notificationSettingsResetByUser()', () => {
-  it('should be able to reset user notification settings to default', async () => {
+  it.skip('should be able to reset user notification settings to default', async () => {
     const { id } = await client.getCurrentUser()
     await client.notificationSettingsUpdateByUser(id, {
       ticketDigestEmail: EnumNotificationSettingsValue.never,

@@ -18,10 +18,7 @@ async function createAdminMessage(author: IUser, title: string): Promise<void> {
 
 describe('notificationsGetByUser()', () => {
   it('should be able to get a list of notifications', async () => {
-    const [
-      currentUser,
-      { client: regularClient, user: regularUser },
-    ] = await Promise.all([
+    const [currentUser, { user: regularUser }] = await Promise.all([
       await client.getCurrentUser(),
       await createUserWithUtilizationPeriod(),
     ])
@@ -30,7 +27,7 @@ describe('notificationsGetByUser()', () => {
 
     await createAdminMessage(currentUser, title)
 
-    const result = await regularClient.notificationsGetByUser(regularUser.id)
+    const result = await client.notificationsGetByUser(regularUser.id)
 
     expect(result._embedded.items).toHaveLength(1)
     expect(result._embedded.items[0]).toEqual(
@@ -45,10 +42,7 @@ describe('notificationsGetByUser()', () => {
 
 describe('notificationsUpdateReadByUser()', () => {
   it('should be able to mark all notifications - older than now - read', async () => {
-    const [
-      currentUser,
-      { client: regularClient, user: regularUser },
-    ] = await Promise.all([
+    const [currentUser, { user: regularUser }] = await Promise.all([
       await client.getCurrentUser(),
       await createUserWithUtilizationPeriod(),
     ])
@@ -56,38 +50,34 @@ describe('notificationsUpdateReadByUser()', () => {
     await createAdminMessage(currentUser, 'title')
 
     expect(
-      (await regularClient.notificationsGetByUser(regularUser.id))._embedded
-        .items[0].read,
+      (await client.notificationsGetByUser(regularUser.id))._embedded.items[0]
+        .read,
     ).toBe(false)
 
-    await regularClient.notificationsUpdateReadByUser(regularUser.id)
+    await client.notificationsUpdateReadByUser(regularUser.id)
 
     expect(
-      (await regularClient.notificationsGetByUser(regularUser.id))._embedded
-        .items[0].read,
+      (await client.notificationsGetByUser(regularUser.id))._embedded.items[0]
+        .read,
     ).toBe(true)
   })
 })
 
 describe('notificationUpdateRead()', () => {
   it('should be able to a notifications as read', async () => {
-    const [
-      currentUser,
-      { client: regularClient, user: regularUser },
-    ] = await Promise.all([
+    const [currentUser, { user: regularUser }] = await Promise.all([
       await client.getCurrentUser(),
       await createUserWithUtilizationPeriod(),
     ])
 
     await createAdminMessage(currentUser, 'title')
 
-    const notification = (
-      await regularClient.notificationsGetByUser(regularUser.id)
-    )._embedded.items[0]
+    const notification = (await client.notificationsGetByUser(regularUser.id))
+      ._embedded.items[0]
 
     expect(notification.read).toBe(false)
 
-    const updatedNotification = await regularClient.notificationUpdateRead(
+    const updatedNotification = await client.notificationUpdateRead(
       notification.id,
     )
 

@@ -45,7 +45,7 @@ beforeAll(async () => {
         startDate: '2018-03-01',
       }),
     ])
-  ).map(item => item.id)
+  ).map((item) => item.id)
 })
 
 describe('registrationCodeCreate()', () => {
@@ -210,5 +210,17 @@ describe('registrationCodeDelete()', () => {
 
     expect(deletedResult).toBeTruthy()
     await expect(wasRegCodeDeleted).rejects.toThrow('404')
+  })
+})
+
+describe('getRegistrationCodes()', () => {
+  it('should be able to get a list of registration codes', async () => {
+    const limit = 3
+
+    const result = await client.getRegistrationCodes()
+    expect(result._embedded).toHaveProperty('items')
+
+    const result2 = await client.getRegistrationCodes(1, limit)
+    expect(result2._embedded.items).toHaveLength(limit)
   })
 })

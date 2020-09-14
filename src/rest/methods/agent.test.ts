@@ -28,6 +28,7 @@ describe('agentCreate()', () => {
       ...testData,
       email: generateId() + '@foobar.test',
       externalId: generateId(),
+      sendInvitation: true,
     }
 
     const agent = await client.agentCreate(
@@ -42,8 +43,7 @@ describe('agentCreate()', () => {
     expect(result.inviteEmailSent).toBeTruthy()
     expect(result.email).toEqual(data.email)
     expect(result.externalId).toEqual(data.externalId)
-    expect(result.roles).toEqual([])
-    expect(result.type).toEqual(EnumUserType.customer)
+    expect(result.type).toEqual(EnumUserType.agent)
 
     const {
       _embedded: { items: managerAgents },
@@ -74,7 +74,6 @@ describe('agentCreate()', () => {
       APP_PROPERTY_MANAGER_ID,
       generateId(),
       data,
-      false,
     )
     const result = await client.userGetById(agent.id)
     expect(result.inviteEmailSent).toBeFalsy()
@@ -110,7 +109,6 @@ describe('agentCreate()', () => {
       APP_PROPERTY_MANAGER_ID,
       generateId(),
       data,
-      true,
       externalAgentCompany.id,
     )
 
@@ -118,8 +116,7 @@ describe('agentCreate()', () => {
 
     expect(result.email).toEqual(data.email)
     expect(result.externalId).toEqual(data.externalId)
-    expect(result.roles).toEqual([])
-    expect(result.type).toEqual(EnumUserType.customer)
+    expect(result.type).toEqual(EnumUserType.agent)
 
     const {
       _embedded: { items: managerAgents },
@@ -152,7 +149,6 @@ describe('agentCreatePermissions()', () => {
       APP_PROPERTY_MANAGER_ID,
       generateId(),
       data,
-      false,
     )
 
     const agentAppPermissionResult = await client.agentCreatePermissions(
@@ -186,7 +182,7 @@ describe('agentCreatePermissions()', () => {
     expect(agentPermissions).toBeTruthy()
     expect(agentPermissions).toHaveLength(4)
     // expect each role to equal the ones we added
-    agentPermissions.map(permission => {
+    agentPermissions.map((permission) => {
       expect(
         [
           EnumUserPermissionRole.bookingAgent,
@@ -197,7 +193,7 @@ describe('agentCreatePermissions()', () => {
       )
     })
     // expect appAdmin + pinboardAgent permissions to be timeboxed
-    agentPermissions.map(permission => {
+    agentPermissions.map((permission) => {
       if (
         [
           EnumUserPermissionRole.appAdmin,

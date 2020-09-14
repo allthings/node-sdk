@@ -1,4 +1,4 @@
-import { IAllthingsRestClient } from '../types'
+import { EntityResultList, IAllthingsRestClient } from '../types'
 
 export interface IRegistrationCodeTenant {
   readonly email?: string
@@ -28,6 +28,8 @@ export interface IRegistrationCode extends Required<IRegistrationCodeOptions> {
 export type PartialRegistrationCode = Partial<IRegistrationCode>
 
 export type RegistrationCodeResult = Promise<IRegistrationCode>
+
+export type RegistrationCodeResultList = EntityResultList<IRegistrationCode>
 
 export const remapRegistationCodeResult = (registrationCode: any) => {
   const { tenantID: externalId, ...result } = registrationCode
@@ -102,6 +104,33 @@ export async function registrationCodeGetById(
   )
 }
 
+/*
+  Get a list of registration codes
+*/
+
+export type MethodGetRegistrationCodes = (
+  page?: number,
+  limit?: number,
+  filter?: Record<string, any>,
+) => RegistrationCodeResultList
+
+export async function getRegistrationCodes(
+  client: IAllthingsRestClient,
+  page = 1,
+  limit = -1,
+  filter = {},
+): RegistrationCodeResultList {
+  const {
+    _embedded: { items: units },
+    total,
+  } = await client.get('/v1/invitations', {
+    filter: JSON.stringify(filter),
+    limit,
+    page,
+  })
+
+  return { _embedded: { items: units }, total }
+}
 /*
   Delete registration code by id
 */

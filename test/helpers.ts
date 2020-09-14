@@ -21,6 +21,7 @@ export async function createUserAndClient(): CreateUserAndClientResult {
   const password = generateId()
 
   const data = {
+    company: APP_PROPERTY_MANAGER_ID,
     description: 'Foobar User',
     email,
     externalId: generateId(),
