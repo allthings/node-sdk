@@ -1,7 +1,7 @@
 version: '2.1'
 volumes:
-  ? assets
-  ? accounts_public
+  assets:
+  accounts_public:
 services:
   mongodb:
     image: mongo:3.6
@@ -91,6 +91,7 @@ services:
       - cockpit:127.0.0.1
       - insights:127.0.0.1
       - developer-console:127.0.0.1
+      - billing:127.0.0.1
   yarntest:
     image: allthings/node
     links:
