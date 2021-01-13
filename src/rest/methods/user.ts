@@ -62,6 +62,7 @@ export enum EnumUserPermissionRole {
   appAdmin = 'app-admin',
   appOwner = 'app-owner',
   articlesAgent = 'articles-agent',
+  articlesViewOnly = 'articles-view-only',
   bookableAssetAgent = 'bookable-asset-agent',
   bookingAgent = 'booking-agent',
   cockpitManager = 'cockpit-manager',
@@ -292,7 +293,7 @@ export async function userCreatePermissionBatch(
   const { objectId, objectType, roles, startDate, endDate } = permissions
 
   const batch = {
-    batch: roles.map(role => ({
+    batch: roles.map((role) => ({
       endDate: endDate && endDate.toISOString(),
       objectID: objectId,
       objectType,
