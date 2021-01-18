@@ -39,6 +39,7 @@ steps:
   - name: release
     <<: *common
     command: >
+      bin/preversion.sh &&
       bin/artifacts-download.sh &&
       git remote set-url origin https://github.com/allthings/node-sdk.git && 
       git checkout master &&
