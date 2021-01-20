@@ -5,7 +5,11 @@ import {
   MethodAgentCreate,
   MethodAgentCreatePermissions,
 } from './methods/agent'
-import { MethodAppCreate, MethodAppGetById } from './methods/app'
+import {
+  MethodActiveUnitsGetByAppId,
+  MethodAppCreate,
+  MethodAppGetById,
+} from './methods/app'
 import {
   MethodBucketAddFile,
   MethodBucketCreate,
@@ -80,7 +84,7 @@ import {
 import {
   MethodUserRelationCreate,
   MethodUserRelationDelete,
-  MethodUserRelationsGetByUser
+  MethodUserRelationsGetByUser,
 } from './methods/userRelation'
 import {
   MethodUtilisationPeriodAddRegistrationCode,
@@ -237,6 +241,10 @@ export interface IAllthingsRestClient {
    */
   readonly appGetById: MethodAppGetById
 
+  /*
+   * Get the active units of an app by its id
+   */
+  readonly activeUnitsGetByAppId: MethodActiveUnitsGetByAppId
   // Bucket
 
   /**

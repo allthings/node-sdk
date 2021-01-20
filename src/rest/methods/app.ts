@@ -50,3 +50,18 @@ export async function appGetById(
 ): AppResult {
   return client.get(`/v1/apps/${appId}`)
 }
+
+/*
+ Get the active units of an app
+*/
+
+export type MethodActiveUnitsGetByAppId = (
+  appId: string,
+) => PartialApp & { readonly activeUnitCount: number }
+
+export async function activeUnitsGetByAppId(
+  client: IAllthingsRestClient,
+  appId: string,
+): AppResult {
+  return client.get(`/v1/apps/${appId}/active-units`)
+}

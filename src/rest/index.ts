@@ -12,7 +12,7 @@ import { pseudoRandomString } from '../utils/random'
 import httpDelete from './delete'
 import httpGet from './get'
 import { agentCreate, agentCreatePermissions } from './methods/agent'
-import { appCreate, appGetById } from './methods/app'
+import { activeUnitsGetByAppId, appCreate, appGetById } from './methods/app'
 import {
   bucketAddFile,
   bucketCreate,
@@ -93,7 +93,7 @@ import {
   EnumUserRelationType,
   userRelationCreate,
   userRelationDelete,
-  userRelationsGetByUser
+  userRelationsGetByUser,
 } from './methods/userRelation'
 import {
   EnumUtilisationPeriodType,
@@ -121,6 +121,7 @@ const API_METHODS: ReadonlyArray<any> = [
   agentCreatePermissions,
 
   // App
+  activeUnitsGetByAppId,
   appCreate,
   appGetById,
 
