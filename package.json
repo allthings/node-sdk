@@ -58,7 +58,7 @@
   "dependencies": {
     "bottleneck": "2.19.5",
     "cross-fetch": "3.0.6",
-    "query-string": "6.13.8"
+    "query-string": "6.14.0"
   },
   "devDependencies": {
     "@allthings/tslint-preset": "2.0.0",
