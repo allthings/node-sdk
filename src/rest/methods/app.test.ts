@@ -29,6 +29,6 @@ describe('activeUnitsGetByAppId()', () => {
     const result = await client.activeUnitsGetByAppId(APP_ID)
 
     expect(result.id).toEqual(APP_ID)
-    expect(result.activeUnitCount).toEqual(42)
+    expect(result.activeUnitCount).toEqual(46)
   })
 })
