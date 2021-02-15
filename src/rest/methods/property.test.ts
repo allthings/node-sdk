@@ -6,8 +6,6 @@ import { APP_ID } from '../../../test/constants'
 const client = restClient()
 
 const testData = {
-  billingPeriodEndDate: '2050-01-01',
-  billingPeriodStartDate: '2020-01-01',
   name: 'Foobar Property',
   propertyOwner: 'Owner',
   readOnly: true,

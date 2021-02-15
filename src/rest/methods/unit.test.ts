@@ -9,8 +9,6 @@ let sharedGroupId: string // tslint:disable-line no-let
 const client = restClient()
 
 const testData = {
-  billingPeriodEndDate: '2050-01-01',
-  billingPeriodStartDate: '2020-01-01',
   name: 'Foobar Unit',
   propertyOwner: 'Owner',
   readOnly: true,
