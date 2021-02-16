@@ -30,7 +30,7 @@ describe('activeUnitsGetByAppId()', () => {
       '5832debdfe7fc33f008b4569',
     )
 
-    expect(result.id).toEqual(APP_ID)
+    expect(result.id).toEqual('5832debdfe7fc33f008b4569')
     expect(result.activeUnitCount).toEqual(0)
   })
 })
