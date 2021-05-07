@@ -63,6 +63,16 @@ describe('ticketCreateOnUser()', () => {
 
 describe('ticketCreateOnServiceProvider()', () => {
   it('should be able to create a ticket on a service provider', async () => {
+    const customSettingsItemName = {
+      key: 'requesterName',
+      type: 'string',
+      value: 'John Doe',
+    }
+    const customSettingsItemEmail = {
+      key: 'requesterEmail',
+      type: 'string',
+      value: 'john@doe.com',
+    }
     const result = await client.ticketCreateOnServiceProvider(
       SERVICE_PROVIDER_ID,
       {
@@ -72,14 +82,21 @@ describe('ticketCreateOnServiceProvider()', () => {
           type: COMMUNICATION_METHOD.type,
           value: COMMUNICATION_METHOD.value,
         },
+        customSettings: [customSettingsItemName, customSettingsItemEmail],
         description: 'description',
         inputChannel: 'test',
+        phoneNumber: '+49 12 34 56',
         title: 'title',
       },
     )
 
     expect(result.description).toEqual('description')
     expect(result.title).toEqual('title')
+    expect(result.phoneNumber).toEqual('+49 12 34 56')
+    expect(result.customSettings).toEqual({
+      [customSettingsItemEmail.key]: customSettingsItemEmail.value,
+      [customSettingsItemName.key]: customSettingsItemName.value,
+    })
     expect(result.files.length).toEqual(0)
   })
 

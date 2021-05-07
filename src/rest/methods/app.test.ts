@@ -25,12 +25,17 @@ describe('appGetById()', () => {
 })
 
 describe('activeUnitsGetByAppId()', () => {
-  it('should get the active units of an app by id', async () => {
-    const result = await client.activeUnitsGetByAppId(
-      '5832debdfe7fc33f008b4569',
-    )
+  it('should get the number of active units of an app by id', async () => {
+    const appWithUnits = await client.activeUnitsGetByAppId(APP_ID)
 
-    expect(result.id).toEqual('5832debdfe7fc33f008b4569')
-    expect(result.activeUnitCount).toEqual(0)
+    expect(appWithUnits.id).toEqual(APP_ID)
+    expect(appWithUnits.activeUnitCount).toBeGreaterThan(0)
+
+    const cleanApp = await client.appCreate(USER_ID, {
+      name: pseudoRandomString(32),
+      siteUrl: `https://${pseudoRandomString(32)}.info`,
+    })
+    const appWithNoUnits = await client.activeUnitsGetByAppId(cleanApp.id)
+    expect(appWithNoUnits.activeUnitCount).toEqual(0)
   })
 })

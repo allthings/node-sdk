@@ -23,6 +23,12 @@ export interface ITicketLabel {
   readonly name: IMessage
 }
 
+export interface ICustomSettingsItem {
+  readonly key: string
+  readonly type: string
+  readonly value: string
+}
+
 export interface ITicketCreatePayload {
   readonly files?: ReadonlyArray<{
     readonly content: Buffer
@@ -37,6 +43,8 @@ export interface ITicketCreatePayload {
   readonly description: string
   readonly inputChannel: string
   readonly title: string
+  readonly phoneNumber?: string
+  readonly customSettings?: ReadonlyArray<ICustomSettingsItem>
 }
 
 interface ITicketParticipant extends IUser {
@@ -68,6 +76,7 @@ export interface ITicket {
   readonly commentCount: number
   readonly createdAt: string
   readonly customerWaitingSinceIndicator: ETrafficLightColor
+  readonly customSettings?: ReadonlyArray<ICustomSettingsItem>
   readonly description: string
   readonly files: ReadonlyArray<string>
   readonly id: string
