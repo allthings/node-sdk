@@ -33,7 +33,7 @@ client
 
 <!--
 ```javascript
-const allthingsSdk = require('@allthings/sdk')
+const allthings3 = require('@allthings/sdk')
 
 const allthings = allthingsSdk({
   accessToken: '043dab7447450772example1214b552838003522',
